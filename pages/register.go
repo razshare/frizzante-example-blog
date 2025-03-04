@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-func Register(_ *frz.Server, req *frz.Request, _ *frz.Response, _ *frz.Page) {
-	//frz.PageWithRenderMode(p, frz.RenderModeServer)
+func Register(_ *frz.Server, req *frz.Request, _ *frz.Response, p *frz.Page) {
+	frz.PageWithRenderMode(p, frz.RenderModeServer)
 
 	form := frz.ReceiveForm(req)
 

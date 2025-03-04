@@ -8,7 +8,7 @@ import (
 )
 
 func Login(_ *frz.Server, req *frz.Request, res *frz.Response, p *frz.Page) {
-	//frz.PageWithRenderMode(p, frz.RenderModeServer)
+	frz.PageWithRenderMode(p, frz.RenderModeServer)
 
 	get, set, _ := frz.SessionStart(req, res)
 	form := frz.ReceiveForm(req)
