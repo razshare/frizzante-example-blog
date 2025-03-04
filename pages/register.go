@@ -8,18 +8,18 @@ import (
 	"time"
 )
 
-func Register(_ *frz.Server, req *frz.Request, res *frz.Response, p *frz.Page) {
+func Register(_ *frz.Server, req *frz.Request, _ *frz.Response, _ *frz.Page) {
+	//frz.PageWithRenderMode(p, frz.RenderModeServer)
+
 	form := frz.ReceiveForm(req)
-
-	submit := form.Has("submit")
-
-	// Do nothing if it's not a submission.
-	if !submit {
-		return
-	}
 
 	id := form.Get("id")
 	password := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("password"))))
+
+	// Do nothing if it's not a submission.
+	if "" == id {
+		return
+	}
 
 	// Try login.
 	now := time.Now().Unix()

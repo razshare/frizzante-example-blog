@@ -2,11 +2,9 @@ module main
 
 go 1.23
 
-replace github.com/razshare/frizzante => /home/raz/Github/razshare/frizzante
-
 require (
 	github.com/go-sql-driver/mysql v1.9.0
-	github.com/razshare/frizzante v0.17.22
+	github.com/razshare/frizzante v0.17.24
 )
 
 require (
