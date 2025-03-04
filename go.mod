@@ -4,7 +4,7 @@ go 1.23
 
 require (
 	github.com/go-sql-driver/mysql v1.9.0
-	github.com/razshare/frizzante v0.17.24
+	github.com/razshare/frizzante v0.17.25
 )
 
 require (

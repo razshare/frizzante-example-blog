@@ -3,6 +3,10 @@
         max-width: 30rem;
     }
 
+    button {
+        width: 100%;
+    }
+
     .login-title, .additional-options {
         text-align: center;
     }
