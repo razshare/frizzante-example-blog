@@ -19,7 +19,7 @@
     <article>
         <h1 class="login-title">Register</h1>
         <form method="POST" action="?" onsubmit={update(getContext("data"))}>
-            <input type="text" name="id" placeholder="Id" aria-label="Id">
+            <input type="text" name="id" placeholder="Id" aria-label="id">
             <input type="password" name="password" placeholder="Password" aria-label="Password">
             <button type="submit">Continue</button>
             <p class="additional-options">

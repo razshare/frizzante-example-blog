@@ -8,7 +8,7 @@ import (
 	"log"
 	"main/database"
 	"main/pages"
-	"main/schemas"
+	"os"
 )
 
 //go:embed .dist/*/**
@@ -38,9 +38,6 @@ func main() {
 	frz.ServerRoutePage(srv, "GET /", "login", pages.Login)
 	frz.ServerRoutePage(srv, "POST /", "login", pages.Login)
 
-	// Schemas.
-	frz.SqlCreateTable[schemas.User](database.Sql)
-
 	// Log.
 	frz.ServerRecallError(srv, func(err error) {
 		lg.Fatal(err)
@@ -48,6 +45,20 @@ func main() {
 	frz.SqlRecallError(database.Sql, func(err error) {
 		lg.Fatal(err)
 	})
+
+	// Schemas.
+	if "1" != os.Getenv("PROD") {
+		frz.SqlDropTable[CommentContent](database.Sql)
+		frz.SqlDropTable[ArticleContent](database.Sql)
+		frz.SqlDropTable[Comment](database.Sql)
+		frz.SqlDropTable[Article](database.Sql)
+		frz.SqlDropTable[Account](database.Sql)
+	}
+	frz.SqlCreateTable[Account](database.Sql)
+	frz.SqlCreateTable[Article](database.Sql)
+	frz.SqlCreateTable[Comment](database.Sql)
+	frz.SqlCreateTable[ArticleContent](database.Sql)
+	frz.SqlCreateTable[CommentContent](database.Sql)
 
 	// Start.
 	frz.ServerStart(srv)

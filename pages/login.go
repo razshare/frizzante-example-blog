@@ -39,7 +39,7 @@ func Login(_ *frz.Server, req *frz.Request, res *frz.Response, p *frz.Page) {
 	}
 
 	// Try login.
-	fetch, _ := frz.SqlFind(database.Sql, "select id from `User` where id = ? and password = ? limit 1", id, password)
+	fetch, _ := frz.SqlFind(database.Sql, "select Id from Account where Id = ? and Password = ? limit 1", id, password)
 	if !fetch(&id) {
 		frz.PageWithData(p, "error", "Invalid credentials")
 		return

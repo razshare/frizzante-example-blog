@@ -13,15 +13,15 @@ func Register(_ *frz.Server, req *frz.Request, _ *frz.Response, p *frz.Page) {
 
 	form := frz.ReceiveForm(req)
 
-	id := form.Get("id")
+	accountId := form.Get("accountId")
 	password := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("password"))))
 
 	// Do nothing if it's not a submission.
-	if "" == id {
+	if "" == accountId {
 		return
 	}
 
 	// Try login.
 	now := time.Now().Unix()
-	frz.SqlExecute(database.Sql, "insert into `User` values(?,?,?,?)", id, password, now, now)
+	frz.SqlExecute(database.Sql, "insert into Account values(?,?,?,?)", accountId, password, now, now)
 }
