@@ -6,9 +6,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	frz "github.com/razshare/frizzante"
 	"log"
-	"main/database"
 	"main/pages"
-	"os"
+	"main/schemas"
 )
 
 //go:embed .dist/*/**
@@ -24,7 +23,7 @@ func main() {
 	srv := frz.ServerCreate()
 
 	// Setup.
-	frz.SqlWithDatabase(database.Sql, db)
+	frz.SqlWithDatabase(schemas.Sql, db)
 	frz.ServerWithPort(srv, 8080)
 	frz.ServerWithHostName(srv, "127.0.0.1")
 	frz.ServerWithEmbeddedFileSystem(srv, efs)
@@ -42,23 +41,23 @@ func main() {
 	frz.ServerRecallError(srv, func(err error) {
 		lg.Fatal(err)
 	})
-	frz.SqlRecallError(database.Sql, func(err error) {
+	frz.SqlRecallError(schemas.Sql, func(err error) {
 		lg.Fatal(err)
 	})
 
-	// Schemas.
-	if "1" != os.Getenv("PROD") {
-		frz.SqlDropTable[CommentContent](database.Sql)
-		frz.SqlDropTable[ArticleContent](database.Sql)
-		frz.SqlDropTable[Comment](database.Sql)
-		frz.SqlDropTable[Article](database.Sql)
-		frz.SqlDropTable[Account](database.Sql)
-	}
-	frz.SqlCreateTable[Account](database.Sql)
-	frz.SqlCreateTable[Article](database.Sql)
-	frz.SqlCreateTable[Comment](database.Sql)
-	frz.SqlCreateTable[ArticleContent](database.Sql)
-	frz.SqlCreateTable[CommentContent](database.Sql)
+	// Drop tables.
+	frz.SqlDropTable[schemas.CommentContent](schemas.Sql)
+	frz.SqlDropTable[schemas.ArticleContent](schemas.Sql)
+	frz.SqlDropTable[schemas.Comment](schemas.Sql)
+	frz.SqlDropTable[schemas.Article](schemas.Sql)
+	frz.SqlDropTable[schemas.Account](schemas.Sql)
+
+	// Create tables.
+	frz.SqlCreateTable[schemas.Account](schemas.Sql)
+	frz.SqlCreateTable[schemas.Article](schemas.Sql)
+	frz.SqlCreateTable[schemas.Comment](schemas.Sql)
+	frz.SqlCreateTable[schemas.ArticleContent](schemas.Sql)
+	frz.SqlCreateTable[schemas.CommentContent](schemas.Sql)
 
 	// Start.
 	frz.ServerStart(srv)

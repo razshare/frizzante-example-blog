@@ -1,4 +1,8 @@
-package main
+package schemas
+
+import frz "github.com/razshare/frizzante"
+
+var Sql = frz.SqlCreate()
 
 type Account struct {
 	Id        string `sql:"varchar(36) not null"`
