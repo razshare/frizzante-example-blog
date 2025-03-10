@@ -8,20 +8,22 @@ import (
 	"time"
 )
 
-func Register(_ *frz.Server, req *frz.Request, _ *frz.Response, p *frz.Page) {
+func Register(_ *frz.Server, req *frz.Request, res *frz.Response, p *frz.Page) {
 	frz.PageWithRenderMode(p, frz.RenderModeServer)
 
 	form := frz.ReceiveForm(req)
 
-	accountId := form.Get("accountId")
+	id := form.Get("id")
 	password := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("password"))))
 
 	// Do nothing if it's not a submission.
-	if "" == accountId {
+	if "" == id {
 		return
 	}
 
 	// Try login.
 	now := time.Now().Unix()
-	frz.SqlExecute(schemas.Sql, "insert into Account values(?,?,?,?)", accountId, password, now, now)
+	frz.SqlExecute(schemas.Sql, "insert into Account(Id,Password,CreatedAt,UpdatedAt) values(?,?,?,?)", id, password, now, now)
+
+	frz.SendRedirectToPage(res, "login", map[string]string{})
 }
