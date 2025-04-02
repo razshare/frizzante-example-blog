@@ -4,7 +4,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	frz "github.com/razshare/frizzante"
-	"main/schemas"
+	"main/lib"
 	"time"
 )
 
@@ -23,7 +23,7 @@ func Register(_ *frz.Server, req *frz.Request, res *frz.Response, p *frz.Page) {
 
 	// Try login.
 	now := time.Now().Unix()
-	frz.SqlExecute(schemas.Sql, "insert into Account(Id,Password,CreatedAt,UpdatedAt) values(?,?,?,?)", id, password, now, now)
+	frz.SqlExecute(lib.Sql, "insert into Account(Id,Password,CreatedAt,UpdatedAt) values(?,?,?,?)", id, password, now, now)
 
 	frz.SendRedirectToPage(res, "login", map[string]string{})
 }

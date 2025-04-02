@@ -5,60 +5,37 @@ import (
 	"embed"
 	_ "github.com/go-sql-driver/mysql"
 	frz "github.com/razshare/frizzante"
-	"log"
-	"main/pages"
-	"main/schemas"
+	"main/lib"
+	"main/lib/pages"
 )
 
 //go:embed .dist/*/**
-var efs embed.FS
+var dist embed.FS
 
 func main() {
-	// Create.
-	db, err := sqlib.Open("mysql", "root:root@/forum")
-	if err != nil {
-		panic(err)
+	database, databaseError := sqlib.Open("mysql", "root:root@/forum")
+	if databaseError != nil {
+		panic(databaseError)
 	}
-	lg := log.Default()
-	srv := frz.ServerCreate()
 
-	// Setup.
-	frz.SqlWithDatabase(schemas.Sql, db)
-	frz.ServerWithPort(srv, 8080)
-	frz.ServerWithHostName(srv, "127.0.0.1")
-	frz.ServerWithEmbeddedFileSystem(srv, efs)
-	frz.ServerWithLogger(srv, lg)
+	// Sql.
+	frz.SqlWithDatabase(lib.Sql, database)
+	frz.SqlWithNotifier(lib.Sql, lib.Notifier)
+
+	// Server.
+	server := frz.ServerCreate()
+	frz.ServerWithPort(server, 8080)
+	frz.ServerWithHostName(server, "127.0.0.1")
+	frz.ServerWithEmbeddedFileSystem(server, dist)
 
 	// Route (order matters, "/" should always be last).
-	frz.ServerRoutePage(srv, "GET /register", "register", pages.Register)
-	frz.ServerRoutePage(srv, "POST /register", "register", pages.Register)
-	frz.ServerRoutePage(srv, "GET /login", "login", pages.Login)
-	frz.ServerRoutePage(srv, "POST /login", "login", pages.Login)
-	frz.ServerRoutePage(srv, "GET /", "login", pages.Login)
-	frz.ServerRoutePage(srv, "POST /", "login", pages.Login)
-
-	// Log.
-	frz.ServerRecallError(srv, func(err error) {
-		lg.Fatal(err)
-	})
-	frz.SqlRecallError(schemas.Sql, func(err error) {
-		lg.Fatal(err)
-	})
-
-	// Drop tables.
-	frz.SqlDropTable[schemas.CommentContent](schemas.Sql)
-	frz.SqlDropTable[schemas.ArticleContent](schemas.Sql)
-	frz.SqlDropTable[schemas.Comment](schemas.Sql)
-	frz.SqlDropTable[schemas.Article](schemas.Sql)
-	frz.SqlDropTable[schemas.Account](schemas.Sql)
-
-	// Create tables.
-	frz.SqlCreateTable[schemas.Account](schemas.Sql)
-	frz.SqlCreateTable[schemas.Article](schemas.Sql)
-	frz.SqlCreateTable[schemas.Comment](schemas.Sql)
-	frz.SqlCreateTable[schemas.ArticleContent](schemas.Sql)
-	frz.SqlCreateTable[schemas.CommentContent](schemas.Sql)
+	frz.ServerRoutePage(server, "GET /register", "register", pages.Register)
+	frz.ServerRoutePage(server, "POST /register", "register", pages.Register)
+	frz.ServerRoutePage(server, "GET /login", "login", pages.Login)
+	frz.ServerRoutePage(server, "POST /login", "login", pages.Login)
+	frz.ServerRoutePage(server, "GET /", "login", pages.Login)
+	frz.ServerRoutePage(server, "POST /", "login", pages.Login)
 
 	// Start.
-	frz.ServerStart(srv)
+	frz.ServerStart(server)
 }

@@ -4,7 +4,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	frz "github.com/razshare/frizzante"
-	"main/schemas"
+	"main/lib"
 )
 
 func Login(_ *frz.Server, req *frz.Request, res *frz.Response, p *frz.Page) {
@@ -39,7 +39,7 @@ func Login(_ *frz.Server, req *frz.Request, res *frz.Response, p *frz.Page) {
 	}
 
 	// Try login.
-	fetch, _ := frz.SqlFind(schemas.Sql, "select Id from Account where Id = ? and Password = ? limit 1", id, password)
+	fetch, _ := frz.SqlFind(lib.Sql, "select Id from Account where Id = ? and Password = ? limit 1", id, password)
 	if !fetch(&id) {
 		frz.PageWithData(p, "error", "Invalid credentials")
 		return
