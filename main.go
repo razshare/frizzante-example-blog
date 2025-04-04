@@ -29,12 +29,12 @@ func main() {
 	frz.ServerWithEmbeddedFileSystem(server, dist)
 
 	// Route (order matters, "/" should always be last).
-	frz.ServerRoutePage(server, "GET /register", "register", pages.Register)
-	frz.ServerRoutePage(server, "POST /register", "register", pages.Register)
-	frz.ServerRoutePage(server, "GET /login", "login", pages.Login)
-	frz.ServerRoutePage(server, "POST /login", "login", pages.Login)
-	frz.ServerRoutePage(server, "GET /", "login", pages.Login)
-	frz.ServerRoutePage(server, "POST /", "login", pages.Login)
+	frz.ServerRoutePage(server, "GET /register", "Register", pages.Register)
+	frz.ServerRoutePage(server, "POST /register", "Register", pages.Register)
+	frz.ServerRoutePage(server, "GET /login", "Login", pages.Login)
+	frz.ServerRoutePage(server, "POST /login", "Login", pages.Login)
+	frz.ServerRoutePage(server, "GET /", "Login", pages.Login)
+	frz.ServerRoutePage(server, "POST /", "Login", pages.Login)
 
 	// Start.
 	frz.ServerStart(server)

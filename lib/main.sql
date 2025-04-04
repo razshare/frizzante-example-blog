@@ -1,70 +1,70 @@
-DROP DATABASE IF EXISTS `forum`;
+drop database if exists `forum`;
 
-CREATE DATABASE `forum`;
+create database `forum`;
 
-USE `forum`;
+use `forum`;
 
-CREATE TABLE IF NOT EXISTS
+create table if not exists
     `Account`
 (
-    `Id`        varchar(36)  NOT NULL,
-    `Password`  varchar(255) NOT NULL,
-    `CreatedAt` int          NOT NULL,
-    `UpdatedAt` int          NOT NULL,
-    PRIMARY KEY (`Id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+    `AccountId`   varchar(36)  not null,
+    `DisplayName` varchar(255) not null unique,
+    `Password`    varchar(255) not null,
+    `CreatedAt`   int          not null,
+    `UpdatedAt`   int          not null,
+    primary key (`AccountId`)
+) engine = InnoDB
+  default charset = utf8mb4
+  collate = utf8mb4_0900_ai_ci;
 
-
-CREATE TABLE IF NOT EXISTS
+create table if not exists
     `Article`
 (
-    `Id`        varchar(36) NOT NULL,
-    `CreatedAt` int         NOT NULL,
-    `Account`   varchar(36) NOT NULL,
-    PRIMARY KEY (`Id`),
-    KEY `Account` (`Account`),
-    CONSTRAINT `Article_ibfk_1` FOREIGN KEY (`Account`) REFERENCES `Account` (`Id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+    `ArticleId` varchar(36) not null,
+    `CreatedAt` int         not null,
+    `AccountId` varchar(36) not null,
+    primary key (`ArticleId`),
+    foreign key (`AccountId`) references `Account` (`AccountId`)
+) engine = InnoDB
+  default charset = utf8mb4
+  collate = utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS
+create table if not exists
     `ArticleContent`
 (
-    `Id`        varchar(36) NOT NULL,
-    `CreatedAt` int         NOT NULL,
-    `Article`   varchar(36) NOT NULL,
-    PRIMARY KEY (`Id`),
-    KEY `Article` (`Article`),
-    CONSTRAINT `ArticleContent_ibfk_1` FOREIGN KEY (`Article`) REFERENCES `Article` (`Id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+    `ArticleContentId` varchar(36) not null,
+    `CreatedAt`        int         not null,
+    `ArticleId`        varchar(36) not null,
+    `Content`          text        not null,
+    primary key (`ArticleContentId`),
+    foreign key (`ArticleId`) references `Article` (`ArticleId`)
+) engine = InnoDB
+  default charset = utf8mb4
+  collate = utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS
+create table if not exists
     `Comment`
 (
-    `Id`        varchar(36) NOT NULL,
-    `CreatedAt` int         NOT NULL,
-    `Account`   varchar(36) NOT NULL,
-    PRIMARY KEY (`Id`),
-    KEY `Account` (`Account`),
-    CONSTRAINT `Comment_ibfk_1` FOREIGN KEY (`Account`) REFERENCES `Account` (`Id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+    `CommentId` varchar(36) not null,
+    `CreatedAt` int         not null,
+    `AccountId` varchar(36) not null,
+    `ArticleId` varchar(36) not null,
+    primary key (`CommentId`),
+    foreign key (`AccountId`) references `Account` (`AccountId`),
+    foreign key (`ArticleId`) references `Article` (`ArticleId`)
+) engine = InnoDB
+  default charset = utf8mb4
+  collate = utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS
+create table if not exists
     `CommentContent`
 (
-    `Id`        varchar(36) NOT NULL,
-    `CreatedAt` int         NOT NULL,
-    `Comment`   varchar(36) NOT NULL,
-    PRIMARY KEY (`Id`),
-    KEY `Comment` (`Comment`),
-    CONSTRAINT `CommentContent_ibfk_1` FOREIGN KEY (`Comment`) REFERENCES `Comment` (`Id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+    `CommentContentId` varchar(36) not null,
+    `CreatedAt`        int         not null,
+    `CommentId`        varchar(36) not null,
+    `Content`          text        not null,
+    primary key (`CommentContentId`),
+    foreign key (`CommentId`) references `Comment` (`CommentId`)
+) engine = InnoDB
+  default charset = utf8mb4
+  collate = utf8mb4_0900_ai_ci;

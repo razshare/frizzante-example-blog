@@ -5,7 +5,6 @@ import (
 	"fmt"
 	frz "github.com/razshare/frizzante"
 	"main/lib"
-	"time"
 )
 
 func Register(_ *frz.Server, req *frz.Request, res *frz.Response, p *frz.Page) {
@@ -13,17 +12,17 @@ func Register(_ *frz.Server, req *frz.Request, res *frz.Response, p *frz.Page) {
 
 	form := frz.ReceiveForm(req)
 
-	id := form.Get("id")
-	password := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("password"))))
+	id := form.Get("Id")
+	displayName := form.Get("DisplayName")
+	password := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("Password"))))
 
 	// Do nothing if it's not a submission.
 	if "" == id {
 		return
 	}
 
-	// Try login.
-	now := time.Now().Unix()
-	frz.SqlExecute(lib.Sql, "insert into Account(Id,Password,CreatedAt,UpdatedAt) values(?,?,?,?)", id, password, now, now)
+	// Register.
+	lib.AddAccount(id, displayName, password)
 
-	frz.SendRedirectToPage(res, "login", map[string]string{})
+	frz.SendRedirectToPage(res, "Login", map[string]string{})
 }
