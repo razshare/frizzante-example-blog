@@ -1,14 +1,11 @@
 package indexes
 
-import (
-	frz "github.com/razshare/frizzante"
-	"main/lib"
-)
+import frz "github.com/razshare/frizzante"
 
-func logoutAndRedirect(req *frz.Request, res *frz.Response, p *frz.Page) {
+func logoutAndRedirect(req *frz.Request, res *frz.Response, _ *frz.Page) {
 	_, set, _ := frz.SessionStart(req, res)
 	set("verified", false)
-	frz.SendRedirectToPage(res, "login", lib.NoProps)
+	frz.SendNavigate(res, "login")
 }
 
 func Logout() (

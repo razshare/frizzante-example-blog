@@ -6,6 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	frz "github.com/razshare/frizzante"
 	"main/lib"
+	"main/lib/guards"
 	"main/lib/indexes"
 	"main/lib/sql"
 )
@@ -29,8 +30,12 @@ func main() {
 	frz.ServerWithHostName(server, "127.0.0.1")
 	frz.ServerWithEmbeddedFileSystem(server, dist)
 
-	// Route pages.
-	frz.ServerWithPage(server, "/board", "board", indexes.Board)
+	// Guards.
+	frz.ServerWithPageGuard(server, guards.Session)
+	frz.ServerWithPageGuard(server, guards.Render)
+
+	// Routes.
+	frz.ServerWithPage(server, "/board/{user}", "board", indexes.Board)
 	frz.ServerWithPage(server, "/login", "login", indexes.Login)
 	frz.ServerWithPage(server, "/logout", "logout", indexes.Logout)
 	frz.ServerWithPage(server, "/register", "register", indexes.Register)

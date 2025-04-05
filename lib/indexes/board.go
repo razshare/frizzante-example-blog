@@ -2,13 +2,13 @@ package indexes
 
 import (
 	frz "github.com/razshare/frizzante"
-	"main/lib"
 )
 
-func showIfVerified(req *frz.Request, res *frz.Response, p *frz.Page) {
+func showIfVerified(req *frz.Request, res *frz.Response, _ *frz.Page) {
 	get, _, _ := frz.SessionStart(req, res)
-	if !get("verified", false).(bool) {
-		frz.SendRedirectToPage(res, "login", lib.NoProps)
+	verified := get("verified", false).(bool)
+	if !verified {
+		frz.SendNavigate(res, "login")
 	}
 }
 
