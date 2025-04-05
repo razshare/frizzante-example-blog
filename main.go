@@ -6,7 +6,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	frz "github.com/razshare/frizzante"
 	"main/lib"
-	"main/lib/pages"
+	"main/lib/indexes"
+	"main/lib/sql"
 )
 
 //go:embed .dist/*/**
@@ -19,8 +20,8 @@ func main() {
 	}
 
 	// Sql.
-	frz.SqlWithDatabase(lib.Sql, database)
-	frz.SqlWithNotifier(lib.Sql, lib.Notifier)
+	frz.SqlWithDatabase(sql.Sql, database)
+	frz.SqlWithNotifier(sql.Sql, lib.Notifier)
 
 	// Server.
 	server := frz.ServerCreate()
@@ -28,13 +29,12 @@ func main() {
 	frz.ServerWithHostName(server, "127.0.0.1")
 	frz.ServerWithEmbeddedFileSystem(server, dist)
 
-	// Route (order matters, "/" should always be last).
-	frz.ServerRoutePage(server, "GET /register", "Register", pages.Register)
-	frz.ServerRoutePage(server, "POST /register", "Register", pages.Register)
-	frz.ServerRoutePage(server, "GET /login", "Login", pages.Login)
-	frz.ServerRoutePage(server, "POST /login", "Login", pages.Login)
-	frz.ServerRoutePage(server, "GET /", "Login", pages.Login)
-	frz.ServerRoutePage(server, "POST /", "Login", pages.Login)
+	// Route pages.
+	frz.ServerWithPage(server, "/board", "board", indexes.Board)
+	frz.ServerWithPage(server, "/login", "login", indexes.Login)
+	frz.ServerWithPage(server, "/logout", "logout", indexes.Logout)
+	frz.ServerWithPage(server, "/register", "register", indexes.Register)
+	frz.ServerWithPage(server, "/", "login", indexes.Login)
 
 	// Start.
 	frz.ServerStart(server)

@@ -13,7 +13,7 @@ dev: clean update
 	DEV=1 CGO_ENABLED=1 ./bin/air \
 	--build.cmd "go build -o bin/app ." \
 	--build.bin "bin/app" \
-	--build.exclude_dir "out,tmp,bin,lib" \
+	--build.exclude_dir "out,tmp,bin" \
 	--build.exclude_regex "_test.go,.frizzante" \
 	--build.include_ext "go" \
 	--build.log "go-build-errors.log" & \

@@ -1,9 +1,10 @@
-package lib
+package sql
 
 import (
 	"database/sql"
 	uuid "github.com/nu7hatch/gouuid"
 	frz "github.com/razshare/frizzante"
+	"main/lib"
 	"time"
 )
 
@@ -53,7 +54,7 @@ func ChangeAccount(
 func AddArticle(accountId string) string {
 	uuidLocal, uuidError := uuid.NewV4()
 	if nil != uuidError {
-		Failure(uuidError)
+		lib.Failure(uuidError)
 		return ""
 	}
 
@@ -71,7 +72,7 @@ func AddArticle(accountId string) string {
 func AddArticleContent(articleId string, content string) string {
 	id, idError := uuid.NewV4()
 	if nil != idError {
-		Failure(idError)
+		lib.Failure(idError)
 		return ""
 	}
 
@@ -108,7 +109,7 @@ func RemoveArticle(articleId string) {
 func AddComment(accountId string, articleId string) string {
 	uuidLocal, uuidError := uuid.NewV4()
 	if nil != uuidError {
-		Failure(uuidError)
+		lib.Failure(uuidError)
 		return ""
 	}
 
@@ -126,7 +127,7 @@ func AddComment(accountId string, articleId string) string {
 func AddCommentContent(commentId string, articleId string, content string) string {
 	id, idError := uuid.NewV4()
 	if nil != idError {
-		Failure(idError)
+		lib.Failure(idError)
 		return ""
 	}
 

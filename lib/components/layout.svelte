@@ -6,8 +6,6 @@
         top: 0;
         bottom: 0;
         display: grid;
-        justify-content: center;
-        align-content: center;
     }
 </style>
 
