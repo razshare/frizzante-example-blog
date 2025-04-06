@@ -3,24 +3,24 @@ package indexes
 import (
 	"crypto/sha256"
 	"fmt"
-	frz "github.com/razshare/frizzante"
+	f "github.com/razshare/frizzante"
 	"main/lib/sql"
 )
 
-func registerAndNavigate(req *frz.Request, res *frz.Response, _ *frz.Page) {
-	form := frz.ReceiveForm(req)
+func action(req *f.Request, res *f.Response, _ *f.Page) {
+	form := f.ReceiveForm(req)
 	id := form.Get("id")
-	displayName := form.Get("display_name")
-	password := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("password"))))
+	dn := form.Get("display_name")
+	pwd := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("password"))))
 
-	sql.AddAccount(id, displayName, password)
-	frz.SendNavigate(res, "login")
+	sql.AddAccount(id, dn, pwd)
+	f.SendNavigate(res, "login")
 }
 
 func Register() (
-	show frz.PageFunction,
-	action frz.PageFunction,
+	s f.PageFunction,
+	a f.PageFunction,
 ) {
-	action = registerAndNavigate
+	a = action
 	return
 }

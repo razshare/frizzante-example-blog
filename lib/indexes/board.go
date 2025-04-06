@@ -1,20 +1,19 @@
 package indexes
 
 import (
-	frz "github.com/razshare/frizzante"
+	f "github.com/razshare/frizzante"
 )
 
-func showIfVerified(req *frz.Request, res *frz.Response, _ *frz.Page) {
-	get, _, _ := frz.SessionStart(req, res)
-	verified := get("verified", false).(bool)
-	if !verified {
-		frz.SendNavigate(res, "login")
+func showIfVerified(req *f.Request, res *f.Response, _ *f.Page) {
+	get, _, _ := f.SessionStart(req, res)
+	if !get("verified", false).(bool) {
+		f.SendNavigate(res, "login")
 	}
 }
 
 func Board() (
-	show frz.PageFunction,
-	action frz.PageFunction,
+	show f.PageFunction,
+	action f.PageFunction,
 ) {
 	show = showIfVerified
 	return

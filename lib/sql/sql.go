@@ -3,19 +3,19 @@ package sql
 import (
 	"database/sql"
 	uuid "github.com/nu7hatch/gouuid"
-	frz "github.com/razshare/frizzante"
+	f "github.com/razshare/frizzante"
 	"main/lib"
 	"time"
 )
 
-var Sql = frz.SqlCreate()
+var Sql = f.SqlCreate()
 
 func find(query string, props ...any) (next func(dest ...any) bool, close func()) {
-	return frz.SqlFind(Sql, query, props...)
+	return f.SqlFind(Sql, query, props...)
 }
 
 func run(query string, props ...any) *sql.Result {
-	return frz.SqlExecute(Sql, query, props...)
+	return f.SqlExecute(Sql, query, props...)
 }
 
 // VerifyAccount verifies that the combination of id and password are exists.

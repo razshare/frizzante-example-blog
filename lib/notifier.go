@@ -1,15 +1,15 @@
 package lib
 
-import frz "github.com/razshare/frizzante"
+import f "github.com/razshare/frizzante"
 
-var Notifier = frz.NotifierCreate()
+var Notifier = f.NotifierCreate()
 
 // Failure sends and error to the notifier.
 func Failure(err error) {
-	frz.NotifierSendError(Notifier, err)
+	f.NotifierSendError(Notifier, err)
 }
 
 // Info sends a message to the notifier.
 func Info(message string) {
-	frz.NotifierSendMessage(Notifier, message)
+	f.NotifierSendMessage(Notifier, message)
 }

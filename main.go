@@ -4,7 +4,7 @@ import (
 	sqlib "database/sql"
 	"embed"
 	_ "github.com/go-sql-driver/mysql"
-	frz "github.com/razshare/frizzante"
+	f "github.com/razshare/frizzante"
 	"main/lib"
 	"main/lib/guards"
 	"main/lib/indexes"
@@ -12,35 +12,35 @@ import (
 )
 
 //go:embed .dist/*/**
-var dist embed.FS
+var d embed.FS
 
 func main() {
-	database, databaseError := sqlib.Open("mysql", "root:root@/forum")
-	if databaseError != nil {
-		panic(databaseError)
+	db, dbe := sqlib.Open("mysql", "root:root@/forum")
+	if dbe != nil {
+		panic(dbe)
 	}
 
 	// Sql.
-	frz.SqlWithDatabase(sql.Sql, database)
-	frz.SqlWithNotifier(sql.Sql, lib.Notifier)
+	f.SqlWithDatabase(sql.Sql, db)
+	f.SqlWithNotifier(sql.Sql, lib.Notifier)
 
 	// Server.
-	server := frz.ServerCreate()
-	frz.ServerWithPort(server, 8080)
-	frz.ServerWithHostName(server, "127.0.0.1")
-	frz.ServerWithEmbeddedFileSystem(server, dist)
+	s := f.ServerCreate()
+	f.ServerWithPort(s, 8080)
+	f.ServerWithHostName(s, "127.0.0.1")
+	f.ServerWithEmbeddedFileSystem(s, d)
 
 	// Guards.
-	frz.ServerWithPageGuard(server, guards.Session)
-	frz.ServerWithPageGuard(server, guards.Render)
+	f.ServerWithPageGuard(s, guards.Session)
+	f.ServerWithPageGuard(s, guards.Render)
 
 	// Routes.
-	frz.ServerWithPage(server, "/board/{user}", "board", indexes.Board)
-	frz.ServerWithPage(server, "/login", "login", indexes.Login)
-	frz.ServerWithPage(server, "/logout", "logout", indexes.Logout)
-	frz.ServerWithPage(server, "/register", "register", indexes.Register)
-	frz.ServerWithPage(server, "/", "login", indexes.Login)
+	f.ServerWithPage(s, "/board/{user}", "board", indexes.Board)
+	f.ServerWithPage(s, "/login", "login", indexes.Login)
+	f.ServerWithPage(s, "/logout", "logout", indexes.Logout)
+	f.ServerWithPage(s, "/register", "register", indexes.Register)
+	f.ServerWithPage(s, "/", "login", indexes.Login)
 
 	// Start.
-	frz.ServerStart(server)
+	f.ServerStart(s)
 }
