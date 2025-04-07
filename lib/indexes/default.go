@@ -10,5 +10,4 @@ func Default(
 	route("/", "login")
 	show(loginShowFunction)
 	action(loginActionFunction)
-	return
 }

@@ -51,5 +51,4 @@ func Board(
 	route("/board", "board")
 	show(boardShowFunction)
 	action(boardActionFunction)
-	return
 }

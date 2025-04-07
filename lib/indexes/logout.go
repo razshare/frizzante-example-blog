@@ -20,5 +20,4 @@ func Logout(
 	route("/logout", "logout")
 	show(logoutShowFunction)
 	action(logoutActionFunction)
-	return
 }

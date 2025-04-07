@@ -29,5 +29,4 @@ func Register(
 	route("/register", "register")
 	show(registerShowFunction)
 	action(registerActionFunction)
-	return
 }

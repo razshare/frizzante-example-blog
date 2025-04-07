@@ -1,7 +1,5 @@
 <script>
-    import Icon from "$lib/components/Icon.svelte"
     import {getContext} from "svelte";
-    import {mdiDotsVertical} from "@mdi/js";
 
     /**
      * @typedef Article

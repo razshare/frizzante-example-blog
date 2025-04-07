@@ -35,5 +35,4 @@ func Login(
 	route("/login", "login")
 	show(loginShowFunction)
 	action(loginActionFunction)
-	return
 }

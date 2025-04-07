@@ -31,8 +31,8 @@ func main() {
 	f.ServerWithEmbeddedFileSystem(s, d)
 
 	// Guards.
-	f.ServerWithPageGuard(s, guards.Session)
-	f.ServerWithPageGuard(s, guards.Render)
+	f.ServerWithIndexGuard(s, guards.Session)
+	f.ServerWithIndexGuard(s, guards.Render)
 
 	// Indexes.
 	f.ServerWithIndex(s, indexes.Board)
