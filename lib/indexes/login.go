@@ -7,7 +7,11 @@ import (
 	"main/lib/sql"
 )
 
-func loginAction(req *f.Request, res *f.Response, p *f.Page) {
+func loginShowFunction(_ *f.Request, _ *f.Response, _ *f.Page) {
+	// Noop.
+}
+
+func loginActionFunction(req *f.Request, res *f.Response, p *f.Page) {
 	_, set, _ := f.SessionStart(req, res)
 
 	form := f.ReceiveForm(req)
@@ -23,12 +27,13 @@ func loginAction(req *f.Request, res *f.Response, p *f.Page) {
 	f.SendNavigate(res, "board")
 }
 
-func Login() (
-	page string,
-	show f.PageFunction,
-	action f.PageFunction,
+func Login(
+	route func(path string, page string),
+	show func(showFunction f.PageFunction),
+	action func(actionFunction f.PageFunction),
 ) {
-	page = "login"
-	action = loginAction
+	route("/login", "login")
+	show(loginShowFunction)
+	action(loginActionFunction)
 	return
 }

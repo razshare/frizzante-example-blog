@@ -7,7 +7,11 @@ import (
 	"main/lib/sql"
 )
 
-func registerAction(req *f.Request, res *f.Response, _ *f.Page) {
+func registerShowFunction(_ *f.Request, _ *f.Response, _ *f.Page) {
+	// Noop.
+}
+
+func registerActionFunction(req *f.Request, res *f.Response, _ *f.Page) {
 	form := f.ReceiveForm(req)
 	id := form.Get("id")
 	dn := form.Get("displayName")
@@ -17,12 +21,13 @@ func registerAction(req *f.Request, res *f.Response, _ *f.Page) {
 	f.SendNavigate(res, "login")
 }
 
-func Register() (
-	page string,
-	show f.PageFunction,
-	action f.PageFunction,
+func Register(
+	route func(path string, page string),
+	show func(showFunction f.PageFunction),
+	action func(actionFunction f.PageFunction),
 ) {
-	page = "register"
-	action = registerAction
+	route("/register", "register")
+	show(registerShowFunction)
+	action(registerActionFunction)
 	return
 }

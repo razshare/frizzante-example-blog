@@ -12,7 +12,7 @@ type BoardArticle struct {
 	AccountId string `json:"accountId"`
 }
 
-func showAction(req *f.Request, res *f.Response, p *f.Page) {
+func boardShowFunction(req *f.Request, res *f.Response, p *f.Page) {
 	get, _, _ := f.SessionStart(req, res)
 	if !get("verified", false).(bool) {
 		f.SendNavigate(res, "login")
@@ -39,12 +39,17 @@ func showAction(req *f.Request, res *f.Response, p *f.Page) {
 	f.PageWithData(p, "articles", articles)
 }
 
-func Board() (
-	page string,
-	show f.PageFunction,
-	action f.PageFunction,
+func boardActionFunction(_ *f.Request, _ *f.Response, _ *f.Page) {
+	// Noop.
+}
+
+func Board(
+	route func(path string, page string),
+	show func(showFunction f.PageFunction),
+	action func(actionFunction f.PageFunction),
 ) {
-	page = "board"
-	show = showAction
+	route("/board", "board")
+	show(boardShowFunction)
+	action(boardActionFunction)
 	return
 }
