@@ -7,17 +7,17 @@
         width: 100%;
     }
 
-    .login_title, .additional_options {
+    .LoginTitle, .AdditionalOptions {
         text-align: center;
     }
 
 </style>
 
 <script>
-    import Layout from "$lib/components/layout.svelte";
+    import Layout from "$lib/components/Layout.svelte";
+    import Form from "$frizzante/components/Form.svelte";
     import {getContext} from "svelte";
-    import Form from "$frizzante/components/form.svelte";
-    import Center from "$lib/components/center.svelte";
+    import Center from "$lib/components/Center.svelte";
 
     /**
      * @typedef Data
@@ -34,13 +34,13 @@
 <Layout title="Login">
     <Center>
         <article>
-            <h1 class="login_title">Login</h1>
+            <h1 class="LoginTitle">Login</h1>
             <Form>
                 <input type="email" name="id" placeholder="Email" aria-label="Email">
                 <input type="password" name="password" placeholder="Password" aria-label="Password">
                 <button type="submit">Continue</button>
             </Form>
-            <p class="additional_options">
+            <p class="AdditionalOptions">
                 or <a href={path("register")}>register a new account</a>
                 {#if data.error}
                     <br/>

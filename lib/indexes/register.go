@@ -7,10 +7,10 @@ import (
 	"main/lib/sql"
 )
 
-func action(req *f.Request, res *f.Response, _ *f.Page) {
+func registerAction(req *f.Request, res *f.Response, _ *f.Page) {
 	form := f.ReceiveForm(req)
 	id := form.Get("id")
-	dn := form.Get("display_name")
+	dn := form.Get("displayName")
 	pwd := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("password"))))
 
 	sql.AddAccount(id, dn, pwd)
@@ -18,9 +18,11 @@ func action(req *f.Request, res *f.Response, _ *f.Page) {
 }
 
 func Register() (
-	s f.PageFunction,
-	a f.PageFunction,
+	page string,
+	show f.PageFunction,
+	action f.PageFunction,
 ) {
-	a = action
+	page = "register"
+	action = registerAction
 	return
 }

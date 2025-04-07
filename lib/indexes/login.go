@@ -7,7 +7,7 @@ import (
 	"main/lib/sql"
 )
 
-func loginAndRedirect(req *f.Request, res *f.Response, p *f.Page) {
+func loginAction(req *f.Request, res *f.Response, p *f.Page) {
 	_, set, _ := f.SessionStart(req, res)
 
 	form := f.ReceiveForm(req)
@@ -20,15 +20,15 @@ func loginAndRedirect(req *f.Request, res *f.Response, p *f.Page) {
 	}
 	set("verified", true)
 
-	f.SendNavigateWithParameters(res, "board", map[string]string{
-		"user": "asd",
-	})
+	f.SendNavigate(res, "board")
 }
 
 func Login() (
+	page string,
 	show f.PageFunction,
 	action f.PageFunction,
 ) {
-	action = loginAndRedirect
+	page = "login"
+	action = loginAction
 	return
 }

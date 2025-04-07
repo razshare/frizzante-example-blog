@@ -1,5 +1,5 @@
 <script>
-    import Submit from "$frizzante/components/submit.svelte";
+    import Submit from "$frizzante/components/Submit.svelte";
     import {getContext} from "svelte";
 
     /**

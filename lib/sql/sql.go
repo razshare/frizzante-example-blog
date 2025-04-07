@@ -159,3 +159,96 @@ func RemoveComment(commentId string) {
 		commentId,
 	)
 }
+
+// FindArticles find articles.
+func FindArticles(
+	offset int,
+	count int,
+) (func(
+	articleId *string,
+	title *string,
+	createdAt *int,
+	accountId *string,
+) bool, func()) {
+	fetch, closeFetch := find(
+		"select ArticleId, Title, CreatedAt, AccountId from Article limit ?, ?",
+		offset, count,
+	)
+
+	return func(
+		articleId *string,
+		title *string,
+		createdAt *int,
+		accountId *string,
+	) bool {
+		return fetch(
+			articleId,
+			title,
+			createdAt,
+			accountId,
+		)
+	}, closeFetch
+}
+
+// FindCommentsByArticleId find comments.
+func FindCommentsByArticleId(
+	offset int,
+	count int,
+	articleId string,
+) (func(
+	commentId *string,
+	createdAt *int,
+	accountId *string,
+	articleId *string,
+) bool, func()) {
+	fetch, closeFetch := find(
+		"select CommentId, CreatedAt, AccountId, ArticleId from Comment where ArticleId = ? limit ?, ?",
+		articleId, offset, count,
+	)
+	defer closeFetch()
+
+	return func(
+		commentId *string,
+		createdAt *int,
+		accountId *string,
+		articleId *string,
+	) bool {
+		return fetch(
+			commentId,
+			createdAt,
+			accountId,
+			articleId,
+		)
+	}, closeFetch
+}
+
+// FindAccounts find accounts.
+func FindAccounts(
+	offset int,
+	count int,
+) (func(
+	commentId *string,
+	createdAt *int,
+	accountId *string,
+	articleId *string,
+) bool, func()) {
+	fetch, closeFetch := find(
+		"select AccountId, DisplayName, CreatedAt, UpdatedAt from Account limit ?, ?",
+		offset, count,
+	)
+	defer closeFetch()
+
+	return func(
+		accountId *string,
+		displayName *int,
+		createdAt *string,
+		updatedAt *string,
+	) bool {
+		return fetch(
+			accountId,
+			displayName,
+			createdAt,
+			updatedAt,
+		)
+	}, closeFetch
+}

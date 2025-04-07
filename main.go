@@ -34,12 +34,12 @@ func main() {
 	f.ServerWithPageGuard(s, guards.Session)
 	f.ServerWithPageGuard(s, guards.Render)
 
-	// Routes.
-	f.ServerWithPage(s, "/board/{user}", "board", indexes.Board)
-	f.ServerWithPage(s, "/login", "login", indexes.Login)
-	f.ServerWithPage(s, "/logout", "logout", indexes.Logout)
-	f.ServerWithPage(s, "/register", "register", indexes.Register)
-	f.ServerWithPage(s, "/", "login", indexes.Login)
+	// Indexes.
+	f.ServerWithIndex(s, indexes.Board)
+	f.ServerWithIndex(s, indexes.Login)
+	f.ServerWithIndex(s, indexes.Logout)
+	f.ServerWithIndex(s, indexes.Register)
+	f.ServerWithIndex(s, indexes.Default)
 
 	// Start.
 	f.ServerStart(s)

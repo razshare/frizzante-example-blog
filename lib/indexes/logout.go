@@ -9,9 +9,11 @@ func logoutAction(req *f.Request, res *f.Response, _ *f.Page) {
 }
 
 func Logout() (
-	s f.PageFunction,
-	a f.PageFunction,
+	page string,
+	show f.PageFunction,
+	action f.PageFunction,
 ) {
-	a = logoutAction
+	page = "logout"
+	action = logoutAction
 	return
 }

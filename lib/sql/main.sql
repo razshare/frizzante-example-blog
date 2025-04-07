@@ -21,6 +21,7 @@ create table if not exists
     `Article`
 (
     `ArticleId` varchar(36) not null,
+    `Title`     varchar(36) not null,
     `CreatedAt` int         not null,
     `AccountId` varchar(36) not null,
     primary key (`ArticleId`),
