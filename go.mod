@@ -5,7 +5,7 @@ go 1.23
 require (
 	github.com/go-sql-driver/mysql v1.9.0
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
-	github.com/razshare/frizzante v0.26.6
+	github.com/razshare/frizzante v0.27.0
 )
 
 require (
