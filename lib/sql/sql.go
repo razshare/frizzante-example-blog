@@ -1,7 +1,6 @@
 package sql
 
 import (
-	"database/sql"
 	uuid "github.com/nu7hatch/gouuid"
 	f "github.com/razshare/frizzante"
 	"main/lib"
@@ -10,18 +9,10 @@ import (
 
 var Sql = f.SqlCreate()
 
-func find(query string, props ...any) (next func(dest ...any) bool, close func()) {
-	return f.SqlFind(Sql, query, props...)
-}
-
-func run(query string, props ...any) *sql.Result {
-	return f.SqlExecute(Sql, query, props...)
-}
-
 // VerifyAccount verifies that the combination of id and password are exists.
 func VerifyAccount(id string, password string) bool {
-	fetch, closeFetch := find(
-		"select AccountId from `Account` where AccountId = ? and Password = ? limit 1",
+	fetch, closeFetch := f.SqlFind(Sql,
+		"select `AccountId` from `Account` where `AccountId` = ? and `Password` = ? limit 1",
 		id, password,
 	)
 	defer closeFetch()
@@ -31,21 +22,17 @@ func VerifyAccount(id string, password string) bool {
 // AddAccount adds an account.
 func AddAccount(id string, displayName string, password string) {
 	now := time.Now().Unix()
-	run(
-		"insert into `Account`(AccountId,DisplayName,Password,CreatedAt,UpdatedAt) values(?,?,?,?,?)",
+	f.SqlExecute(Sql,
+		"insert into `Account`(`AccountId`,`DisplayName`,`Password`,`CreatedAt`,`UpdatedAt`) values(?,?,?,?,?)",
 		id, displayName, password, now, now,
 	)
 }
 
 // ChangeAccount changes properties of an account.
-func ChangeAccount(
-	accountId string,
-	displayName string,
-	password string,
-) {
+func ChangeAccount(accountId string, displayName string, password string) {
 	updatedAt := time.Now().Unix()
-	run(
-		"update `Account` set DisplayName = ?, Password = ?, UpdatedAt = ? where AccountId = ?",
+	f.SqlExecute(Sql,
+		"update `Account` set `DisplayName` = ?, `Password` = ?, `UpdatedAt` = ? where `AccountId` = ?",
 		displayName, password, updatedAt, accountId,
 	)
 }
@@ -60,8 +47,8 @@ func AddArticle(accountId string) string {
 
 	articleId := uuidLocal.String()
 	createdAt := time.Now().Unix()
-	run(
-		"insert into `Article`(ArticleId,CreatedAt,Account) values(?,?,?)",
+	f.SqlExecute(Sql,
+		"insert into `Article`(`ArticleId`,`CreatedAt`,`Account`) values(?,?,?)",
 		articleId, createdAt, accountId,
 	)
 
@@ -78,8 +65,8 @@ func AddArticleContent(articleId string, content string) string {
 
 	articleContentId := id.String()
 	createdAt := time.Now().Unix()
-	run(
-		"insert into `ArticleContent`(ArticleContentId,CreatedAt,Account,Content) values(?,?,?,?)",
+	f.SqlExecute(Sql,
+		"insert into `ArticleContent`(`ArticleContentId`,`CreatedAt`,`Account`,`Content`) values(?,?,?,?)",
 		articleContentId, createdAt, articleId, content,
 	)
 
@@ -88,8 +75,8 @@ func AddArticleContent(articleId string, content string) string {
 
 // FindArticleContent finds the content of an article.
 func FindArticleContent(articleId string) (content string) {
-	fetch, closeFetch := find(
-		"select `Content` from `ArticleContent` where `ArticleId` = ? order by CreatedAt desc limit 1",
+	fetch, closeFetch := f.SqlFind(Sql,
+		"select `Content` from `ArticleContent` where `ArticleId` = ? order by `CreatedAt` desc limit 1",
 		articleId,
 	)
 	defer closeFetch()
@@ -99,7 +86,7 @@ func FindArticleContent(articleId string) (content string) {
 
 // RemoveArticle removes an article.
 func RemoveArticle(articleId string) {
-	run(
+	f.SqlExecute(Sql,
 		"delete from `Article`  where ArticleId = ?",
 		articleId,
 	)
@@ -115,8 +102,8 @@ func AddComment(accountId string, articleId string) string {
 
 	commentId := uuidLocal.String()
 	createdAt := time.Now().Unix()
-	run(
-		"insert into `Comment`(CommentId,CreatedAt,AccountId) values(?,?,?)",
+	f.SqlExecute(Sql,
+		"insert into `Comment`(`CommentId`,`CreatedAt`,`AccountId`) values(?,?,?)",
 		commentId, createdAt, accountId,
 	)
 
@@ -133,8 +120,8 @@ func AddCommentContent(commentId string, articleId string, content string) strin
 
 	commentContentId := id.String()
 	createdAt := time.Now().Unix()
-	run(
-		"insert into `CommentContent`(CommentContentId,CreatedAt,CommentId,AccountId,Content) values(?,?,?,?)",
+	f.SqlExecute(Sql,
+		"insert into `CommentContent`(`CommentContentId`,`CreatedAt`,`CommentId`,`AccountId`,`Content`) values(?,?,?,?)",
 		commentContentId, createdAt, commentId, articleId, content,
 	)
 
@@ -143,8 +130,8 @@ func AddCommentContent(commentId string, articleId string, content string) strin
 
 // FindCommentContent finds the content of a comment.
 func FindCommentContent(commentId string) (content string) {
-	fetch, closeFetch := find(
-		"select `Content` from `CommentContent` where `CommentContentId` = ? order by CreatedAt desc limit 1",
+	fetch, closeFetch := f.SqlFind(Sql,
+		"select `Content` from `CommentContent` where `CommentContentId` = ? order by `CreatedAt` desc limit 1",
 		commentId,
 	)
 	defer closeFetch()
@@ -154,101 +141,59 @@ func FindCommentContent(commentId string) (content string) {
 
 // RemoveComment removes a comment.
 func RemoveComment(commentId string) {
-	run(
+	f.SqlExecute(Sql,
 		"delete from `Comment`  where CommentId = ?",
 		commentId,
 	)
 }
 
 // FindArticles find articles.
-func FindArticles(
-	offset int,
-	count int,
-) (func(
-	articleId *string,
-	title *string,
-	createdAt *int,
-	accountId *string,
-) bool, func()) {
-	fetch, closeFetch := find(
-		"select ArticleId, Title, CreatedAt, AccountId from Article limit ?, ?",
+func FindArticles(offset int, count int) (
+	func(articleId *string, title *string, createdAt *int, accountId *string) bool, func()) {
+	fetch, closeFetch := f.SqlFind(Sql,
+		"select `ArticleId`, `Title`, `CreatedAt`, `AccountId` from `Article` limit ?, ?",
 		offset, count,
 	)
 
-	return func(
-		articleId *string,
-		title *string,
-		createdAt *int,
-		accountId *string,
-	) bool {
-		return fetch(
-			articleId,
-			title,
-			createdAt,
-			accountId,
-		)
+	return func(articleId *string, title *string, createdAt *int, accountId *string) bool {
+		return fetch(articleId, title, createdAt, accountId)
 	}, closeFetch
 }
 
 // FindCommentsByArticleId find comments.
-func FindCommentsByArticleId(
-	offset int,
-	count int,
-	articleId string,
-) (func(
-	commentId *string,
-	createdAt *int,
-	accountId *string,
-	articleId *string,
-) bool, func()) {
-	fetch, closeFetch := find(
-		"select CommentId, CreatedAt, AccountId, ArticleId from Comment where ArticleId = ? limit ?, ?",
+func FindCommentsByArticleId(offset int, count int, articleId string) (
+	func(commentId *string, createdAt *int, accountId *string, articleId *string) bool, func()) {
+	fetch, closeFetch := f.SqlFind(Sql,
+		"select `CommentId`, `CreatedAt`, `AccountId`, `ArticleId` from `Comment` where `ArticleId` = ? limit ?, ?",
 		articleId, offset, count,
 	)
-	defer closeFetch()
 
-	return func(
-		commentId *string,
-		createdAt *int,
-		accountId *string,
-		articleId *string,
-	) bool {
-		return fetch(
-			commentId,
-			createdAt,
-			accountId,
-			articleId,
-		)
+	return func(commentId *string, createdAt *int, accountId *string, articleId *string) bool {
+		return fetch(commentId, createdAt, accountId, articleId)
 	}, closeFetch
 }
 
 // FindAccounts find accounts.
-func FindAccounts(
-	offset int,
-	count int,
-) (func(
-	commentId *string,
-	createdAt *int,
-	accountId *string,
-	articleId *string,
-) bool, func()) {
-	fetch, closeFetch := find(
-		"select AccountId, DisplayName, CreatedAt, UpdatedAt from Account limit ?, ?",
+func FindAccounts(offset int, count int) (
+	func(commentId *string, createdAt *int, accountId *string, articleId *string) bool, func()) {
+	fetch, closeFetch := f.SqlFind(Sql,
+		"select `AccountId`, `DisplayName`, `CreatedAt`, `UpdatedAt` from `Account` limit ?, ?",
 		offset, count,
 	)
-	defer closeFetch()
 
-	return func(
-		accountId *string,
-		displayName *int,
-		createdAt *string,
-		updatedAt *string,
-	) bool {
-		return fetch(
-			accountId,
-			displayName,
-			createdAt,
-			updatedAt,
-		)
+	return func(accountId *string, displayName *int, createdAt *string, updatedAt *string) bool {
+		return fetch(accountId, displayName, createdAt, updatedAt)
 	}, closeFetch
+}
+
+// AccountExists find account.
+func AccountExists(id string) bool {
+	fetch, closeFetch := f.SqlFind(Sql,
+		"select `AccountId` from `Account` where `AccountId` = ? limit 1",
+		id,
+	)
+	defer closeFetch()
+	var accountId string
+	fetch(&accountId)
+	return accountId != ""
 }

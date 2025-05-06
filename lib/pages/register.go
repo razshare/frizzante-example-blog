@@ -7,18 +7,31 @@ import (
 	"main/lib/sql"
 )
 
-func registerActionFunction(request *f.Request, response *f.Response, _ *f.View) {
-	form := f.ReceiveForm(request)
-	id := form.Get("id")
-	displayName := form.Get("displayName")
-	password := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("password"))))
-	sql.AddAccount(id, displayName, password)
-	f.SendNavigate(response, "Login")
-}
-
 func Register(context f.PageContext) {
+	// Context.
 	path, view, _, action := context()
+
+	// Configure.
 	path("/register")
 	view(f.ViewReference("Register"))
-	action(registerActionFunction)
+	action(func(request *f.Request, response *f.Response, view *f.View) {
+		form := f.RequestReceiveForm(request)
+		id := form.Get("id")
+		if sql.AccountExists(id) {
+			f.ViewWithData(view, "error", fmt.Sprintf("Account %s already exists.", id))
+			return
+		}
+
+		displayName := form.Get("displayName")
+		rawPassword := form.Get("password")
+
+		if "" == id || "" == displayName || "" == rawPassword {
+			f.ViewWithData(view, "error", "Please fill all fields.")
+			return
+		}
+
+		password := fmt.Sprintf("%x", sha256.Sum256([]byte(rawPassword)))
+		sql.AddAccount(id, displayName, password)
+		f.ResponseSendNavigate(response, "Login")
+	})
 }

@@ -3,9 +3,15 @@ package pages
 import f "github.com/razshare/frizzante"
 
 func Default(context f.PageContext) {
-	path, view, base, action := context()
+	// Context.
+	path, _, base, action := context()
+
+	// Configure.
 	path("/")
-	view(f.ViewReference("Login"))
-	base(loginBaseFunction)
-	action(loginActionFunction)
+	base(func(_ *f.Request, response *f.Response, _ *f.View) {
+		f.ResponseSendNavigate(response, "Login")
+	})
+	action(func(_ *f.Request, response *f.Response, _ *f.View) {
+		f.ResponseSendNavigate(response, "Login")
+	})
 }

@@ -7,6 +7,10 @@
         text-align: center;
     }
 
+    .error {
+        color: #f45;
+        text-align: center;
+    }
 </style>
 
 <script>
@@ -16,6 +20,7 @@
     import Center from "$lib/components/Center.svelte";
 
     const path = getContext("path")
+    const data = getContext("data")
 </script>
 
 <Layout title="Register">
@@ -30,6 +35,9 @@
                 <p class="AdditionalOptions">
                     or <a href={path("Login")}>login</a>
                 </p>
+                {#if data.error}
+                    <div class="error">{data.error}</div>
+                {/if}
             </Form>
         </article>
     </Center>
