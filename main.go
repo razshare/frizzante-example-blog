@@ -7,7 +7,7 @@ import (
 	f "github.com/razshare/frizzante"
 	"main/lib"
 	"main/lib/guards"
-	"main/lib/indexes"
+	"main/lib/pages"
 	"main/lib/sql"
 )
 
@@ -31,15 +31,14 @@ func main() {
 	f.ServerWithEmbeddedFileSystem(s, d)
 
 	// Guards.
-	f.ServerWithIndexGuard(s, guards.Session)
-	f.ServerWithIndexGuard(s, guards.Render)
+	f.ServerWithGuardBuilder(s, guards.Session)
 
-	// Indexes.
-	f.ServerWithIndex(s, indexes.Board)
-	f.ServerWithIndex(s, indexes.Login)
-	f.ServerWithIndex(s, indexes.Logout)
-	f.ServerWithIndex(s, indexes.Register)
-	f.ServerWithIndex(s, indexes.Default)
+	// Pages.
+	f.ServerWithPageBuilder(s, pages.Board)
+	f.ServerWithPageBuilder(s, pages.Login)
+	f.ServerWithPageBuilder(s, pages.Logout)
+	f.ServerWithPageBuilder(s, pages.Register)
+	f.ServerWithPageBuilder(s, pages.Default)
 
 	// Start.
 	f.ServerStart(s)

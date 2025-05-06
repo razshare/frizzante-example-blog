@@ -1,4 +1,4 @@
-package indexes
+package pages
 
 import (
 	f "github.com/razshare/frizzante"
@@ -12,10 +12,10 @@ type BoardArticle struct {
 	AccountId string `json:"accountId"`
 }
 
-func boardShowFunction(req *f.Request, res *f.Response, p *f.Page) {
-	get, _, _ := f.SessionStart(req, res)
+func boardShowFunction(request *f.Request, response *f.Response, view *f.View) {
+	get, _, _ := f.SessionStart(request, response)
 	if !get("verified", false).(bool) {
-		f.SendNavigate(res, "login")
+		f.SendNavigate(response, "login")
 	}
 
 	article, closeFetch := sql.FindArticles(0, 10)
@@ -36,19 +36,12 @@ func boardShowFunction(req *f.Request, res *f.Response, p *f.Page) {
 		})
 	}
 
-	f.PageWithData(p, "articles", articles)
+	f.ViewWithData(view, "articles", articles)
 }
 
-func boardActionFunction(_ *f.Request, _ *f.Response, _ *f.Page) {
-	// Noop.
-}
-
-func Board(
-	route func(path string, page string),
-	show func(showFunction f.PageFunction),
-	action func(actionFunction f.PageFunction),
-) {
-	route("/board", "board")
-	show(boardShowFunction)
-	action(boardActionFunction)
+func Board(context f.PageContext) {
+	path, view, base, _ := context()
+	path("/board")
+	view(f.ViewReference("Board"))
+	base(boardShowFunction)
 }

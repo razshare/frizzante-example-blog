@@ -14,8 +14,8 @@ dev: clean update
 	--build.cmd "go build -o bin/app ." \
 	--build.bin "bin/app" \
 	--build.exclude_dir "out,tmp,bin" \
-	--build.exclude_regex "_test.go,.frizzante" \
-	--build.include_ext "go" \
+	--build.exclude_regex "_test.go,.frizzante,node_modules" \
+	--build.include_ext "go,svelte,js,css,json" \
 	--build.log "go-build-errors.log" & \
 	make www-watch-server & \
 	make www-watch-client & \
@@ -76,9 +76,6 @@ hooks:
 
 api:
 	go run lib/make/main.go -api
-
-index:
-	go run lib/make/main.go -index
 
 guard:
 	go run lib/make/main.go -guard

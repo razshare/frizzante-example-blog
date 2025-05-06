@@ -28,7 +28,7 @@
                 <input type="password" name="password" placeholder="Password" aria-label="Password">
                 <button type="submit">Continue</button>
                 <p class="AdditionalOptions">
-                    or <a href={path("login")}>login</a>
+                    or <a href={path("Login")}>login</a>
                 </p>
             </Form>
         </article>

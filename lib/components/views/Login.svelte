@@ -41,7 +41,7 @@
                 <button type="submit">Continue</button>
             </Form>
             <p class="AdditionalOptions">
-                or <a href={path("register")}>register a new account</a>
+                or <a href={path("Register")}>register a new account</a>
                 {#if data.error}
                     <br/>
                     <span class="pico-color-red-600">{data.error}</span>

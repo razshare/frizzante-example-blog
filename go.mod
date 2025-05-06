@@ -1,11 +1,13 @@
 module main
 
-go 1.23
+go 1.24
+
+toolchain go1.24.1
 
 require (
 	github.com/go-sql-driver/mysql v1.9.0
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
-	github.com/razshare/frizzante v0.28.0
+	github.com/razshare/frizzante v0.42.2
 )
 
 require (

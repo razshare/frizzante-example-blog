@@ -2,7 +2,10 @@ package guards
 
 import f "github.com/razshare/frizzante"
 
-func Session(req *f.Request, res *f.Response, _ *f.Page, pass func()) {
-	f.SessionStart(req, res)
-	pass()
+func Session(context f.GuardContext) {
+	handler := context()
+	handler(func(request *f.Request, response *f.Response, pass func()) {
+		f.SessionStart(request, response)
+		pass()
+	})
 }
