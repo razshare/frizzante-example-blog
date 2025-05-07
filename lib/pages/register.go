@@ -7,14 +7,10 @@ import (
 	"main/lib/sql"
 )
 
-func Register(context f.PageContext) {
-	// Context.
-	path, view, _, action := context()
-
-	// Configure.
-	path("/register")
-	view(f.ViewReference("Register"))
-	action(func(request *f.Request, response *f.Response, view *f.View) {
+func Register(page *f.Page) {
+	f.PageWithPath(page, "/register")
+	f.PageWithView(page, f.ViewReference("Register"))
+	f.PageWithActionHandler(page, func(request *f.Request, response *f.Response, view *f.View) {
 		form := f.RequestReceiveForm(request)
 		id := form.Get("id")
 		if sql.AccountExists(id) {

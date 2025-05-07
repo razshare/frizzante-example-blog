@@ -1,17 +1,17 @@
 package pages
 
-import f "github.com/razshare/frizzante"
+import (
+	f "github.com/razshare/frizzante"
+	"main/lib/guards"
+)
 
-func Default(context f.PageContext) {
-	// Context.
-	path, _, base, action := context()
-
-	// Configure.
-	path("/")
-	base(func(_ *f.Request, response *f.Response, _ *f.View) {
+func Default(page *f.Page) {
+	f.PageWithPath(page, "/")
+	f.PageWithGuardHandler(page, guards.Session)
+	f.PageWithBaseHandler(page, func(_ *f.Request, response *f.Response, _ *f.View) {
 		f.ResponseSendNavigate(response, "Login")
 	})
-	action(func(_ *f.Request, response *f.Response, _ *f.View) {
+	f.PageWithActionHandler(page, func(_ *f.Request, response *f.Response, _ *f.View) {
 		f.ResponseSendNavigate(response, "Login")
 	})
 }

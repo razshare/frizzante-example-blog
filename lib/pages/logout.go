@@ -1,20 +1,20 @@
 package pages
 
-import f "github.com/razshare/frizzante"
+import (
+	f "github.com/razshare/frizzante"
+	"main/lib/guards"
+)
 
-func Logout(context f.PageContext) {
-	// Context.
-	path, view, base, action := context()
-
-	// Configure.
-	path("/logout")
-	view(f.ViewReference("Logout"))
-	base(func(_ *f.Request, response *f.Response, _ *f.View) {
+func Logout(page *f.Page) {
+	f.PageWithPath(page, "/logout")
+	f.PageWithView(page, f.ViewReference("Logout"))
+	f.PageWithGuardHandler(page, guards.Session)
+	f.PageWithBaseHandler(page, func(_ *f.Request, response *f.Response, _ *f.View) {
 		f.ResponseSendNavigate(response, "Login")
 	})
-	action(func(request *f.Request, response *f.Response, _ *f.View) {
-		_, set, _ := f.SessionStart(request, response)
-		set("verified", false)
+	f.PageWithActionHandler(page, func(request *f.Request, response *f.Response, _ *f.View) {
+		session := f.SessionStart(request, response)
+		f.SessionSet(session, "verified", false)
 		f.ResponseSendNavigate(response, "Login")
 	})
 }

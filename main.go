@@ -6,7 +6,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	f "github.com/razshare/frizzante"
 	"main/lib"
-	"main/lib/guards"
 	"main/lib/pages"
 	"main/lib/sql"
 )
@@ -29,9 +28,6 @@ func main() {
 	f.ServerWithPort(s, 8080)
 	f.ServerWithHostName(s, "127.0.0.1")
 	f.ServerWithEmbeddedFileSystem(s, d)
-
-	// Guards.
-	f.ServerWithGuardBuilder(s, guards.Session)
 
 	// Pages.
 	f.ServerWithPageBuilder(s, pages.Board)
