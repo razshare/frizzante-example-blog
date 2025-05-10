@@ -19,13 +19,13 @@
 </script>
 
 <hr/>
-<ul class="list bg-base-100 rounded-box shadow-md">
+<ul>
     {#each data.articles as article}
         {@const createdAt = new Date(article.createdAt * 1000)}
         <li class="list-row">
             <div>
-                <div>{article.title}</div>
-                <div class="text-xs uppercase font-semibold opacity-60">{createdAt}</div>
+                <span>{article.title}</span>
+                <span>{createdAt}</span>
             </div>
         </li>
     {/each}

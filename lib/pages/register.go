@@ -4,12 +4,14 @@ import (
 	"crypto/sha256"
 	"fmt"
 	f "github.com/razshare/frizzante"
+	"main/lib/guards"
 	"main/lib/sql"
 )
 
 func Register(page *f.Page) {
 	f.PageWithPath(page, "/register")
 	f.PageWithView(page, f.ViewReference("Register"))
+	f.PageWithGuardHandler(page, guards.Verified)
 	f.PageWithActionHandler(page, func(request *f.Request, response *f.Response, view *f.View) {
 		form := f.RequestReceiveForm(request)
 		id := form.Get("id")

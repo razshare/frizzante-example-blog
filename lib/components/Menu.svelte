@@ -1,6 +1,7 @@
 <script>
     import Submit from "$frizzante/components/Submit.svelte";
     import {getContext} from "svelte";
+    import Link from "$frizzante/components/Link.svelte";
 
     /**
      * @typedef Data
@@ -16,11 +17,13 @@
         <li><strong>Forum</strong></li>
     </ul>
     <ul>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Services</a></li>
-        <li><a href="#">Products</a></li>
         <li>
-            <Submit action="logout">
+            <button>
+                <Link view="Account">Account</Link>
+            </button>
+        </li>
+        <li>
+            <Submit view="Logout">
                 <button>Logout</button>
             </Submit>
         </li>

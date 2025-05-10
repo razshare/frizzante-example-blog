@@ -10,6 +10,11 @@ import (
 func Login(page *f.Page) {
 	f.PageWithPath(page, "/login")
 	f.PageWithView(page, f.ViewReference("Login"))
+	f.PageWithGuardHandler(page, func(request *f.Request, response *f.Response, pass func()) {
+		f.SessionStart(request, response)
+		pass()
+	})
+
 	f.PageWithActionHandler(page, func(request *f.Request, response *f.Response, view *f.View) {
 		form := f.RequestReceiveForm(request)
 		id := form.Get("id")

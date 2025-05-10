@@ -5,6 +5,7 @@ import (
 	"embed"
 	_ "github.com/go-sql-driver/mysql"
 	f "github.com/razshare/frizzante"
+	"log"
 	"main/lib"
 	"main/lib/pages"
 	"main/lib/sql"
@@ -14,28 +15,29 @@ import (
 var d embed.FS
 
 func main() {
-	db, dbe := sqlib.Open("mysql", "root:root@/forum")
-	if dbe != nil {
-		panic(dbe)
+	// Database.
+	database, databaseError := sqlib.Open("mysql", "root:root@/forum")
+	if databaseError != nil {
+		log.Fatal(databaseError)
 	}
 
 	// Sql.
-	f.SqlWithDatabase(sql.Sql, db)
+	f.SqlWithDatabase(sql.Sql, database)
 	f.SqlWithNotifier(sql.Sql, lib.Notifier)
 
 	// Server.
-	s := f.ServerCreate()
-	f.ServerWithPort(s, 8080)
-	f.ServerWithHostName(s, "127.0.0.1")
-	f.ServerWithEmbeddedFileSystem(s, d)
+	server := f.ServerCreate()
+	f.ServerWithPort(server, 8080)
+	f.ServerWithHostName(server, "127.0.0.1")
+	f.ServerWithEmbeddedFileSystem(server, d)
 
 	// Pages.
-	f.ServerWithPageBuilder(s, pages.Board)
-	f.ServerWithPageBuilder(s, pages.Login)
-	f.ServerWithPageBuilder(s, pages.Logout)
-	f.ServerWithPageBuilder(s, pages.Register)
-	f.ServerWithPageBuilder(s, pages.Default)
+	f.ServerWithPageBuilder(server, pages.Board)
+	f.ServerWithPageBuilder(server, pages.Login)
+	f.ServerWithPageBuilder(server, pages.Logout)
+	f.ServerWithPageBuilder(server, pages.Register)
+	f.ServerWithPageBuilder(server, pages.Default)
 
 	// Start.
-	f.ServerStart(s)
+	f.ServerStart(server)
 }

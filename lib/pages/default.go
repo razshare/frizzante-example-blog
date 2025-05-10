@@ -7,7 +7,7 @@ import (
 
 func Default(page *f.Page) {
 	f.PageWithPath(page, "/")
-	f.PageWithGuardHandler(page, guards.Session)
+	f.PageWithGuardHandler(page, guards.Verified)
 	f.PageWithBaseHandler(page, func(_ *f.Request, response *f.Response, _ *f.View) {
 		f.ResponseSendNavigate(response, "Login")
 	})

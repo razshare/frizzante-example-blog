@@ -16,7 +16,7 @@ type BoardArticle struct {
 func Board(page *f.Page) {
 	f.PageWithPath(page, "/board")
 	f.PageWithView(page, f.ViewReference("Board"))
-	f.PageWithGuardHandler(page, guards.Session)
+	f.PageWithGuardHandler(page, guards.Verified)
 	f.PageWithBaseHandler(page, func(request *f.Request, response *f.Response, view *f.View) {
 		fetchNextArticle, closeFetch := sql.FindArticles(0, 10)
 		defer closeFetch()
