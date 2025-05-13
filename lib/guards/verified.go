@@ -21,7 +21,7 @@ func Verified(request *f.Request, response *f.Response, pass func()) {
 
 	lastActivity := f.SessionGetTime(session, "lastActivity")
 
-	if time.Since(lastActivity) > 20*time.Second {
+	if time.Since(lastActivity) > 30*time.Minute {
 		f.SessionDestroy(session)
 		f.ResponseSendNavigate(response, "Expired")
 		return
