@@ -2,12 +2,11 @@ package guards
 
 import (
 	f "github.com/razshare/frizzante"
-	"main/lib/sessions"
 	"time"
 )
 
 func Verified(request *f.Request, response *f.Response, pass func()) {
-	session := f.SessionStart(request, response, sessions.Builder)
+	session := f.SessionStart(request, response)
 
 	verified := f.SessionHas(session, "verified") && f.SessionGetBool(session, "verified")
 
