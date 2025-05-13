@@ -8,7 +8,7 @@ import (
 func Verified(request *f.Request, response *f.Response, pass func()) {
 	session := f.SessionStart(request, response)
 
-	verified := f.SessionHas(session, "verified") && f.SessionGetBool(session, "verified")
+	verified := f.SessionGetBool(session, "verified")
 
 	if !verified {
 		f.ResponseSendNavigate(response, "Login")
