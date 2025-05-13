@@ -33,10 +33,10 @@ func main() {
 
 	// Pages.
 	f.ServerWithPageBuilder(server, pages.Board)
-	f.ServerWithPageBuilder(server, pages.Login)
-	f.ServerWithPageBuilder(server, pages.Logout)
 	f.ServerWithPageBuilder(server, pages.Register)
-	f.ServerWithPageBuilder(server, pages.Default)
+	f.ServerWithPageBuilder(server, pages.Expired)
+	f.ServerWithPageBuilder(server, pages.Logout)
+	f.ServerWithPageBuilder(server, pages.Login)
 
 	// Start.
 	f.ServerStart(server)

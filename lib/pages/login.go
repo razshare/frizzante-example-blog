@@ -4,14 +4,16 @@ import (
 	"crypto/sha256"
 	"fmt"
 	f "github.com/razshare/frizzante"
+	"main/lib/sessions"
 	"main/lib/sql"
 )
 
 func Login(page *f.Page) {
+	f.PageWithPath(page, "/")
 	f.PageWithPath(page, "/login")
 	f.PageWithView(page, f.ViewReference("Login"))
 	f.PageWithGuardHandler(page, func(request *f.Request, response *f.Response, pass func()) {
-		f.SessionStart(request, response)
+		f.SessionStart(request, response, sessions.Builder)
 		pass()
 	})
 
@@ -25,8 +27,8 @@ func Login(page *f.Page) {
 			return
 		}
 
-		session := f.SessionStart(request, response)
-		f.SessionSet(session, "verified", true)
+		session := f.SessionStart(request, response, sessions.Builder)
+		f.SessionSetBool(session, "verified", true)
 
 		f.ResponseSendNavigate(response, "Board")
 	})

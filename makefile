@@ -81,4 +81,5 @@ guard:
 	go run lib/make/main.go -guard
 
 page:
-	go run lib/make/main.go -page
+	go run lib/make/main.go -page && \
+	make configure
