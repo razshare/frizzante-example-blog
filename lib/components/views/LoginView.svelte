@@ -39,7 +39,8 @@
             <p class="AdditionalOptions">
                 or
                 <Link bind:server to="Register">register a new account</Link>
-
+                or
+                <Link bind:server to="Redirect">redirect</Link>
                 {#if server.data.error}
                     <br/>
                     <span class="pico-color-red-600">{server.data.error}</span>

@@ -43,6 +43,11 @@ func main() {
 	server.WithPageController(pages.RegisterController{})
 	server.WithPageController(pages.DefaultController{})
 	server.WithPageController(pages.AccountController{})
+	server.WithPageController(pages.RedirectController{})
+
+	server.OnRequest("GET /asd", func(request *f.Request, response *f.Response) {
+		response.SendNavigateWithQuery("Expired", "?asd=1")
+	})
 
 	//Start.
 	server.Start()
