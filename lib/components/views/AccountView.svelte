@@ -3,7 +3,6 @@
     import Layout from "$lib/components/Layout.svelte";
     import Menu from "$lib/components/Menu.svelte";
     import Push from "$lib/components/Push.svelte";
-    import ArticleList from "$lib/components/ArticleList.svelte";
 
     type Props = {
         server: ServerProperties<any>
