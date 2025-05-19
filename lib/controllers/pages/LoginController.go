@@ -40,5 +40,7 @@ func (_ LoginController) Action(request *f.Request, response *f.Response) {
 
 	session := f.SessionStart(request, response, sessions.Archived)
 	session.Data.Verified = true
+	session.Data.AccountId = id
+	session.Save()
 	response.SendNavigate("Board")
 }

@@ -8,6 +8,7 @@ import (
 func SessionIsVerified(request *f.Request, response *f.Response) bool {
 	session := f.SessionStart(request, response, sessions.Archived)
 	verified := session.Data.Verified
+	session.Save()
 
 	if !verified {
 		response.SendNavigate("Login")

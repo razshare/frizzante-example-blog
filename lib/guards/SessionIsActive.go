@@ -16,5 +16,6 @@ func SessionIsActive(request *f.Request, response *f.Response) bool {
 	}
 
 	session.Data.LastActivity = time.Now()
+	session.Save()
 	return true
 }

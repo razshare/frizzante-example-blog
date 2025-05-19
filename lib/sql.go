@@ -102,8 +102,8 @@ func AddComment(accountId string, articleId string) string {
 	commentId := uuidLocal.String()
 	createdAt := time.Now().Unix()
 	Sql.Execute(
-		"insert into `Comment`(`CommentId`,`CreatedAt`,`AccountId`) values(?,?,?)",
-		commentId, createdAt, accountId,
+		"insert into `Comment`(`CommentId`,`CreatedAt`,`AccountId`,`ArticleId`) values(?,?,?,?)",
+		commentId, createdAt, accountId, articleId,
 	)
 
 	return commentId
@@ -174,13 +174,26 @@ func FindCommentsByArticleId(offset int, count int, articleId string) (
 
 // FindAccounts find accounts.
 func FindAccounts(offset int, count int) (
-	func(commentId *string, createdAt *int, accountId *string, articleId *string) bool, func()) {
+	func(accountId *string, displayName *string, createdAt *int, updatedAt *int) bool, func()) {
 	fetch, closeFetch := Sql.Find(
 		"select `AccountId`, `DisplayName`, `CreatedAt`, `UpdatedAt` from `Account` limit ?, ?",
 		offset, count,
 	)
 
-	return func(accountId *string, displayName *int, createdAt *string, updatedAt *string) bool {
+	return func(accountId *string, displayName *string, createdAt *int, updatedAt *int) bool {
+		return fetch(accountId, displayName, createdAt, updatedAt)
+	}, closeFetch
+}
+
+// FindAccountById finds an account by id.
+func FindAccountById(accountId string) (
+	func(accountId *string, displayName *string, createdAt *int, updatedAt *int) bool, func()) {
+	fetch, closeFetch := Sql.Find(
+		"select `AccountId`, `DisplayName`, `CreatedAt`, `UpdatedAt` from `Account` where `AccountId` = ?",
+		accountId,
+	)
+
+	return func(accountId *string, displayName *string, createdAt *int, updatedAt *int) bool {
 		return fetch(accountId, displayName, createdAt, updatedAt)
 	}, closeFetch
 }

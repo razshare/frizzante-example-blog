@@ -3,7 +3,6 @@ package sessions
 import (
 	"encoding/json"
 	f "github.com/razshare/frizzante"
-	"main/lib"
 	"time"
 )
 
@@ -11,7 +10,7 @@ var key = "session.json"
 var notifier = f.NewNotifier()
 var archive = f.NewArchiveOnDisk(".sessions", time.Second/2)
 
-func Archived(session *f.Session[lib.Data]) {
+func Archived(session *f.Session[Data]) {
 	session.WithExistsHandler(func() bool {
 		return archive.Has(session.Id, key)
 	})
@@ -42,5 +41,5 @@ func Archived(session *f.Session[lib.Data]) {
 		return
 	}
 
-	session.Data = lib.InitialData()
+	session.Data = InitialData()
 }

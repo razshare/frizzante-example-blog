@@ -17,9 +17,9 @@
     </ul>
     <ul>
         <li>
-            <button>
+<!--            <button>-->
                 <Link bind:server to="Account">Account</Link>
-            </button>
+<!--            </button>-->
         </li>
         <li>
             <Action bind:server of="Logout">

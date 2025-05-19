@@ -1,4 +1,4 @@
-package lib
+package sessions
 
 import "time"
 
@@ -22,6 +22,7 @@ type Data struct {
 	LastActivity time.Time `json:"lastActivity"`
 	Verified     bool      `json:"verified"`
 	Expired      bool      `json:"expired"`
+	AccountId    string    `json:"accountId"`
 }
 
 type Item struct {
