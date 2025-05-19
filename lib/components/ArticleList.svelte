@@ -1,26 +1,21 @@
-<script>
-    import {getContext} from "svelte";
+<script lang="ts">
+    type Article = {
+        articleId: string
+        title: string
+        createdAt: number
+        accountId: string
+    }
 
-    /**
-     * @typedef Article
-     * @property {string} articleId
-     * @property {string} title
-     * @property {number} createdAt
-     * @property {string} accountId
-     */
+    type Props = {
+        server: ServerProperties<{ articles: Article[] }>
+    }
 
-    /**
-     * @typedef Data
-     * @property {Article[]} articles
-     */
-
-    /** @type {Data} */
-    const data = getContext("data")
+    let {server = $bindable()}: Props = $props()
 </script>
 
 <hr/>
 <ul>
-    {#each data.articles as article}
+    {#each server.data.articles as article}
         {@const createdAt = new Date(article.createdAt * 1000)}
         <li class="list-row">
             <div>

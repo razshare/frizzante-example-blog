@@ -16,24 +16,24 @@
     }
 </style>
 
-<script>
-    /**
-     * @typedef Props
-     * @property {import("svelte").Snippet<[]>} children
-     * @property {boolean} [left]
-     * @property {boolean} [right]
-     * @property {boolean} [top]
-     * @property {boolean} [bottom]
-     */
+<script lang="ts">
+    import type {Snippet} from "svelte";
 
-    /** @type {Props} */
+    type Props = {
+        left?: boolean
+        right?: boolean
+        top?: boolean
+        bottom?: boolean
+        children: Snippet
+    }
+
     let {
-        children,
         left = false,
         right = false,
         top = false,
         bottom = false,
-    } = $props()
+        children,
+    }: Props = $props()
 </script>
 
 <div

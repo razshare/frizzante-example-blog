@@ -13,22 +13,22 @@ dev: clean update
 	DEV=1 CGO_ENABLED=1 ./bin/air \
 	--build.cmd "go build -o bin/app ." \
 	--build.bin "bin/app" \
-	--build.exclude_dir "out,tmp,bin,archive" \
+	--build.exclude_dir "out,bin,.sessions" \
 	--build.exclude_regex "_test.go,.frizzante,node_modules" \
 	--build.include_ext "go,svelte,js,css,json" \
 	--build.log "go-build-errors.log" & \
-	make www-watch-server & \
-	make www-watch-client & \
+	make www-dev-server & \
+	make www-dev-client & \
 	wait
 
-www-watch-server:
-	bunx vite build --watch --ssr .frizzante/vite-project/render.server.js --outDir .dist/server && \
+www-dev-server:
+	DEV=1 bunx vite build --watch --ssr .frizzante/vite-project/render.server.js --outDir .dist/server && \
 	./node_modules/.bin/esbuild .dist/server/render.server.js --bundle --outfile=.dist/server/render.server.js --format=esm --allow-overwrite
 
-www-watch-client:
-	bunx vite build --watch --outDir .dist/client
+www-dev-client:
+	DEV=1 bunx vite build --watch --outDir .dist/client
 
-configure: clean update
+configure: update
 	go run lib/prepare/main.go
 	make www-build-server & \
 	make www-build-client & \
@@ -36,12 +36,9 @@ configure: clean update
 
 clean:
 	go clean
-	rm main.db -f
+	rm bin/app -f
 	rm cert.pem -f
 	rm key.pem -f
-	rm bin/app -f
-	rm tmp -fr
-	rm tmp -fr
 	rm node_modules -fr
 	rm .dist -fr
 	rm .frizzante -fr
@@ -75,11 +72,8 @@ hooks:
 	chmod +x .git/hooks/pre-commit
 
 api:
-	go run lib/make/main.go -api
-
-guard:
-	go run lib/make/main.go -guard
+	go run lib/cli/main.go -api
 
 page:
-	go run lib/make/main.go -page && \
+	go run lib/cli/main.go -page && \
 	make configure

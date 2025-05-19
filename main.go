@@ -7,37 +7,43 @@ import (
 	f "github.com/razshare/frizzante"
 	"log"
 	"main/lib"
-	"main/lib/pages"
-	"main/lib/sql"
+	"main/lib/controllers/pages"
 )
 
 //go:embed .dist/*/**
-var d embed.FS
+var dist embed.FS
+
+var database, databaseError = sqlib.Open("mysql", "root:root@/forum")
 
 func main() {
-	// Database.
-	database, databaseError := sqlib.Open("mysql", "root:root@/forum")
+	// Errors.
 	if databaseError != nil {
 		log.Fatal(databaseError)
 	}
 
-	// Sql.
-	f.SqlWithDatabase(sql.Sql, database)
-	f.SqlWithNotifier(sql.Sql, lib.Notifier)
+	// Create.
+	server := f.NewServer()
+	notifier := f.NewNotifier()
 
-	// Server.
-	server := f.ServerCreate()
-	f.ServerWithPort(server, 8080)
-	f.ServerWithHostName(server, "127.0.0.1")
-	f.ServerWithEmbeddedFileSystem(server, d)
+	// Configure.
+	server.WithPort(8080)
+	server.WithNotifier(notifier)
+	server.WithHostName("127.0.0.1")
+	server.WithEmbeddedFileSystem(&dist)
+
+	// Sql.
+	lib.Sql.WithNotifier(notifier)
+	lib.Sql.WithDatabase(database)
 
 	// Pages.
-	f.ServerWithPageBuilder(server, pages.Board)
-	f.ServerWithPageBuilder(server, pages.Register)
-	f.ServerWithPageBuilder(server, pages.Expired)
-	f.ServerWithPageBuilder(server, pages.Logout)
-	f.ServerWithPageBuilder(server, pages.Login)
+	server.WithPageController(pages.BoardController{})
+	server.WithPageController(pages.ExpiredController{})
+	server.WithPageController(pages.LoginController{})
+	server.WithPageController(pages.LogoutController{})
+	server.WithPageController(pages.RegisterController{})
+	server.WithPageController(pages.DefaultController{})
+	server.WithPageController(pages.AccountController{})
 
-	// Start.
-	f.ServerStart(server)
+	//Start.
+	server.Start()
 }

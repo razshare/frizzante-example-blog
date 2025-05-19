@@ -1,17 +1,16 @@
-package sql
+package lib
 
 import (
 	uuid "github.com/nu7hatch/gouuid"
 	f "github.com/razshare/frizzante"
-	"main/lib"
 	"time"
 )
 
-var Sql = f.SqlCreate()
+var Sql = f.NewSql()
 
 // VerifyAccount verifies that the combination of id and password are exists.
 func VerifyAccount(id string, password string) bool {
-	fetch, closeFetch := f.SqlFind(Sql,
+	fetch, closeFetch := Sql.Find(
 		"select `AccountId` from `Account` where `AccountId` = ? and `Password` = ? limit 1",
 		id, password,
 	)
@@ -22,7 +21,7 @@ func VerifyAccount(id string, password string) bool {
 // AddAccount adds an account.
 func AddAccount(id string, displayName string, password string) {
 	now := time.Now().Unix()
-	f.SqlExecute(Sql,
+	Sql.Execute(
 		"insert into `Account`(`AccountId`,`DisplayName`,`Password`,`CreatedAt`,`UpdatedAt`) values(?,?,?,?,?)",
 		id, displayName, password, now, now,
 	)
@@ -31,7 +30,7 @@ func AddAccount(id string, displayName string, password string) {
 // ChangeAccount changes properties of an account.
 func ChangeAccount(accountId string, displayName string, password string) {
 	updatedAt := time.Now().Unix()
-	f.SqlExecute(Sql,
+	Sql.Execute(
 		"update `Account` set `DisplayName` = ?, `Password` = ?, `UpdatedAt` = ? where `AccountId` = ?",
 		displayName, password, updatedAt, accountId,
 	)
@@ -41,13 +40,13 @@ func ChangeAccount(accountId string, displayName string, password string) {
 func AddArticle(accountId string) string {
 	uuidLocal, uuidError := uuid.NewV4()
 	if nil != uuidError {
-		lib.Failure(uuidError)
+		Failure(uuidError)
 		return ""
 	}
 
 	articleId := uuidLocal.String()
 	createdAt := time.Now().Unix()
-	f.SqlExecute(Sql,
+	Sql.Execute(
 		"insert into `Article`(`ArticleId`,`CreatedAt`,`Account`) values(?,?,?)",
 		articleId, createdAt, accountId,
 	)
@@ -59,13 +58,13 @@ func AddArticle(accountId string) string {
 func AddArticleContent(articleId string, content string) string {
 	id, idError := uuid.NewV4()
 	if nil != idError {
-		lib.Failure(idError)
+		Failure(idError)
 		return ""
 	}
 
 	articleContentId := id.String()
 	createdAt := time.Now().Unix()
-	f.SqlExecute(Sql,
+	Sql.Execute(
 		"insert into `ArticleContent`(`ArticleContentId`,`CreatedAt`,`Account`,`Content`) values(?,?,?,?)",
 		articleContentId, createdAt, articleId, content,
 	)
@@ -75,7 +74,7 @@ func AddArticleContent(articleId string, content string) string {
 
 // FindArticleContent finds the content of an article.
 func FindArticleContent(articleId string) (content string) {
-	fetch, closeFetch := f.SqlFind(Sql,
+	fetch, closeFetch := Sql.Find(
 		"select `Content` from `ArticleContent` where `ArticleId` = ? order by `CreatedAt` desc limit 1",
 		articleId,
 	)
@@ -86,7 +85,7 @@ func FindArticleContent(articleId string) (content string) {
 
 // RemoveArticle removes an article.
 func RemoveArticle(articleId string) {
-	f.SqlExecute(Sql,
+	Sql.Execute(
 		"delete from `Article`  where ArticleId = ?",
 		articleId,
 	)
@@ -96,13 +95,13 @@ func RemoveArticle(articleId string) {
 func AddComment(accountId string, articleId string) string {
 	uuidLocal, uuidError := uuid.NewV4()
 	if nil != uuidError {
-		lib.Failure(uuidError)
+		Failure(uuidError)
 		return ""
 	}
 
 	commentId := uuidLocal.String()
 	createdAt := time.Now().Unix()
-	f.SqlExecute(Sql,
+	Sql.Execute(
 		"insert into `Comment`(`CommentId`,`CreatedAt`,`AccountId`) values(?,?,?)",
 		commentId, createdAt, accountId,
 	)
@@ -114,13 +113,13 @@ func AddComment(accountId string, articleId string) string {
 func AddCommentContent(commentId string, articleId string, content string) string {
 	id, idError := uuid.NewV4()
 	if nil != idError {
-		lib.Failure(idError)
+		Failure(idError)
 		return ""
 	}
 
 	commentContentId := id.String()
 	createdAt := time.Now().Unix()
-	f.SqlExecute(Sql,
+	Sql.Execute(
 		"insert into `CommentContent`(`CommentContentId`,`CreatedAt`,`CommentId`,`AccountId`,`Content`) values(?,?,?,?)",
 		commentContentId, createdAt, commentId, articleId, content,
 	)
@@ -130,7 +129,7 @@ func AddCommentContent(commentId string, articleId string, content string) strin
 
 // FindCommentContent finds the content of a comment.
 func FindCommentContent(commentId string) (content string) {
-	fetch, closeFetch := f.SqlFind(Sql,
+	fetch, closeFetch := Sql.Find(
 		"select `Content` from `CommentContent` where `CommentContentId` = ? order by `CreatedAt` desc limit 1",
 		commentId,
 	)
@@ -141,7 +140,7 @@ func FindCommentContent(commentId string) (content string) {
 
 // RemoveComment removes a comment.
 func RemoveComment(commentId string) {
-	f.SqlExecute(Sql,
+	Sql.Execute(
 		"delete from `Comment`  where CommentId = ?",
 		commentId,
 	)
@@ -150,7 +149,7 @@ func RemoveComment(commentId string) {
 // FindArticles find articles.
 func FindArticles(offset int, count int) (
 	func(articleId *string, title *string, createdAt *int, accountId *string) bool, func()) {
-	fetch, closeFetch := f.SqlFind(Sql,
+	fetch, closeFetch := Sql.Find(
 		"select `ArticleId`, `Title`, `CreatedAt`, `AccountId` from `Article` limit ?, ?",
 		offset, count,
 	)
@@ -163,7 +162,7 @@ func FindArticles(offset int, count int) (
 // FindCommentsByArticleId find comments.
 func FindCommentsByArticleId(offset int, count int, articleId string) (
 	func(commentId *string, createdAt *int, accountId *string, articleId *string) bool, func()) {
-	fetch, closeFetch := f.SqlFind(Sql,
+	fetch, closeFetch := Sql.Find(
 		"select `CommentId`, `CreatedAt`, `AccountId`, `ArticleId` from `Comment` where `ArticleId` = ? limit ?, ?",
 		articleId, offset, count,
 	)
@@ -176,7 +175,7 @@ func FindCommentsByArticleId(offset int, count int, articleId string) (
 // FindAccounts find accounts.
 func FindAccounts(offset int, count int) (
 	func(commentId *string, createdAt *int, accountId *string, articleId *string) bool, func()) {
-	fetch, closeFetch := f.SqlFind(Sql,
+	fetch, closeFetch := Sql.Find(
 		"select `AccountId`, `DisplayName`, `CreatedAt`, `UpdatedAt` from `Account` limit ?, ?",
 		offset, count,
 	)
@@ -188,7 +187,7 @@ func FindAccounts(offset int, count int) (
 
 // AccountExists find account.
 func AccountExists(id string) bool {
-	fetch, closeFetch := f.SqlFind(Sql,
+	fetch, closeFetch := Sql.Find(
 		"select `AccountId` from `Account` where `AccountId` = ? limit 1",
 		id,
 	)

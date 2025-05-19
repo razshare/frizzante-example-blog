@@ -6,12 +6,6 @@
 </style>
 
 <script>
-    /**
-     * @typedef Props
-     * @property {import("svelte").Snippet<[]>} children
-     */
-
-    /** @type {Props} */
     let {children} = $props()
 </script>
 

@@ -1,15 +1,14 @@
-<script>
-    import Submit from "$frizzante/components/Submit.svelte";
-    import {getContext} from "svelte";
-    import Link from "$frizzante/components/Link.svelte";
+<script lang="ts">
+    import Link from "$lib/components/Link.svelte";
+    import Action from "$lib/components/Action.svelte";
 
-    /**
-     * @typedef Data
-     * @property {boolean} Verified
-     */
+    type Props = {
+        server: ServerProperties<{}>
+    }
 
-    /** @type {Data} */
-    const data = getContext("data")
+    let {
+        server = $bindable(),
+    }: Props = $props()
 </script>
 
 <nav>
@@ -19,13 +18,13 @@
     <ul>
         <li>
             <button>
-                <Link view="Account">Account</Link>
+                <Link bind:server to="Account">Account</Link>
             </button>
         </li>
         <li>
-            <Submit view="Logout">
+            <Action bind:server of="Logout">
                 <button>Logout</button>
-            </Submit>
+            </Action>
         </li>
     </ul>
 </nav>

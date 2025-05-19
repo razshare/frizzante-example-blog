@@ -13,30 +13,36 @@
     }
 </style>
 
-<script>
+<script lang="ts">
     import Layout from "$lib/components/Layout.svelte";
-    import {getContext} from "svelte";
-    import Form from "$frizzante/components/Form.svelte";
     import Center from "$lib/components/Center.svelte";
+    import Form from "$lib/components/Form.svelte";
+    import Link from "$lib/components/Link.svelte";
+    import Router from "$lib/components/Router.svelte";
 
-    const path = getContext("path")
-    const data = getContext("data")
+    type Props = {
+        server: ServerProperties<any>
+    }
+
+    let {server = $bindable()}: Props = $props()
 </script>
 
-<Layout title="Register">
+<Router bind:server/>
+<Layout bind:server title="Register">
     <Center>
         <article>
             <h1 class="LoginTitle">Register</h1>
-            <Form>
+            <Form bind:server of="Register">
                 <input type="email" name="id" placeholder="Email" aria-label="Email">
                 <input type="text" name="displayName" placeholder="Display Name" aria-label="DisplayName">
                 <input type="password" name="password" placeholder="Password" aria-label="Password">
                 <button type="submit">Continue</button>
                 <p class="AdditionalOptions">
-                    or <a href={path("Login")}>login</a>
+                    or
+                    <Link bind:server to="Login">login</Link>
                 </p>
-                {#if data.error}
-                    <div class="error">{data.error}</div>
+                {#if server.data.error}
+                    <div class="error">{server.data.error}</div>
                 {/if}
             </Form>
         </article>

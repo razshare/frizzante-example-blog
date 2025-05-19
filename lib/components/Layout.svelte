@@ -9,15 +9,20 @@
     }
 </style>
 
-<script>
-    /**
-     * @typedef Props
-     * @property {string} title
-     * @property {import("svelte").Snippet} children
-     */
+<script lang="ts">
+    import type {Snippet} from "svelte";
 
-    /** @type {Props} */
-    const {title, children} = $props()
+    type Props = {
+        title: string
+        children: Snippet
+        server: ServerProperties<{}>
+    }
+
+    const {
+        title,
+        children,
+        server = $bindable()
+    }: Props = $props()
 </script>
 
 
