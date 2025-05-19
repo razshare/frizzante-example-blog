@@ -23,7 +23,7 @@ func (_ LoginController) Configure() f.PageConfiguration {
 }
 
 func (_ LoginController) Base(_ *f.Request, response *f.Response) {
-	response.SendView(f.NewView(false))
+	response.SendView(f.NewView(f.RenderModeFull))
 }
 
 func (_ LoginController) Action(request *f.Request, response *f.Response) {
@@ -32,7 +32,7 @@ func (_ LoginController) Action(request *f.Request, response *f.Response) {
 	password := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("password"))))
 
 	if !lib.VerifyAccount(id, password) {
-		response.SendView(f.NewView(LoginData{
+		response.SendView(f.NewViewWithData(f.RenderModeFull, LoginData{
 			Error: "Invalid credentials",
 		}))
 		return

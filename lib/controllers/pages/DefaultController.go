@@ -13,10 +13,10 @@ func (_ DefaultController) Configure() f.PageConfiguration {
 	}
 }
 
-func (_ DefaultController) Base(_ *f.Request, response *f.Response) {
-	response.SendView(f.NewView(false))
+func (_ DefaultController) Base(request *f.Request, response *f.Response) {
+	response.SendView(f.NewView(f.RenderModeFull))
 }
 
-func (_ DefaultController) Action(_ *f.Request, response *f.Response) {
-	response.SendView(f.NewView(false))
+func (_ DefaultController) Action(request *f.Request, response *f.Response) {
+	response.SendView(f.NewView(f.RenderModeFull))
 }

@@ -22,14 +22,14 @@ func (_ RegisterController) Configure() f.PageConfiguration {
 }
 
 func (_ RegisterController) Base(request *f.Request, response *f.Response) {
-	response.SendView(f.NewView(false))
+	response.SendView(f.NewView(f.RenderModeFull))
 }
 
 func (_ RegisterController) Action(request *f.Request, response *f.Response) {
 	form := request.ReceiveForm()
 	id := form.Get("id")
 	if lib.AccountExists(id) {
-		response.SendView(f.NewView(RegisterData{
+		response.SendView(f.NewViewWithData(f.RenderModeFull, RegisterData{
 			Error: fmt.Sprintf("Account %s already exists.", id),
 		}))
 		return
@@ -39,7 +39,7 @@ func (_ RegisterController) Action(request *f.Request, response *f.Response) {
 	rawPassword := form.Get("password")
 
 	if "" == id || "" == displayName || "" == rawPassword {
-		response.SendView(f.NewView(RegisterData{
+		response.SendView(f.NewViewWithData(f.RenderModeFull, RegisterData{
 			Error: "Please fill all fields.",
 		}))
 		return

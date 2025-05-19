@@ -10,6 +10,7 @@
 </style>
 
 <script lang="ts">
+    import {fade} from "svelte/transition";
     import type {Snippet} from "svelte";
 
     type Props = {
@@ -39,6 +40,6 @@
     >
 </svelte:head>
 
-<main class="container">
+<main class="container" transition:fade>
     {@render children()}
 </main>

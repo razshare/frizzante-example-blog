@@ -44,9 +44,9 @@ func (_ BoardController) Base(request *f.Request, response *f.Response) {
 		})
 	}
 
-	response.SendView(f.NewView(BoardData{Articles: articles}))
+	response.SendView(f.NewViewWithData(f.RenderModeFull, BoardData{Articles: articles}))
 }
 
 func (_ BoardController) Action(_ *f.Request, response *f.Response) {
-	response.SendView(f.NewView(false))
+	response.SendView(f.NewView(f.RenderModeFull))
 }
