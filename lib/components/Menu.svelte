@@ -1,14 +1,6 @@
 <script lang="ts">
-    import Link from "$lib/components/Link.svelte";
-    import Action from "$lib/components/Action.svelte";
-
-    type Props = {
-        server: ServerProperties<{}>
-    }
-
-    let {
-        server = $bindable(),
-    }: Props = $props()
+    import {href} from "$frizzante/scripts/href.ts";
+    import {action} from "$frizzante/scripts/action.ts";
 </script>
 
 <nav>
@@ -17,14 +9,14 @@
     </ul>
     <ul>
         <li>
-<!--            <button>-->
-                <Link bind:server to="Account">Account</Link>
-<!--            </button>-->
+            <a {...href("Account")}>
+                <button>Account</button>
+            </a>
         </li>
         <li>
-            <Action bind:server of="Logout">
+            <form {...action("Logout")}>
                 <button>Logout</button>
-            </Action>
+            </form>
         </li>
     </ul>
 </nav>

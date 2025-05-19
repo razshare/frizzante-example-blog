@@ -16,31 +16,29 @@
 <script lang="ts">
     import Layout from "$lib/components/Layout.svelte";
     import Center from "$lib/components/Center.svelte";
-    import Form from "$lib/components/Form.svelte";
-    import Link from "$lib/components/Link.svelte";
-    import Router from "$lib/components/Router.svelte";
+    import Router from "$frizzante/components/Router.svelte";
+    import {getContext} from "svelte";
+    import type {ServerContext} from "$frizzante/types";
+    import {action} from "$frizzante/scripts/action.ts";
+    import {href} from "$frizzante/scripts/href.ts";
 
-    type Props = {
-        server: ServerProperties<{ error: string }>
-    }
-
-    let {server = $bindable()}: Props = $props()
+    let server = getContext("server") as ServerContext<{ error: string }>
 </script>
-<Router bind:server/>
+<Router/>
 <Layout title="Login">
     <Center>
         <article>
             <h1 class="LoginTitle">Login</h1>
-            <Form bind:server of="Login">
+            <form {...action("Login")}>
                 <input type="email" name="id" placeholder="Email" aria-label="Email">
                 <input type="password" name="password" placeholder="Password" aria-label="Password">
-                <button type="submit">Continue</button>
-            </Form>
+                <button>Continue</button>
+            </form>
+            <br/>
             <p class="AdditionalOptions">
                 or
-                <Link bind:server to="Register">register a new account</Link>
-                or
-                <Link bind:server to="Redirect">redirect</Link>
+
+                <a {...href("Register")}>register a new account</a>
                 {#if server.data.error}
                     <br/>
                     <span class="pico-color-red-600">{server.data.error}</span>

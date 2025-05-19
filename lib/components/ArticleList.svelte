@@ -1,4 +1,7 @@
 <script lang="ts">
+    import {getContext} from "svelte";
+    import type {ServerContext} from "$frizzante/types";
+
     type Article = {
         articleId: string
         title: string
@@ -6,11 +9,7 @@
         accountId: string
     }
 
-    type Props = {
-        server: ServerProperties<{ articles: Article[] }>
-    }
-
-    let {server = $bindable()}: Props = $props()
+    let server = getContext("server") as ServerContext<{ articles: Article[] }>
 </script>
 
 <hr/>
