@@ -10,7 +10,7 @@ func SessionIsVerified(request *f.Request, response *f.Response) bool {
 	verified := session.Data.Verified
 
 	if !verified {
-		response.SendNavigate("Login", f.NewView(false))
+		response.SendNavigate("Login")
 		return false
 	}
 

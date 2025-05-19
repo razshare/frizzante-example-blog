@@ -40,5 +40,5 @@ func (_ LoginController) Action(request *f.Request, response *f.Response) {
 
 	session := f.SessionStart(request, response, sessions.Archived)
 	session.Data.Verified = true
-	response.SendNavigate("Board", f.NewView(false))
+	response.SendNavigate("Board")
 }

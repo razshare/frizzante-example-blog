@@ -18,11 +18,11 @@ func (_ LogoutController) Configure() f.PageConfiguration {
 func (_ LogoutController) Base(request *f.Request, response *f.Response) {
 	session := f.SessionStart(request, response, sessions.Archived)
 	session.Data.Verified = false
-	response.SendNavigate("Login", f.NewView(false))
+	response.SendNavigate("Login")
 }
 
 func (_ LogoutController) Action(request *f.Request, response *f.Response) {
 	session := f.SessionStart(request, response, sessions.Archived)
 	session.Data.Verified = false
-	response.SendNavigate("Login", f.NewView(false))
+	response.SendNavigate("Login")
 }

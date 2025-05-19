@@ -47,5 +47,5 @@ func (_ RegisterController) Action(request *f.Request, response *f.Response) {
 
 	password := fmt.Sprintf("%x", sha256.Sum256([]byte(rawPassword)))
 	lib.AddAccount(id, displayName, password)
-	response.SendNavigate("Login", f.NewView(false))
+	response.SendNavigate("Login")
 }
