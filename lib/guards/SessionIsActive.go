@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func SessionIsValid(request *f.Request, response *f.Response) bool {
+func SessionIsActive(request *f.Request, response *f.Response) bool {
 	session := f.SessionStart(request, response, sessions.Archived)
 
 	if time.Since(session.Data.LastActivity) > 30*time.Minute {
