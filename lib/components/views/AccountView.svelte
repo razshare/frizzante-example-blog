@@ -1,5 +1,6 @@
 <script lang="ts">
     import Router from "$lib/components/Router.svelte";
+    import Layout from "$lib/components/Layout.svelte";
 
     type Props = {
         server: ServerProperties<any>
@@ -9,5 +10,7 @@
 </script>
 
 <Router bind:server/>
-<span>Hello, this is Account.svelte!</span>
-<!-- Content. -->
+<Layout title="">
+    lorem
+
+</Layout>

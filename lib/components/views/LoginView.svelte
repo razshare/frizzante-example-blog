@@ -27,7 +27,7 @@
     let {server = $bindable()}: Props = $props()
 </script>
 <Router bind:server/>
-<Layout bind:server title="Login">
+<Layout title="Login">
     <Center>
         <article>
             <h1 class="LoginTitle">Login</h1>

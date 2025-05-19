@@ -12,7 +12,7 @@
 </script>
 
 <Router bind:server/>
-<Layout bind:server title="Session expired">
+<Layout title="Session expired">
     <Center>
         <h1>Your session has expired.</h1>
 

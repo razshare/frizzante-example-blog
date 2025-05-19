@@ -15,13 +15,11 @@
     type Props = {
         title: string
         children: Snippet
-        server: ServerProperties<{}>
     }
 
     const {
         title,
         children,
-        server = $bindable()
     }: Props = $props()
 </script>
 

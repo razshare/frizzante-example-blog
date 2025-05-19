@@ -13,7 +13,7 @@
 </script>
 
 <Router bind:server/>
-<Layout bind:server title="Login">
+<Layout title="Login">
     <Push top>
         <Menu bind:server/>
         <ArticleList bind:server/>

@@ -28,7 +28,7 @@
 </script>
 
 <Router bind:server/>
-<Layout bind:server title="Register">
+<Layout title="Register">
     <Center>
         <article>
             <h1 class="LoginTitle">Register</h1>
