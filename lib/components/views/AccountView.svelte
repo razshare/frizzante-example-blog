@@ -6,7 +6,7 @@
     import type {ServerContext} from "$frizzante/types.ts";
     import Router from "$frizzante/components/Router.svelte";
 
-    let server = getContext("server") as ServerContext<{
+    const server = getContext("server") as ServerContext<{
         accountId: string
         displayName: string
     }>

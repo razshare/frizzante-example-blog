@@ -9,7 +9,7 @@
         accountId: string
     }
 
-    let server = getContext("server") as ServerContext<{ articles: Article[] }>
+    const server = getContext("server") as ServerContext<{ articles: Article[] }>
 </script>
 
 <hr/>

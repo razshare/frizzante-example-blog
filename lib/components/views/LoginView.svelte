@@ -22,7 +22,7 @@
     import {action} from "$frizzante/scripts/action.ts";
     import {href} from "$frizzante/scripts/href.ts";
 
-    let server = getContext("server") as ServerContext<{ error: string }>
+    const server = getContext("server") as ServerContext<{ error: string }>
 </script>
 <Router/>
 <Layout title="Login">
