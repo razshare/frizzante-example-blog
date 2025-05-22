@@ -5,7 +5,7 @@ import (
 	"main/lib/sessions"
 )
 
-func SessionIsVerified(request *f.Request, response *f.Response) bool {
+func Verified(request *f.Request, response *f.Response) bool {
 	session := f.SessionStart(request, response, sessions.Archived)
 	verified := session.Data.Verified
 	session.Save()

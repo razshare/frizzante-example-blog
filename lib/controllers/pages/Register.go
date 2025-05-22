@@ -7,29 +7,21 @@ import (
 	"main/lib"
 )
 
+var Register = f.NewPageController().WithBase(registerBase).WithAction(registerAction)
+
 type RegisterData struct {
 	Error string `json:"error"`
 }
 
-type RegisterController struct {
-	f.PageController
+func registerBase(req *f.Request, res *f.Response) {
+	res.SendView(f.NewView(f.RenderModeFull))
 }
 
-func (_ RegisterController) Configure() f.PageConfiguration {
-	return f.PageConfiguration{
-		Path: "/register",
-	}
-}
-
-func (_ RegisterController) Base(request *f.Request, response *f.Response) {
-	response.SendView(f.NewView(f.RenderModeFull))
-}
-
-func (_ RegisterController) Action(request *f.Request, response *f.Response) {
-	form := request.ReceiveForm()
+func registerAction(req *f.Request, res *f.Response) {
+	form := req.ReceiveForm()
 	id := form.Get("id")
 	if lib.AccountExists(id) {
-		response.SendView(f.NewViewWithData(f.RenderModeFull, RegisterData{
+		res.SendView(f.NewViewWithData(f.RenderModeFull, RegisterData{
 			Error: fmt.Sprintf("Account %s already exists.", id),
 		}))
 		return
@@ -39,7 +31,7 @@ func (_ RegisterController) Action(request *f.Request, response *f.Response) {
 	rawPassword := form.Get("password")
 
 	if "" == id || "" == displayName || "" == rawPassword {
-		response.SendView(f.NewViewWithData(f.RenderModeFull, RegisterData{
+		res.SendView(f.NewViewWithData(f.RenderModeFull, RegisterData{
 			Error: "Please fill all fields.",
 		}))
 		return
@@ -47,5 +39,5 @@ func (_ RegisterController) Action(request *f.Request, response *f.Response) {
 
 	password := fmt.Sprintf("%x", sha256.Sum256([]byte(rawPassword)))
 	lib.AddAccount(id, displayName, password)
-	response.SendNavigate("Login")
+	res.SendNavigate("Login")
 }

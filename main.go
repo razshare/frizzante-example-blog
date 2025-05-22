@@ -16,39 +16,22 @@ var dist embed.FS
 var database, databaseError = sqlib.Open("mysql", "root:root@/forum")
 
 func main() {
-	// Errors.
 	if databaseError != nil {
 		log.Fatal(databaseError)
 	}
-
-	// Create.
-	server := f.NewServer()
-	notifier := f.NewNotifier()
-
-	// Configure.
-	server.WithPort(8080)
-	server.WithNotifier(notifier)
-	server.WithHostName("127.0.0.1")
-	server.WithEmbeddedFileSystem(&dist)
-
-	// Sql.
-	lib.Sql.WithNotifier(notifier)
 	lib.Sql.WithDatabase(database)
 
-	// Pages.
-	server.WithPageController(pages.BoardController{})
-	server.WithPageController(pages.ExpiredController{})
-	server.WithPageController(pages.LoginController{})
-	server.WithPageController(pages.LogoutController{})
-	server.WithPageController(pages.RegisterController{})
-	server.WithPageController(pages.DefaultController{})
-	server.WithPageController(pages.AccountController{})
-	server.WithPageController(pages.RedirectController{})
-
-	server.OnRequest("GET /asd", func(request *f.Request, response *f.Response) {
-		response.SendNavigateWithQuery("Expired", "?asd=1")
-	})
-
-	//Start.
-	server.Start()
+	f.
+		NewServer().
+		WithAddress("127.0.0.1:8080").
+		WithEfs(dist).
+		WithPageController(pages.Board).
+		WithPageController(pages.Expired).
+		WithPageController(pages.Login).
+		WithPageController(pages.Logout).
+		WithPageController(pages.Register).
+		WithPageController(pages.Account).
+		WithPageController(pages.Redirect).
+		WithPageController(pages.Any).
+		Start()
 }

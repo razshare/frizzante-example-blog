@@ -1,7 +1,7 @@
 <script lang="ts">
-    import LoginView from "$lib/components/views/LoginView.svelte";
+    import Login from "$lib/controllers/pages/Login.svelte";
     import Router from "$frizzante/components/Router.svelte";
 </script>
 
 <Router />
-<LoginView />
+<Login />

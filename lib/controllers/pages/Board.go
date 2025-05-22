@@ -5,6 +5,8 @@ import (
 	"main/lib"
 )
 
+var Board = f.NewPageController().WithBase(boardBase)
+
 type BoardArticle struct {
 	ArticleId string `json:"articleId"`
 	Title     string `json:"title"`
@@ -16,17 +18,7 @@ type BoardData struct {
 	Articles []BoardArticle `json:"articles"`
 }
 
-type BoardController struct {
-	f.PageController
-}
-
-func (_ BoardController) Configure() f.PageConfiguration {
-	return f.PageConfiguration{
-		Path: "/board",
-	}
-}
-
-func (_ BoardController) Base(request *f.Request, response *f.Response) {
+func boardBase(req *f.Request, res *f.Response) {
 	fetchNextArticle, closeFetch := lib.FindArticles(0, 10)
 	defer closeFetch()
 
@@ -44,9 +36,5 @@ func (_ BoardController) Base(request *f.Request, response *f.Response) {
 		})
 	}
 
-	response.SendView(f.NewViewWithData(f.RenderModeFull, BoardData{Articles: articles}))
-}
-
-func (_ BoardController) Action(_ *f.Request, response *f.Response) {
-	response.SendView(f.NewView(f.RenderModeFull))
+	res.SendView(f.NewViewWithData(f.RenderModeFull, BoardData{Articles: articles}))
 }
