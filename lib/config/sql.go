@@ -1,4 +1,4 @@
-package lib
+package config
 
 import (
 	uuid "github.com/nu7hatch/gouuid"
@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-var Sql = f.NewSql()
+var Sql = f.NewSql().WithDatabase(Database)
 
 // VerifyAccount verifies that the combination of id and password are exists.
 func VerifyAccount(id string, password string) bool {

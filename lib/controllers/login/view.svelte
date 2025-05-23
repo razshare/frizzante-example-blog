@@ -29,7 +29,7 @@
     <Center>
         <article>
             <h1 class="LoginTitle">Login</h1>
-            <form {...action("Login")}>
+            <form {...action("login")}>
                 <input type="email" name="id" placeholder="Email" aria-label="Email">
                 <input type="password" name="password" placeholder="Password" aria-label="Password">
                 <button>Continue</button>
@@ -38,7 +38,7 @@
             <p class="AdditionalOptions">
                 or
 
-                <a {...href("Register")}>register a new account</a>
+                <a {...href("register")}>register a new account</a>
                 {#if server.data.error}
                     <br/>
                     <span class="pico-color-red-600">{server.data.error}</span>

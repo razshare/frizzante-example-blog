@@ -9,12 +9,12 @@
     </ul>
     <ul>
         <li>
-            <a {...href("Account")}>
+            <a {...href("account")}>
                 <button>Account</button>
             </a>
         </li>
         <li>
-            <form {...action("Logout")}>
+            <form {...action("logout")}>
                 <button>Logout</button>
             </form>
         </li>

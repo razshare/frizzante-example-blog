@@ -1,37 +1,22 @@
 package main
 
 import (
-	sqlib "database/sql"
 	"embed"
 	_ "github.com/go-sql-driver/mysql"
-	f "github.com/razshare/frizzante"
-	"log"
-	"main/lib"
-	"main/lib/controllers/pages"
+	"main/lib/config"
+	_ "main/lib/config"
+	_ "main/lib/controllers/account"
+	_ "main/lib/controllers/any"
+	_ "main/lib/controllers/board"
+	_ "main/lib/controllers/expired"
+	_ "main/lib/controllers/login"
+	_ "main/lib/controllers/logout"
+	_ "main/lib/controllers/register"
 )
 
 //go:embed .dist/*/**
 var dist embed.FS
 
-var database, databaseError = sqlib.Open("mysql", "root:root@/forum")
-
 func main() {
-	if databaseError != nil {
-		log.Fatal(databaseError)
-	}
-	lib.Sql.WithDatabase(database)
-
-	f.
-		NewServer().
-		WithAddress("127.0.0.1:8080").
-		WithEfs(dist).
-		WithPageController(pages.Board).
-		WithPageController(pages.Expired).
-		WithPageController(pages.Login).
-		WithPageController(pages.Logout).
-		WithPageController(pages.Register).
-		WithPageController(pages.Account).
-		WithPageController(pages.Redirect).
-		WithPageController(pages.Any).
-		Start()
+	config.Server.Start(dist)
 }
