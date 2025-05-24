@@ -1,4 +1,4 @@
-package config
+package lib
 
 import (
 	f "github.com/razshare/frizzante"

@@ -1,4 +1,4 @@
-package config
+package lib
 
 import (
 	"encoding/json"
@@ -34,30 +34,26 @@ func NewSessionData() SessionData {
 	}
 }
 
-var key = "session.json"
-var notifier = f.NewNotifier()
-var archive = f.NewArchiveOnDisk(".sessions", time.Second/2)
-
 func SessionAdapter(session *f.Session[SessionData]) {
 	session.WithExistsHandler(func() bool {
-		return archive.Has(session.Id, key)
+		return archive.Has(session.Id, SessionKey)
 	})
 
 	session.WithLoadHandler(func() {
-		data := archive.Get(session.Id, key)
+		data := archive.Get(session.Id, SessionKey)
 		unmarshalError := json.Unmarshal(data, &session.Data)
 		if nil != unmarshalError {
-			notifier.SendError(unmarshalError)
+			Notifier.SendError(unmarshalError)
 		}
 	})
 
 	session.WithSaveHandler(func() {
 		data, marshalError := json.Marshal(session.Data)
 		if nil != marshalError {
-			notifier.SendError(marshalError)
+			Notifier.SendError(marshalError)
 			return
 		}
-		archive.Set(session.Id, key, data)
+		archive.Set(session.Id, SessionKey, data)
 	})
 
 	session.WithDestroyHandler(func() {

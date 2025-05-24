@@ -16,7 +16,6 @@
 <script lang="ts">
     import Layout from "$lib/components/Layout.svelte";
     import Center from "$lib/components/Center.svelte";
-    import Router from "$frizzante/components/Router.svelte";
     import {getContext} from "svelte";
     import type {ServerContext} from "$frizzante/types.ts";
     import {action} from "$frizzante/scripts/action.ts";
@@ -24,7 +23,7 @@
 
     const server = getContext("server") as ServerContext<{ error: string }>
 </script>
-<Router/>
+
 <Layout title="Login">
     <Center>
         <article>

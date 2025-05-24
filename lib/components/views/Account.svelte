@@ -4,7 +4,6 @@
     import Push from "$lib/components/Push.svelte";
     import {getContext} from "svelte";
     import type {ServerContext} from "$frizzante/types.ts";
-    import Router from "$frizzante/components/Router.svelte";
 
     const server = getContext("server") as ServerContext<{
         accountId: string
@@ -12,7 +11,6 @@
     }>
 </script>
 
-<Router/>
 <Layout title="Login">
     <Push top>
         <Menu/>
