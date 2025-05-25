@@ -8,7 +8,7 @@ import (
 
 func init() {
 	Server.
-		WithRoute("GET /account", func(req *f.Request, res *f.Response) {
+		WithRequestHandler("GET /account", func(req *f.Request, res *f.Response) {
 			session := f.SessionStart(req, res, SessionAdapter)
 
 			fetchAccount, closeFetch := FindAccountById(session.Data.AccountId)
@@ -29,7 +29,7 @@ func init() {
 				},
 			})
 		}).
-		WithRoute("GET /board", func(req *f.Request, res *f.Response) {
+		WithRequestHandler("GET /board", func(req *f.Request, res *f.Response) {
 			fetchNextArticle, closeFetch := FindArticles(0, 10)
 			defer closeFetch()
 
@@ -54,29 +54,29 @@ func init() {
 				},
 			})
 		}).
-		WithRoute("GET /expired", func(req *f.Request, res *f.Response) {
+		WithRequestHandler("GET /expired", func(req *f.Request, res *f.Response) {
 			res.SendView(f.View{
 				Name: "Expired",
 			})
 		}).
-		WithRoute("GET /logout", func(req *f.Request, res *f.Response) {
+		WithRequestHandler("GET /logout", func(req *f.Request, res *f.Response) {
 			session := f.SessionStart(req, res, SessionAdapter)
 			session.Data.Verified = false
 			session.Save()
 			res.SendNavigate("/login")
 		}).
-		WithRoute("POST /logout", func(req *f.Request, res *f.Response) {
+		WithRequestHandler("POST /logout", func(req *f.Request, res *f.Response) {
 			session := f.SessionStart(req, res, SessionAdapter)
 			session.Data.Verified = false
 			session.Save()
 			res.SendNavigate("/login")
 		}).
-		WithRoute("GET /login", func(req *f.Request, res *f.Response) {
+		WithRequestHandler("GET /login", func(req *f.Request, res *f.Response) {
 			res.SendView(f.View{
 				Name: "Login",
 			})
 		}).
-		WithRoute("POST /login", func(req *f.Request, res *f.Response) {
+		WithRequestHandler("POST /login", func(req *f.Request, res *f.Response) {
 			form := req.ReceiveForm()
 			id := form.Get("id")
 			password := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("password"))))
@@ -98,12 +98,12 @@ func init() {
 			session.Save()
 			res.SendNavigate("/board")
 		}).
-		WithRoute("GET /register", func(req *f.Request, res *f.Response) {
+		WithRequestHandler("GET /register", func(req *f.Request, res *f.Response) {
 			res.SendView(f.View{
 				Name: "Register",
 			})
 		}).
-		WithRoute("POST /register", func(req *f.Request, res *f.Response) {
+		WithRequestHandler("POST /register", func(req *f.Request, res *f.Response) {
 			form := req.ReceiveForm()
 			id := form.Get("id")
 			if AccountExists(id) {
@@ -133,7 +133,7 @@ func init() {
 			AddAccount(id, displayName, password)
 			res.SendNavigate("/login")
 		}).
-		WithRoute("GET /", func(req *f.Request, res *f.Response) {
+		WithRequestHandler("GET /", func(req *f.Request, res *f.Response) {
 			res.SendFileOrElse(func() {
 				res.SendView(f.View{
 					Name: "Welcome",
