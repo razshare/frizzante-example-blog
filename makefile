@@ -30,6 +30,7 @@ www-dev-client:
 
 configure: update
 	go run lib/tools/prepare/main.go
+	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 	make www-build-server & \
 	make www-build-client & \
 	wait

@@ -5,16 +5,18 @@
     import {getContext} from "svelte";
     import type {ServerContext} from "$frizzante/types.ts";
 
-    const server = getContext("server") as ServerContext<{
-        accountId: string
-        displayName: string
-    }>
+    type Account = {
+        ID: string
+        DisplayName: string
+    }
+
+    const server = getContext("server") as ServerContext<Account>
 </script>
 
 <Layout title="Login">
     <Push top>
         <Menu/>
-        <h1>{server.data.displayName}</h1>
-        <small>{server.data.accountId}</small>
+        <h1>{server.data.DisplayName}</h1>
+        <small>{server.data.ID}</small>
     </Push>
 </Layout>

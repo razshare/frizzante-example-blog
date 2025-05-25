@@ -1,6 +1,14 @@
+<style>
+    li {
+        padding: 1rem;
+    }
+</style>
+
 <script lang="ts">
     import {href} from "$frizzante/scripts/href.ts";
-    import {action} from "$frizzante/scripts/action.ts";
+    import {getContext} from "svelte";
+    import type {ServerContext} from "$frizzante/types.ts";
+    const server = getContext("server") as ServerContext<any>
 </script>
 
 <nav>
@@ -9,14 +17,20 @@
     </ul>
     <ul>
         <li>
-            <a {...href("account")}>
-                <button>Account</button>
-            </a>
+            {#if "Account" === server.view}
+                <a {...href("/board")}>
+                    <button>Board</button>
+                </a>
+            {:else}
+                <a {...href("/account")}>
+                    <button>Account</button>
+                </a>
+            {/if}
         </li>
         <li>
-            <form {...action("logout")}>
+            <a {...href("/logout")}>
                 <button>Logout</button>
-            </form>
+            </a>
         </li>
     </ul>
 </nav>

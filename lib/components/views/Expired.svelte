@@ -8,7 +8,7 @@
     <Center>
         <h1>Your session has expired.</h1>
 
-        <a {...href("login")}>
+        <a {...href("/login")}>
             <button>
                 Back to login.
             </button>

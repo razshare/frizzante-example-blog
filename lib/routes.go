@@ -1,50 +1,49 @@
 package lib
 
 import (
+	"context"
 	"crypto/sha256"
+	"errors"
 	"fmt"
+	uuid "github.com/nu7hatch/gouuid"
 	f "github.com/razshare/frizzante"
+	"main/lib/sqlc"
+	"time"
 )
 
 func init() {
 	Server.
 		WithRequestHandler("GET /account", func(req *f.Request, res *f.Response) {
+			if !f.AllGuardsPass(req, res, NotExpired, Verified) {
+				return
+			}
+
 			session := f.SessionStart(req, res, SessionAdapter)
+			account, err := Queries.SqlFindAccountById(context.Background(), session.Data.AccountId)
 
-			fetchAccount, closeFetch := FindAccountById(session.Data.AccountId)
-			defer closeFetch()
-
-			var accountId string
-			var displayName string
-			var createdAt int
-			var updatedAt int
-
-			fetchAccount(&accountId, &displayName, &createdAt, &updatedAt)
+			if nil != err {
+				res.SendView(NewErrorView(err))
+				return
+			}
 
 			res.SendView(f.View{
 				Name: "Account",
-				Data: map[string]string{
-					"accountId":   accountId,
-					"displayName": displayName,
-				},
+				Data: account,
 			})
 		}).
 		WithRequestHandler("GET /board", func(req *f.Request, res *f.Response) {
-			fetchNextArticle, closeFetch := FindArticles(0, 10)
-			defer closeFetch()
+			if !f.AllGuardsPass(req, res, NotExpired, Verified) {
+				return
+			}
 
-			var articleId string
-			var title string
-			var createdAt int
-			var accountId string
-			var articles []map[string]any
-			for fetchNextArticle(&articleId, &title, &createdAt, &accountId) {
-				articles = append(articles, map[string]any{
-					"accountId": accountId,
-					"title":     title,
-					"createdAt": createdAt,
-					"articleId": articleId,
-				})
+			articles, err := Queries.SqlFindArticles(context.Background(), sqlc.SqlFindArticlesParams{
+				Offset: 0,
+				Limit:  10,
+			})
+
+			if err != nil {
+				res.SendView(NewErrorView(err))
+				return
 			}
 
 			res.SendView(f.View{
@@ -81,14 +80,13 @@ func init() {
 			id := form.Get("id")
 			password := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("password"))))
 
-			if !VerifyAccount(id, password) {
-				res.SendView(f.View{
+			_, err := Queries.SqlVerifyAccount(context.Background(), sqlc.SqlVerifyAccountParams{
+				ID:       id,
+				Password: password,
+			})
 
-					Name: "login",
-					Data: map[string]any{
-						"error": "Invalid credentials",
-					},
-				})
+			if err != nil {
+				res.SendView(NewErrorView(err))
 				return
 			}
 
@@ -105,38 +103,85 @@ func init() {
 		}).
 		WithRequestHandler("POST /register", func(req *f.Request, res *f.Response) {
 			form := req.ReceiveForm()
-			id := form.Get("id")
-			if AccountExists(id) {
-				res.SendView(f.View{
-					Name: "Register",
-					Data: map[string]any{
-						"error": fmt.Sprintf("Account %s already exists.", id),
-					},
-				})
+			accountId := form.Get("id")
+
+			_, err := Queries.SqlFindAccountById(context.Background(), accountId)
+			if err != nil {
 				return
 			}
 
-			displayName := form.Get("displayName")
+			if nil != err {
+				res.SendView(NewErrorView(err))
+				return
+			}
+
+			accountDisplayName := form.Get("displayName")
 			rawPassword := form.Get("password")
 
-			if "" == id || "" == displayName || "" == rawPassword {
-				res.SendView(f.View{
-					Name: "Register",
-					Data: map[string]any{
-						"error": "Please fill all fields.",
-					},
-				})
+			if "" == accountId || "" == accountDisplayName || "" == rawPassword {
+				res.SendView(NewErrorView(errors.New("please fill all fields")))
 				return
 			}
 
-			password := fmt.Sprintf("%x", sha256.Sum256([]byte(rawPassword)))
-			AddAccount(id, displayName, password)
+			accountPassword := fmt.Sprintf("%x", sha256.Sum256([]byte(rawPassword)))
+			err = Queries.SqlAddAccount(context.Background(), sqlc.SqlAddAccountParams{
+				ID:          accountId,
+				DisplayName: accountDisplayName,
+				Password:    accountPassword,
+			})
+			if err != nil {
+				res.SendView(NewErrorView(err))
+				return
+			}
 			res.SendNavigate("/login")
+		}).
+		WithRequestHandler("POST /article", func(req *f.Request, res *f.Response) {
+			if !f.AllGuardsPass(req, res, NotExpired, Verified) {
+				return
+			}
+
+			articleId, err := uuid.NewV4()
+			if err != nil {
+				res.SendView(NewErrorView(err))
+				return
+			}
+
+			form := req.ReceiveForm()
+			session := f.SessionStart(req, res, SessionAdapter)
+			err = Queries.SqlAddArticle(context.Background(), sqlc.SqlAddArticleParams{
+				ID:        articleId.String(),
+				AccountID: session.Data.AccountId,
+				CreatedAt: int32(time.Now().Unix()),
+			})
+			if err != nil {
+				res.SendView(NewErrorView(err))
+				return
+			}
+
+			articleContentId, err := uuid.NewV4()
+			if err != nil {
+				res.SendView(NewErrorView(err))
+				return
+			}
+
+			err = Queries.SqlAddArticleContent(context.Background(), sqlc.SqlAddArticleContentParams{
+				ID:        articleContentId.String(),
+				ArticleID: articleId.String(),
+				Title:     form.Get("title"),
+				Content:   form.Get("content"),
+			})
+
+			if err != nil {
+				res.SendView(NewErrorView(err))
+				return
+			}
+
+			res.SendNavigate("/board")
 		}).
 		WithRequestHandler("GET /", func(req *f.Request, res *f.Response) {
 			res.SendFileOrElse(func() {
 				res.SendView(f.View{
-					Name: "Welcome",
+					Name: "Login",
 				})
 			})
 		})

@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func GuardExpired(request *f.Request, response *f.Response) bool {
+func NotExpired(request *f.Request, response *f.Response) bool {
 	session := f.SessionStart(request, response, SessionAdapter)
 
 	if time.Since(session.Data.LastActivity) > 30*time.Minute {
@@ -19,7 +19,7 @@ func GuardExpired(request *f.Request, response *f.Response) bool {
 	return true
 }
 
-func GuardVerified(request *f.Request, response *f.Response) bool {
+func Verified(request *f.Request, response *f.Response) bool {
 	session := f.SessionStart(request, response, SessionAdapter)
 	verified := session.Data.Verified
 	session.Save()
