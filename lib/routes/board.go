@@ -4,6 +4,7 @@ import (
 	"context"
 	uuid "github.com/nu7hatch/gouuid"
 	"github.com/razshare/frizzante"
+	"main/lib"
 	"main/lib/database"
 	"main/lib/generated"
 	"main/lib/guards"
@@ -11,6 +12,11 @@ import (
 	"main/lib/value"
 	"time"
 )
+
+func init() {
+	lib.Server.WithRequestHandler("GET /board", GetBoard)
+	lib.Server.WithRequestHandler("POST /board", PostBoard)
+}
 
 func GetBoard(req *frizzante.Request, res *frizzante.Response) {
 	if !frizzante.AllGuardsPass(req, res, guards.NotExpired, guards.Verified) {

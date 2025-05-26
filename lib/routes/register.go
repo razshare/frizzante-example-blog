@@ -6,10 +6,16 @@ import (
 	"errors"
 	"fmt"
 	"github.com/razshare/frizzante"
+	"main/lib"
 	"main/lib/database"
 	"main/lib/generated"
 	"main/lib/value"
 )
+
+func init() {
+	lib.Server.WithRequestHandler("GET /register", GetRegister)
+	lib.Server.WithRequestHandler("POST /register", PostRegister)
+}
 
 func GetRegister(req *frizzante.Request, res *frizzante.Response) {
 	res.SendView(frizzante.View{Name: "Register"})

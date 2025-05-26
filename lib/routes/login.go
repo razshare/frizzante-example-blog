@@ -6,11 +6,17 @@ import (
 	"errors"
 	"fmt"
 	"github.com/razshare/frizzante"
+	"main/lib"
 	"main/lib/database"
 	"main/lib/generated"
 	"main/lib/sessions"
 	"main/lib/value"
 )
+
+func init() {
+	lib.Server.WithRequestHandler("GET /login", GetLogin)
+	lib.Server.WithRequestHandler("POST /login", PostLogin)
+}
 
 func GetLogin(req *frizzante.Request, res *frizzante.Response) {
 	res.SendView(frizzante.View{Name: "Login"})
