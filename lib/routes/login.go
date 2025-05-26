@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"github.com/razshare/frizzante"
 	"main/lib/database"
+	"main/lib/generated"
 	"main/lib/sessions"
-	"main/lib/sqlc"
 	"main/lib/value"
 )
 
@@ -21,7 +21,7 @@ func PostLogin(req *frizzante.Request, res *frizzante.Response) {
 	id := form.Get("id")
 	password := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("password"))))
 
-	account := value.Wrap(database.Queries.SqlVerifyAccount(context.Background(), sqlc.SqlVerifyAccountParams{
+	account := value.Wrap(database.Queries.SqlVerifyAccount(context.Background(), generated.SqlVerifyAccountParams{
 		ID:       id,
 		Password: password,
 	}))

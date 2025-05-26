@@ -31,8 +31,8 @@ dev-server:
 dev-client:
 	DEV=1 bunx vite build --watch --outDir .dist/client
 
-sql:
-	rm lib/sqlc -fr
+generate:
+	rm lib/generated -fr
 	sqlc generate
 
 configure: update
@@ -78,10 +78,3 @@ hooks:
 	printf "#!/usr/bin/env bash\n" > .git/hooks/pre-commit
 	printf "make test" >> .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
-
-api:
-	go run lib/tools/cli/main.go -api
-
-page:
-	go run lib/tools/cli/main.go -page && \
-	make configure

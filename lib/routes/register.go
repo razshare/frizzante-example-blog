@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"github.com/razshare/frizzante"
 	"main/lib/database"
-	"main/lib/sqlc"
+	"main/lib/generated"
 	"main/lib/value"
 )
 
@@ -35,7 +35,7 @@ func PostRegister(req *frizzante.Request, res *frizzante.Response) {
 		return
 	}
 
-	addAttempt := value.WrapNothing(database.Queries.SqlAddAccount(context.Background(), sqlc.SqlAddAccountParams{
+	addAttempt := value.WrapNothing(database.Queries.SqlAddAccount(context.Background(), generated.SqlAddAccountParams{
 		ID:          id,
 		DisplayName: displayName,
 		Password:    password,

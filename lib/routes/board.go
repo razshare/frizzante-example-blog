@@ -5,9 +5,9 @@ import (
 	uuid "github.com/nu7hatch/gouuid"
 	"github.com/razshare/frizzante"
 	"main/lib/database"
+	"main/lib/generated"
 	"main/lib/guards"
 	"main/lib/sessions"
-	"main/lib/sqlc"
 	"main/lib/value"
 	"time"
 )
@@ -17,7 +17,7 @@ func GetBoard(req *frizzante.Request, res *frizzante.Response) {
 		return
 	}
 
-	articles := value.Wrap(database.Queries.SqlFindArticles(context.Background(), sqlc.SqlFindArticlesParams{
+	articles := value.Wrap(database.Queries.SqlFindArticles(context.Background(), generated.SqlFindArticlesParams{
 		Offset: 0,
 		Limit:  10,
 	}))
@@ -43,7 +43,7 @@ func PostBoard(req *frizzante.Request, res *frizzante.Response) {
 
 	form := req.ReceiveForm()
 	session := frizzante.SessionStart(req, res, sessions.Adapter)
-	addArticle := value.WrapNothing(database.Queries.SqlAddArticle(context.Background(), sqlc.SqlAddArticleParams{
+	addArticle := value.WrapNothing(database.Queries.SqlAddArticle(context.Background(), generated.SqlAddArticleParams{
 		ID:        articleId.Value.String(),
 		AccountID: session.Data.AccountId,
 		CreatedAt: int32(time.Now().Unix()),
@@ -59,7 +59,7 @@ func PostBoard(req *frizzante.Request, res *frizzante.Response) {
 		return
 	}
 
-	addContent := value.WrapNothing(database.Queries.SqlAddArticleContent(context.Background(), sqlc.SqlAddArticleContentParams{
+	addContent := value.WrapNothing(database.Queries.SqlAddArticleContent(context.Background(), generated.SqlAddArticleContentParams{
 		ID:        articleContentId.Value.String(),
 		ArticleID: articleId.Value.String(),
 		Title:     form.Get("title"),
