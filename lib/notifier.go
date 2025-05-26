@@ -1,5 +1,5 @@
 package lib
 
-import f "github.com/razshare/frizzante"
+import "github.com/razshare/frizzante"
 
-var Notifier = f.NewNotifier()
+var Notifier = frizzante.NewNotifier()

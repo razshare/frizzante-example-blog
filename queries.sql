@@ -96,7 +96,7 @@ select id,
 from user_account
 limit ?, ?;
 
--- name: SqlFindAccountById :many
+-- name: SqlFindAccountById :one
 select id,
        display_name,
        created_at,

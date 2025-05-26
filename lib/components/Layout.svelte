@@ -1,4 +1,7 @@
 <style global>
+    :global(.error) {
+        color: orangered;
+    }
     .container {
         position: fixed;
         left: 0;

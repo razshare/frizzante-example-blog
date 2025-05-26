@@ -2,7 +2,7 @@
     import {action} from "$frizzante/scripts/action.ts";
 </script>
 
-<form {...action("/article")}>
+<form {...action("/board")}>
     <span>Title</span><br/>
     <input type="text" name="title">
     <span>Content</span><br/>

@@ -9,12 +9,12 @@
         AccountId: string
     }
 
-    const server = getContext("server") as ServerContext<{ articles: Article[] }>
+    const server = getContext("server") as ServerContext<Article[]>
 </script>
 
 <hr/>
 <ul>
-    {#each server.data.articles as article}
+    {#each server.data as article}
         {@const createdAt = new Date(article.CreatedAt * 1000)}
         <li class="list-row">
             <div>

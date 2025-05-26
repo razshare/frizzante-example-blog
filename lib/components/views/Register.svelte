@@ -13,6 +13,10 @@
     import {href} from "$frizzante/scripts/href.ts";
     import Layout from "$lib/components/Layout.svelte";
     import Center from "$lib/components/Center.svelte";
+    import {getContext} from "svelte";
+    import type {ServerContext} from "$frizzante/types.ts";
+
+    const server = getContext("server") as ServerContext<any>
 </script>
 
 <Layout title="Register">
@@ -28,6 +32,11 @@
                     or
                     <a {...href("/login")}>login</a>
                 </p>
+                {#if server.error}
+                    <Center>
+                        <div class="error">{server.error}</div>
+                    </Center>
+                {/if}
             </form>
         </article>
     </Center>

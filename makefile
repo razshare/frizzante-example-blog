@@ -10,29 +10,36 @@ start: configure
 dev: clean update
 	go run lib/tools/prepare/main.go
 	which bin/air || curl -sSfL https://raw.githubusercontent.com/air-verse/air/master/install.sh | sh -s
+	make air-server & \
+	make dev-server & \
+	make dev-client & \
+	wait
+
+air-server:
 	DEV=1 CGO_ENABLED=1 ./bin/air \
 	--build.cmd "go build -o bin/app ." \
 	--build.bin "bin/app" \
 	--build.exclude_dir "out,bin,.sessions" \
 	--build.exclude_regex "_test.go,.frizzante,node_modules" \
 	--build.include_ext "go,svelte,js,css,json" \
-	--build.log "go-build-errors.log" & \
-	make www-dev-server & \
-	make www-dev-client & \
-	wait
+	--build.log "go-build-errors.log"
 
-www-dev-server:
+dev-server:
 	DEV=1 bunx vite build --watch --ssr .frizzante/vite-project/render.server.js --outDir .dist/server && \
 	./node_modules/.bin/esbuild .dist/server/render.server.js --bundle --outfile=.dist/server/render.server.js --format=esm --allow-overwrite
 
-www-dev-client:
+dev-client:
 	DEV=1 bunx vite build --watch --outDir .dist/client
+
+sql:
+	rm lib/sqlc -fr
+	sqlc generate
 
 configure: update
 	go run lib/tools/prepare/main.go
 	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
-	make www-build-server & \
-	make www-build-client & \
+	make build-server & \
+	make build-client & \
 	wait
 
 clean:
@@ -53,11 +60,11 @@ update:
 	go mod tidy
 	bun update
 
-www-build-server:
+build-server:
 	bunx vite build --ssr .frizzante/vite-project/render.server.js --outDir .dist/server --emptyOutDir && \
 	./node_modules/.bin/esbuild .dist/server/render.server.js --bundle --outfile=.dist/server/render.server.js --format=esm --allow-overwrite
 
-www-build-client:
+build-client:
 	bunx vite build --outDir .dist/client --emptyOutDir
 
 certificate-interactive:
