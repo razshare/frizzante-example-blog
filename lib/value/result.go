@@ -2,7 +2,7 @@ package value
 
 import (
 	"log"
-	"main/lib"
+	"main/lib/notifiers"
 )
 
 type Result[T any] struct {
@@ -16,7 +16,7 @@ func (result *Result[T]) Ok() bool {
 
 func Wrap[T any](value T, err error) Result[T] {
 	if nil != err {
-		lib.Notifier.SendError(err)
+		notifiers.Console.SendError(err)
 		return Result[T]{value, err}
 	}
 
@@ -41,7 +41,7 @@ func WrapNothing(err error) Result[int] {
 	if nil == err {
 		return Result[int]{Value: 0}
 	}
-	lib.Notifier.SendError(err)
+	notifiers.Console.SendError(err)
 	return Result[int]{1, err}
 
 }
