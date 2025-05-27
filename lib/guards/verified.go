@@ -11,7 +11,7 @@ func Verified(request *frizzante.Request, response *frizzante.Response) bool {
 	session.Save()
 
 	if !verified {
-		response.SendNavigate("login")
+		response.SendNavigate("/login")
 		return false
 	}
 

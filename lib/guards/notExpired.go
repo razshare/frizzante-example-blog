@@ -9,9 +9,9 @@ import (
 func NotExpired(request *frizzante.Request, response *frizzante.Response) bool {
 	session := frizzante.SessionStart(request, response, sessions.Adapter)
 
-	if time.Since(session.Data.LastActivity) > 30*time.Minute {
+	if time.Since(session.Data.LastActivity) > 5*time.Second {
 		session.Destroy()
-		response.SendNavigate("expired")
+		response.SendNavigate("/expired")
 		return false
 	}
 
