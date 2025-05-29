@@ -1,13 +1,6 @@
 package routes
 
-import (
-	"github.com/razshare/frizzante"
-	"main/lib"
-)
-
-func init() {
-	lib.Server.WithRequestHandler("GET /expired", GetExpired)
-}
+import "github.com/razshare/frizzante"
 
 func GetExpired(req *frizzante.Request, res *frizzante.Response) {
 	res.SendView(frizzante.View{Name: "Expired"})

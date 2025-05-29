@@ -4,7 +4,6 @@ import (
 	"context"
 	uuid "github.com/nu7hatch/gouuid"
 	"github.com/razshare/frizzante"
-	"main/lib"
 	"main/lib/database"
 	"main/lib/generated"
 	"main/lib/guards"
@@ -12,11 +11,6 @@ import (
 	"main/lib/value"
 	"time"
 )
-
-func init() {
-	lib.Server.WithRequestHandler("GET /board", GetBoard)
-	lib.Server.WithRequestHandler("POST /board", PostBoard)
-}
 
 func GetBoard(req *frizzante.Request, res *frizzante.Response) {
 	if !frizzante.AllGuardsPass(req, res, guards.NotExpired, guards.Verified) {
@@ -52,7 +46,7 @@ func PostBoard(req *frizzante.Request, res *frizzante.Response) {
 	addArticle := value.WrapNothing(database.Queries.SqlAddArticle(context.Background(), generated.SqlAddArticleParams{
 		ID:        articleId.Value.String(),
 		AccountID: session.Data.AccountId,
-		CreatedAt: int32(time.Now().Unix()),
+		CreatedAt: time.Now().Unix(),
 	}))
 	if !addArticle.Ok() {
 		res.SendView(frizzante.View{Name: "Board", Error: addArticle.Error})

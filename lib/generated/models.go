@@ -6,13 +6,13 @@ package generated
 
 type Article struct {
 	ID        string
-	CreatedAt int32
+	CreatedAt int64
 	AccountID string
 }
 
 type ArticleContent struct {
 	ID        string
-	CreatedAt int32
+	CreatedAt int64
 	ArticleID string
 	Title     string
 	Content   string
@@ -20,14 +20,14 @@ type ArticleContent struct {
 
 type Comment struct {
 	ID        string
-	CreatedAt int32
+	CreatedAt int64
 	AccountID string
 	ArticleID string
 }
 
 type CommentContent struct {
 	ID        string
-	CreatedAt int32
+	CreatedAt int64
 	CommentID string
 	Content   string
 }
@@ -36,6 +36,6 @@ type UserAccount struct {
 	ID          string
 	DisplayName string
 	Password    string
-	CreatedAt   int32
-	UpdatedAt   int32
+	CreatedAt   int64
+	UpdatedAt   int64
 }

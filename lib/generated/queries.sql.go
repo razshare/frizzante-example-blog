@@ -22,8 +22,8 @@ type SqlAddAccountParams struct {
 	ID          string
 	DisplayName string
 	Password    string
-	CreatedAt   int32
-	UpdatedAt   int32
+	CreatedAt   int64
+	UpdatedAt   int64
 }
 
 func (q *Queries) SqlAddAccount(ctx context.Context, arg SqlAddAccountParams) error {
@@ -46,7 +46,7 @@ values (?, ?, ?)
 
 type SqlAddArticleParams struct {
 	ID        string
-	CreatedAt int32
+	CreatedAt int64
 	AccountID string
 }
 
@@ -66,7 +66,7 @@ values (?, ?, ?, ?, ?)
 
 type SqlAddArticleContentParams struct {
 	ID        string
-	CreatedAt int32
+	CreatedAt int64
 	ArticleID string
 	Title     string
 	Content   string
@@ -93,7 +93,7 @@ values (?, ?, ?, ?)
 
 type SqlAddCommentParams struct {
 	ID        string
-	CreatedAt int32
+	CreatedAt int64
 	AccountID string
 	ArticleID string
 }
@@ -118,7 +118,7 @@ values (?, ?, ?, ?)
 
 type SqlAddCommentContentParams struct {
 	ID        string
-	CreatedAt int32
+	CreatedAt int64
 	CommentID string
 	Content   string
 }
@@ -144,7 +144,7 @@ where id = ?
 type SqlChangeAccountParams struct {
 	DisplayName string
 	Password    string
-	UpdatedAt   int32
+	UpdatedAt   int64
 	ID          string
 }
 
@@ -170,8 +170,8 @@ where id = ?
 type SqlFindAccountByIdRow struct {
 	ID          string
 	DisplayName string
-	CreatedAt   int32
-	UpdatedAt   int32
+	CreatedAt   int64
+	UpdatedAt   int64
 }
 
 func (q *Queries) SqlFindAccountById(ctx context.Context, id string) (SqlFindAccountByIdRow, error) {
@@ -192,23 +192,23 @@ select id,
        created_at,
        updated_at
 from user_account
-limit ?, ?
+limit ? offset ?
 `
 
 type SqlFindAccountsParams struct {
-	Offset int32
-	Limit  int32
+	Limit  int64
+	Offset int64
 }
 
 type SqlFindAccountsRow struct {
 	ID          string
 	DisplayName string
-	CreatedAt   int32
-	UpdatedAt   int32
+	CreatedAt   int64
+	UpdatedAt   int64
 }
 
 func (q *Queries) SqlFindAccounts(ctx context.Context, arg SqlFindAccountsParams) ([]SqlFindAccountsRow, error) {
-	rows, err := q.db.QueryContext(ctx, sqlFindAccounts, arg.Offset, arg.Limit)
+	rows, err := q.db.QueryContext(ctx, sqlFindAccounts, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -255,16 +255,16 @@ select id,
        created_at,
        account_id
 from article
-limit ?, ?
+limit ? offset ?
 `
 
 type SqlFindArticlesParams struct {
-	Offset int32
-	Limit  int32
+	Limit  int64
+	Offset int64
 }
 
 func (q *Queries) SqlFindArticles(ctx context.Context, arg SqlFindArticlesParams) ([]Article, error) {
-	rows, err := q.db.QueryContext(ctx, sqlFindArticles, arg.Offset, arg.Limit)
+	rows, err := q.db.QueryContext(ctx, sqlFindArticles, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -308,17 +308,17 @@ select id,
        article_id
 from comment
 where article_id = ?
-limit ?, ?
+limit ? offset ?
 `
 
 type SqlFindCommentsByArticleIdParams struct {
 	ArticleID string
-	Offset    int32
-	Limit     int32
+	Limit     int64
+	Offset    int64
 }
 
 func (q *Queries) SqlFindCommentsByArticleId(ctx context.Context, arg SqlFindCommentsByArticleIdParams) ([]Comment, error) {
-	rows, err := q.db.QueryContext(ctx, sqlFindCommentsByArticleId, arg.ArticleID, arg.Offset, arg.Limit)
+	rows, err := q.db.QueryContext(ctx, sqlFindCommentsByArticleId, arg.ArticleID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

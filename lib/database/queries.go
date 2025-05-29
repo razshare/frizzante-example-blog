@@ -1,10 +1,10 @@
 package database
 
 import (
-	slq "database/sql"
-	_ "github.com/go-sql-driver/mysql"
+	"database/sql"
+	_ "github.com/mattn/go-sqlite3"
 	"main/lib/generated"
 	"main/lib/value"
 )
 
-var Queries = generated.New(value.WrapFatal(slq.Open("mysql", "root:root@/forum")).Value)
+var Queries = generated.New(value.WrapFatal(sql.Open("sqlite3", "file:database.sqlite?cache=shared")).Value)

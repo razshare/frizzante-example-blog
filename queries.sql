@@ -77,7 +77,7 @@ select id,
        created_at,
        account_id
 from article
-limit ?, ?;
+limit ? offset ?;
 
 -- name: SqlFindCommentsByArticleId :many
 select id,
@@ -86,7 +86,7 @@ select id,
        article_id
 from comment
 where article_id = ?
-limit ?, ?;
+limit ? offset ?;
 
 -- name: SqlFindAccounts :many
 select id,
@@ -94,7 +94,7 @@ select id,
        created_at,
        updated_at
 from user_account
-limit ?, ?;
+limit ? offset ?;
 
 -- name: SqlFindAccountById :one
 select id,

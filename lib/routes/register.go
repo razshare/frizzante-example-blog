@@ -6,16 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/razshare/frizzante"
-	"main/lib"
 	"main/lib/database"
 	"main/lib/generated"
 	"main/lib/value"
 )
-
-func init() {
-	lib.Server.WithRequestHandler("GET /register", GetRegister)
-	lib.Server.WithRequestHandler("POST /register", PostRegister)
-}
 
 func GetRegister(req *frizzante.Request, res *frizzante.Response) {
 	res.SendView(frizzante.View{Name: "Register"})
@@ -36,8 +30,8 @@ func PostRegister(req *frizzante.Request, res *frizzante.Response) {
 	password := fmt.Sprintf("%x", sha256.Sum256([]byte(rawPassword)))
 
 	account := value.Wrap(database.Queries.SqlFindAccountById(context.Background(), id))
-	if !account.Ok() {
-		res.SendView(frizzante.View{Name: "Register", Error: account.Error})
+	if account.Ok() {
+		res.SendView(frizzante.View{Name: "Register", Error: fmt.Errorf("account `%s` already exists", id)})
 		return
 	}
 

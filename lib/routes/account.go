@@ -3,16 +3,11 @@ package routes
 import (
 	"context"
 	"github.com/razshare/frizzante"
-	"main/lib"
 	"main/lib/database"
 	"main/lib/guards"
 	"main/lib/sessions"
 	"main/lib/value"
 )
-
-func init() {
-	lib.Server.WithRequestHandler("GET /account", GetAccount)
-}
 
 func GetAccount(req *frizzante.Request, res *frizzante.Response) {
 	if !frizzante.AllGuardsPass(req, res, guards.NotExpired, guards.Verified) {
