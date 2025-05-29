@@ -8,7 +8,6 @@ import (
 	"github.com/razshare/frizzante"
 	"main/lib/database"
 	"main/lib/generated"
-	"main/lib/value"
 )
 
 func GetRegister(req *frizzante.Request, res *frizzante.Response) {
@@ -29,20 +28,20 @@ func PostRegister(req *frizzante.Request, res *frizzante.Response) {
 
 	password := fmt.Sprintf("%x", sha256.Sum256([]byte(rawPassword)))
 
-	account := value.Wrap(database.Queries.SqlFindAccountById(context.Background(), id))
-	if account.Ok() {
+	_, accountError := database.Queries.SqlFindAccountById(context.Background(), id)
+	if nil == accountError {
 		res.SendView(frizzante.View{Name: "Register", Error: fmt.Errorf("account `%s` already exists", id)})
 		return
 	}
 
-	addAttempt := value.WrapNothing(database.Queries.SqlAddAccount(context.Background(), generated.SqlAddAccountParams{
+	addError := database.Queries.SqlAddAccount(context.Background(), generated.SqlAddAccountParams{
 		ID:          id,
 		DisplayName: displayName,
 		Password:    password,
-	}))
+	})
 
-	if !addAttempt.Ok() {
-		res.SendView(frizzante.View{Name: "Register", Error: addAttempt.Error})
+	if nil != addError {
+		res.SendView(frizzante.View{Name: "Register", Error: addError})
 		return
 	}
 

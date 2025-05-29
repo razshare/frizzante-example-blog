@@ -6,7 +6,6 @@ import (
 	"main/lib/database"
 	"main/lib/guards"
 	"main/lib/sessions"
-	"main/lib/value"
 )
 
 func GetAccount(req *frizzante.Request, res *frizzante.Response) {
@@ -15,12 +14,12 @@ func GetAccount(req *frizzante.Request, res *frizzante.Response) {
 	}
 
 	session := frizzante.SessionStart(req, res, sessions.Adapter)
-	account := value.Wrap(database.Queries.SqlFindAccountById(context.Background(), session.Data.AccountId))
+	account, accountError := database.Queries.SqlFindAccountById(context.Background(), session.Data.AccountId)
 
-	if !account.Ok() {
-		res.SendView(frizzante.View{Name: "Account", Error: account.Error})
+	if nil != accountError {
+		res.SendView(frizzante.View{Name: "Account", Error: accountError})
 		return
 	}
 
-	res.SendView(frizzante.View{Name: "Account", Data: account.Value})
+	res.SendView(frizzante.View{Name: "Account", Data: account})
 }

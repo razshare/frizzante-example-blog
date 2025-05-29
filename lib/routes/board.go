@@ -8,7 +8,6 @@ import (
 	"main/lib/generated"
 	"main/lib/guards"
 	"main/lib/sessions"
-	"main/lib/value"
 	"time"
 )
 
@@ -17,17 +16,17 @@ func GetBoard(req *frizzante.Request, res *frizzante.Response) {
 		return
 	}
 
-	articles := value.Wrap(database.Queries.SqlFindArticles(context.Background(), generated.SqlFindArticlesParams{
+	articles, articleError := database.Queries.SqlFindArticles(context.Background(), generated.SqlFindArticlesParams{
 		Offset: 0,
 		Limit:  10,
-	}))
+	})
 
-	if !articles.Ok() {
-		res.SendView(frizzante.View{Name: "Board", Error: articles.Error})
+	if nil != articleError {
+		res.SendView(frizzante.View{Name: "Board", Error: articleError})
 		return
 	}
 
-	res.SendView(frizzante.View{Name: "Board", Data: articles.Value})
+	res.SendView(frizzante.View{Name: "Board", Data: articles})
 }
 
 func PostBoard(req *frizzante.Request, res *frizzante.Response) {
@@ -35,39 +34,40 @@ func PostBoard(req *frizzante.Request, res *frizzante.Response) {
 		return
 	}
 
-	articleId := value.Wrap(uuid.NewV4())
-	if !articleId.Ok() {
-		res.SendView(frizzante.View{Name: "Board", Error: articleId.Error})
+	articleId, articleIdError := uuid.NewV4()
+	if nil != articleIdError {
+		res.SendView(frizzante.View{Name: "Board", Error: articleIdError})
 		return
 	}
 
 	form := req.ReceiveForm()
 	session := frizzante.SessionStart(req, res, sessions.Adapter)
-	addArticle := value.WrapNothing(database.Queries.SqlAddArticle(context.Background(), generated.SqlAddArticleParams{
-		ID:        articleId.Value.String(),
+
+	addArticleError := database.Queries.SqlAddArticle(context.Background(), generated.SqlAddArticleParams{
+		ID:        articleId.String(),
 		AccountID: session.Data.AccountId,
 		CreatedAt: time.Now().Unix(),
-	}))
-	if !addArticle.Ok() {
-		res.SendView(frizzante.View{Name: "Board", Error: addArticle.Error})
+	})
+	if nil != addArticleError {
+		res.SendView(frizzante.View{Name: "Board", Error: addArticleError})
 		return
 	}
 
-	articleContentId := value.Wrap(uuid.NewV4())
-	if !articleContentId.Ok() {
-		res.SendView(frizzante.View{Name: "Board", Error: articleContentId.Error})
+	articleContentId, articleContentIdError := uuid.NewV4()
+	if nil != articleContentIdError {
+		res.SendView(frizzante.View{Name: "Board", Error: articleContentIdError})
 		return
 	}
 
-	addContent := value.WrapNothing(database.Queries.SqlAddArticleContent(context.Background(), generated.SqlAddArticleContentParams{
-		ID:        articleContentId.Value.String(),
-		ArticleID: articleId.Value.String(),
+	addContentError := database.Queries.SqlAddArticleContent(context.Background(), generated.SqlAddArticleContentParams{
+		ID:        articleContentId.String(),
+		ArticleID: articleId.String(),
 		Title:     form.Get("title"),
 		Content:   form.Get("content"),
-	}))
+	})
 
-	if !addContent.Ok() {
-		res.SendView(frizzante.View{Name: "Board", Error: addContent.Error})
+	if nil != addContentError {
+		res.SendView(frizzante.View{Name: "Board", Error: addContentError})
 		return
 	}
 
