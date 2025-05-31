@@ -5,16 +5,16 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
-	"github.com/razshare/frizzante"
+	frz "github.com/razshare/frizzante"
 	"main/lib/database"
 	"main/lib/generated"
 )
 
-func GetRegister(c *frizzante.Connection) {
-	c.SendView(frizzante.View{Name: "Register"})
+func GetRegister(c *frz.Connection) {
+	c.SendView(frz.View{Name: "Register"})
 }
 
-func PostRegister(c *frizzante.Connection) {
+func PostRegister(c *frz.Connection) {
 	form := c.ReceiveForm()
 	id := form.Get("id")
 
@@ -22,7 +22,7 @@ func PostRegister(c *frizzante.Connection) {
 	rawPassword := form.Get("password")
 
 	if "" == id || "" == displayName || "" == rawPassword {
-		c.SendView(frizzante.View{Name: "Register", Error: errors.New("please fill all fields")})
+		c.SendView(frz.View{Name: "Register", Error: errors.New("please fill all fields")})
 		return
 	}
 
@@ -30,7 +30,7 @@ func PostRegister(c *frizzante.Connection) {
 
 	_, accountError := database.Queries.SqlFindAccountById(context.Background(), id)
 	if nil == accountError {
-		c.SendView(frizzante.View{Name: "Register", Error: fmt.Errorf("account `%s` already exists", id)})
+		c.SendView(frz.View{Name: "Register", Error: fmt.Errorf("account `%s` already exists", id)})
 		return
 	}
 
@@ -41,7 +41,7 @@ func PostRegister(c *frizzante.Connection) {
 	})
 
 	if nil != addError {
-		c.SendView(frizzante.View{Name: "Register", Error: addError})
+		c.SendView(frz.View{Name: "Register", Error: addError})
 		return
 	}
 

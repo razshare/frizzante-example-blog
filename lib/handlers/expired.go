@@ -1,7 +1,7 @@
 package handlers
 
-import "github.com/razshare/frizzante"
+import frz "github.com/razshare/frizzante"
 
-func GetExpired(c *frizzante.Connection) {
-	c.SendView(frizzante.View{Name: "Expired"})
+func GetExpired(c *frz.Connection) {
+	c.SendView(frz.View{Name: "Expired"})
 }
