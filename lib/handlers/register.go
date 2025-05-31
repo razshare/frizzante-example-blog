@@ -1,4 +1,4 @@
-package routes
+package handlers
 
 import (
 	"context"
@@ -10,19 +10,19 @@ import (
 	"main/lib/generated"
 )
 
-func GetRegister(req *frizzante.Request, res *frizzante.Response) {
-	res.SendView(frizzante.View{Name: "Register"})
+func GetRegister(c *frizzante.Connection) {
+	c.SendView(frizzante.View{Name: "Register"})
 }
 
-func PostRegister(req *frizzante.Request, res *frizzante.Response) {
-	form := req.ReceiveForm()
+func PostRegister(c *frizzante.Connection) {
+	form := c.ReceiveForm()
 	id := form.Get("id")
 
 	displayName := form.Get("displayName")
 	rawPassword := form.Get("password")
 
 	if "" == id || "" == displayName || "" == rawPassword {
-		res.SendView(frizzante.View{Name: "Register", Error: errors.New("please fill all fields")})
+		c.SendView(frizzante.View{Name: "Register", Error: errors.New("please fill all fields")})
 		return
 	}
 
@@ -30,7 +30,7 @@ func PostRegister(req *frizzante.Request, res *frizzante.Response) {
 
 	_, accountError := database.Queries.SqlFindAccountById(context.Background(), id)
 	if nil == accountError {
-		res.SendView(frizzante.View{Name: "Register", Error: fmt.Errorf("account `%s` already exists", id)})
+		c.SendView(frizzante.View{Name: "Register", Error: fmt.Errorf("account `%s` already exists", id)})
 		return
 	}
 
@@ -41,9 +41,9 @@ func PostRegister(req *frizzante.Request, res *frizzante.Response) {
 	})
 
 	if nil != addError {
-		res.SendView(frizzante.View{Name: "Register", Error: addError})
+		c.SendView(frizzante.View{Name: "Register", Error: addError})
 		return
 	}
 
-	res.SendNavigate("/login")
+	c.SendNavigate("/login")
 }

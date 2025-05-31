@@ -3,8 +3,8 @@ package main
 import (
 	"embed"
 	"github.com/razshare/frizzante"
+	"main/lib/handlers"
 	"main/lib/notifiers"
-	"main/lib/routes"
 )
 
 //go:embed .dist/*/**
@@ -16,15 +16,16 @@ var server = frizzante.
 
 func main() {
 	server.
-		WithRequestHandler("GET /", routes.GetDefault).
-		WithRequestHandler("GET /account", routes.GetAccount).
-		WithRequestHandler("GET /board", routes.GetBoard).
-		WithRequestHandler("POST /board", routes.PostBoard).
-		WithRequestHandler("GET /expired", routes.GetExpired).
-		WithRequestHandler("GET /login", routes.GetLogin).
-		WithRequestHandler("POST /login", routes.PostLogin).
-		WithRequestHandler("GET /logout", routes.GetLogout).
-		WithRequestHandler("GET /register", routes.GetRegister).
-		WithRequestHandler("POST /register", routes.PostRegister).
-		Start(dist)
+		WithDist(dist).
+		WithRequestHandler("GET /", handlers.GetDefault).
+		WithRequestHandler("GET /account", handlers.GetAccount).
+		WithRequestHandler("GET /board", handlers.GetBoard).
+		WithRequestHandler("POST /board", handlers.PostBoard).
+		WithRequestHandler("GET /expired", handlers.GetExpired).
+		WithRequestHandler("GET /login", handlers.GetLogin).
+		WithRequestHandler("POST /login", handlers.PostLogin).
+		WithRequestHandler("GET /logout", handlers.GetLogout).
+		WithRequestHandler("GET /register", handlers.GetRegister).
+		WithRequestHandler("POST /register", handlers.PostRegister).
+		Start()
 }
