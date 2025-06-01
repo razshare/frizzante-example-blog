@@ -3,54 +3,30 @@ package main
 import (
 	"embed"
 	frz "github.com/razshare/frizzante"
-	"main/lib"
+	"main/lib/guards"
 	"main/lib/handlers"
 	"main/lib/notifiers"
-	"time"
 )
 
 //go:embed .dist/*/**
 var dist embed.FS
-var public []frz.Guard
-var protected = []frz.Guard{
-	func(c *frz.Connection, allow func()) {
-		state, _ := frz.Session(c, lib.State{})
-
-		if !state.Verified {
-			c.SendNavigate("/login")
-			return
-		}
-
-		allow()
-	},
-	func(c *frz.Connection, allow func()) {
-		state, operator := frz.Session(c, lib.State{})
-		defer operator.Save(state)
-
-		if time.Since(state.LastActivity) > 30*time.Minute {
-			c.SendNavigate("/expired")
-			return
-		}
-
-		state.LastActivity = time.Now()
-		allow()
-	},
-}
 
 func main() {
 	frz.NewServer().
 		WithNotifier(notifiers.Console).
 		WithAddress("127.0.0.1:8080").
 		WithDist(dist).
-		Map(public, "GET /", handlers.GetDefault).
-		Map(public, "GET /expired", handlers.GetExpired).
-		Map(public, "GET /login", handlers.GetLogin).
-		Map(public, "POST /login", handlers.PostLogin).
-		Map(public, "GET /logout", handlers.GetLogout).
-		Map(public, "GET /register", handlers.GetRegister).
-		Map(public, "POST /register", handlers.PostRegister).
-		Map(protected, "GET /account", handlers.GetAccount).
-		Map(protected, "GET /board", handlers.GetBoard).
-		Map(protected, "POST /board", handlers.PostBoard).
+		AddGuard(frz.Guard{Handler: guards.Verified, Tags: []string{"protected"}}).
+		AddGuard(frz.Guard{Handler: guards.Active, Tags: []string{"protected"}}).
+		AddRoute(frz.Route{Pattern: "GET /", Handler: handlers.GetDefault}).
+		AddRoute(frz.Route{Pattern: "GET /expired", Handler: handlers.GetExpired}).
+		AddRoute(frz.Route{Pattern: "GET /login", Handler: handlers.GetLogin}).
+		AddRoute(frz.Route{Pattern: "POST /login", Handler: handlers.PostLogin}).
+		AddRoute(frz.Route{Pattern: "GET /logout", Handler: handlers.GetLogout}).
+		AddRoute(frz.Route{Pattern: "GET /register", Handler: handlers.GetRegister}).
+		AddRoute(frz.Route{Pattern: "POST /register", Handler: handlers.PostRegister}).
+		AddRoute(frz.Route{Pattern: "GET /account", Handler: handlers.GetAccount, Tags: []string{"protected"}}).
+		AddRoute(frz.Route{Pattern: "GET /board", Handler: handlers.GetBoard, Tags: []string{"protected"}}).
+		AddRoute(frz.Route{Pattern: "POST /board", Handler: handlers.PostBoard, Tags: []string{"protected"}}).
 		Start()
 }
