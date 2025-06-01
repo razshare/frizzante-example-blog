@@ -13,9 +13,9 @@ var dist embed.FS
 
 func main() {
 	frz.NewServer().
-		WithNotifier(notifiers.Console).
-		WithAddress("127.0.0.1:8080").
 		WithDist(dist).
+		WithAddress("127.0.0.1:8080").
+		WithNotifier(notifiers.Console).
 		AddGuard(frz.Guard{Handler: guards.Verified, Tags: []string{"protected"}}).
 		AddGuard(frz.Guard{Handler: guards.Active, Tags: []string{"protected"}}).
 		AddRoute(frz.Route{Pattern: "GET /", Handler: handlers.GetDefault}).
