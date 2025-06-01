@@ -1,5 +1,5 @@
 test: configure
-	CGO_ENABLED=1 go test
+	CGO_ENABLED=1 go test ./...
 
 build: configure
 	CGO_ENABLED=1 go build -o bin/app .
@@ -10,36 +10,28 @@ start: configure
 dev: clean update
 	go run lib/tools/prepare/main.go
 	which bin/air || curl -sSfL https://raw.githubusercontent.com/air-verse/air/master/install.sh | sh -s
-	make air-server & \
-	make dev-server & \
-	make dev-client & \
-	wait
-
-air-server:
 	DEV=1 CGO_ENABLED=1 ./bin/air \
 	--build.cmd "go build -o bin/app ." \
 	--build.bin "bin/app" \
-	--build.exclude_dir "out,bin,.sessions,.frizzante,node_modules" \
+	--build.exclude_dir "out,bin,.sessions,.archive,.frizzante,.git,.github,node_modules" \
 	--build.exclude_regex "_test.go" \
-	--build.include_ext "go,svelte,js,css,json" \
-	--build.log "go-build-errors.log"
+	--build.include_ext "go" \
+	--build.log "go-build-errors.log" & \
+	make www-dev-server & \
+	make www-dev-client & \
+	wait
 
-dev-server:
+www-dev-server:
 	DEV=1 bunx vite build --watch --ssr .frizzante/vite-project/render.server.js --outDir .dist/server && \
 	./node_modules/.bin/esbuild .dist/server/render.server.js --bundle --outfile=.dist/server/render.server.js --format=esm --allow-overwrite
 
-dev-client:
+www-dev-client:
 	DEV=1 bunx vite build --watch --outDir .dist/client
-
-generate:
-	rm lib/generated -fr
-	sqlc generate
 
 configure: update
 	go run lib/tools/prepare/main.go
-	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
-	make build-server & \
-	make build-client & \
+	make www-build-server & \
+	make www-build-client & \
 	wait
 
 clean:
@@ -60,11 +52,11 @@ update:
 	go mod tidy
 	bun update
 
-build-server:
+www-build-server:
 	bunx vite build --ssr .frizzante/vite-project/render.server.js --outDir .dist/server --emptyOutDir && \
 	./node_modules/.bin/esbuild .dist/server/render.server.js --bundle --outfile=.dist/server/render.server.js --format=esm --allow-overwrite
 
-build-client:
+www-build-client:
 	bunx vite build --outDir .dist/client --emptyOutDir
 
 certificate-interactive:
@@ -78,3 +70,6 @@ hooks:
 	printf "#!/usr/bin/env bash\n" > .git/hooks/pre-commit
 	printf "make test" >> .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
+
+route:
+	go run lib/tools/cli/main.go -route
