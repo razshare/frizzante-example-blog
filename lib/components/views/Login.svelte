@@ -19,9 +19,9 @@
     import {action} from "$frizzante/scripts/action.ts";
     import {href} from "$frizzante/scripts/href.ts";
     import {getContext} from "svelte";
-    import type {ServerContext} from "$frizzante/types.ts";
+    import type {View} from "$frizzante/types.ts";
 
-    const server = getContext("server") as ServerContext<any>
+    const view = getContext("view") as View<unknown>
 </script>
 
 <Layout title="Login">
@@ -37,9 +37,9 @@
             <p class="AdditionalOptions">
                 or <a {...href("/register")}>register a new account</a>
             </p>
-            {#if server.error}
+            {#if view.error}
                 <Center>
-                    <div class="error">{server.error}</div>
+                    <div class="error">{view.error}</div>
                 </Center>
             {/if}
         </article>

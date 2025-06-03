@@ -8,7 +8,7 @@ import (
 	"main/lib/notifiers"
 )
 
-//go:embed .dist/*/**
+//go:embed .dist/*
 var dist embed.FS
 
 func main() {

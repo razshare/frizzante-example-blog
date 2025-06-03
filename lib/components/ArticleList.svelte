@@ -1,6 +1,6 @@
 <script lang="ts">
     import {getContext} from "svelte";
-    import type {ServerContext} from "$frizzante/types";
+    import type {View} from "$frizzante/types.ts";
 
     type Article = {
         ID: string
@@ -9,12 +9,12 @@
         AccountId: string
     }
 
-    const server = getContext("server") as ServerContext<Article[]>
+    const server = getContext("view") as View<Article[]>
 </script>
 
 <hr/>
 <ul>
-    {#each server.data as article}
+    {#each server.data as article(article.ID)}
         {@const createdAt = new Date(article.CreatedAt * 1000)}
         <li class="list-row">
             <div>

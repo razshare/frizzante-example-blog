@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"crypto/sha256"
-	"errors"
 	"fmt"
 	frz "github.com/razshare/frizzante"
 	"main/lib"
@@ -29,7 +28,7 @@ func PostLogin(c *frz.Connection) {
 	})
 
 	if nil != accountError {
-		c.SendView(frz.View{Name: "Login", Error: errors.New("invalid credentials")})
+		c.SendView(frz.View{Name: "Login", Error: "invalid credentials"})
 		return
 	}
 

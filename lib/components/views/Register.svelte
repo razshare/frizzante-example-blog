@@ -14,9 +14,9 @@
     import Layout from "$lib/components/Layout.svelte";
     import Center from "$lib/components/Center.svelte";
     import {getContext} from "svelte";
-    import type {ServerContext} from "$frizzante/types.ts";
+    import type {View} from "$frizzante/types.ts";
 
-    const server = getContext("server") as ServerContext<any>
+    const view = getContext("view") as View<unknown>
 </script>
 
 <Layout title="Register">
@@ -32,9 +32,9 @@
                     or
                     <a {...href("/login")}>login</a>
                 </p>
-                {#if server.error}
+                {#if view.error}
                     <Center>
-                        <div class="error">{server.error}</div>
+                        <div class="error">{view.error}</div>
                     </Center>
                 {/if}
             </form>

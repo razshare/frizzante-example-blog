@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"crypto/sha256"
-	"errors"
 	"fmt"
 	frz "github.com/razshare/frizzante"
 	"main/lib/database"
@@ -22,7 +21,7 @@ func PostRegister(c *frz.Connection) {
 	rawPassword := form.Get("password")
 
 	if "" == id || "" == displayName || "" == rawPassword {
-		c.SendView(frz.View{Name: "Register", Error: errors.New("please fill all fields")})
+		c.SendView(frz.View{Name: "Register", Error: "please fill all fields"})
 		return
 	}
 
@@ -30,7 +29,7 @@ func PostRegister(c *frz.Connection) {
 
 	_, accountError := database.Queries.SqlFindAccountById(context.Background(), id)
 	if nil == accountError {
-		c.SendView(frz.View{Name: "Register", Error: fmt.Errorf("account `%s` already exists", id)})
+		c.SendView(frz.View{Name: "Register", Error: fmt.Sprintf("account `%s` already exists", id)})
 		return
 	}
 
@@ -41,7 +40,7 @@ func PostRegister(c *frz.Connection) {
 	})
 
 	if nil != addError {
-		c.SendView(frz.View{Name: "Register", Error: addError})
+		c.SendView(frz.View{Name: "Register", Error: addError.Error()})
 		return
 	}
 

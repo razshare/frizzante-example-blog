@@ -3,20 +3,20 @@
     import Menu from "$lib/components/Menu.svelte";
     import Push from "$lib/components/Push.svelte";
     import {getContext} from "svelte";
-    import type {ServerContext} from "$frizzante/types.ts";
+    import type {View} from "$frizzante/types.ts";
 
     type Account = {
         ID: string
         DisplayName: string
     }
 
-    const server = getContext("server") as ServerContext<Account>
+    const view = getContext("view") as View<Account>
 </script>
 
 <Layout title="Login">
     <Push top>
         <Menu/>
-        <h1>{server.data.DisplayName}</h1>
-        <small>{server.data.ID}</small>
+        <h1>{view.data.DisplayName}</h1>
+        <small>{view.data.ID}</small>
     </Push>
 </Layout>
