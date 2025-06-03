@@ -1,7 +1,7 @@
 package guards
 
 import (
-	frz "github.com/razshare/frizzante"
+	"github.com/razshare/frizzante/frz"
 	"main/lib"
 	"time"
 )

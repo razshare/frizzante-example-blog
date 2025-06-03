@@ -3,7 +3,7 @@ package handlers
 import (
 	"context"
 	uuid "github.com/nu7hatch/gouuid"
-	frz "github.com/razshare/frizzante"
+	"github.com/razshare/frizzante/frz"
 	"main/lib"
 	"main/lib/database"
 	"main/lib/generated"

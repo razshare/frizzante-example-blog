@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"context"
-	frz "github.com/razshare/frizzante"
+	"github.com/razshare/frizzante/frz"
 	"main/lib"
 	"main/lib/database"
 )

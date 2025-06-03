@@ -1,5 +1,5 @@
 package notifiers
 
-import frz "github.com/razshare/frizzante"
+import "github.com/razshare/frizzante/frz"
 
 var Console = frz.NewNotifier()
