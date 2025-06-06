@@ -1,8 +1,8 @@
 <script>
-    import {action} from "$frizzante/scripts/action.ts";
+    import {action} from "$frz/scripts/action.ts";
 </script>
 
-<form {...action("/board")}>
+<form method="POST" {...action("/board")}>
     <span>Title</span><br/>
     <input type="text" name="title">
     <span>Content</span><br/>

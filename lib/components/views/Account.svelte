@@ -3,7 +3,7 @@
     import Menu from "$lib/components/Menu.svelte";
     import Push from "$lib/components/Push.svelte";
     import {getContext} from "svelte";
-    import type {View} from "$frizzante/types.ts";
+    import type {View} from "$frz/types.ts";
 
     type Account = {
         ID: string

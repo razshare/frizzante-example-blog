@@ -8,12 +8,15 @@ import (
 	"main/lib/notifiers"
 )
 
-//go:embed .dist/*
+//go:embed dist
 var dist embed.FS
 
 func main() {
 	frz.NewServer().
-		WithDist(dist).
+		WithEfs(dist).
+		WithPublicRoot("dist/client").
+		WithViewIndex("dist/client/index.html").
+		WithViewServer("dist/server.js").
 		WithAddress("127.0.0.1:8080").
 		WithNotifier(notifiers.Console).
 		AddGuard(frz.Guard{Name: "verified", Handler: guards.Verified, Tags: []string{"protected"}}).

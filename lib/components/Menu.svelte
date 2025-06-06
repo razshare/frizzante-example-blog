@@ -5,9 +5,9 @@
 </style>
 
 <script lang="ts">
-    import {href} from "$frizzante/scripts/href.ts";
+    import {href} from "$frz/scripts/href.ts";
     import {getContext} from "svelte";
-    import type {View} from "$frizzante/types.ts";
+    import type {View} from "$frz/types.ts";
 
     const view = getContext("view") as View<unknown>
 </script>

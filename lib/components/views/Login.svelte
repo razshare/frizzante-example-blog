@@ -16,10 +16,10 @@
 <script lang="ts">
     import Layout from "$lib/components/Layout.svelte";
     import Center from "$lib/components/Center.svelte";
-    import {action} from "$frizzante/scripts/action.ts";
-    import {href} from "$frizzante/scripts/href.ts";
+    import {action} from "$frz/scripts/action.ts";
+    import {href} from "$frz/scripts/href.ts";
     import {getContext} from "svelte";
-    import type {View} from "$frizzante/types.ts";
+    import type {View} from "$frz/types.ts";
 
     const view = getContext("view") as View<unknown>
 </script>
@@ -28,7 +28,7 @@
     <Center>
         <article>
             <h1 class="LoginTitle">Login</h1>
-            <form {...action("/login")}>
+            <form method="POST" {...action("/login")}>
                 <input type="email" name="id" placeholder="Email" aria-label="Email">
                 <input type="password" name="password" placeholder="Password" aria-label="Password">
                 <button>Continue</button>

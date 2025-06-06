@@ -1,6 +1,6 @@
 <script lang="ts">
     import {getContext} from "svelte";
-    import type {View} from "$frizzante/types.ts";
+    import type {View} from "$frz/types.ts";
 
     type Article = {
         ID: string
