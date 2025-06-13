@@ -16,10 +16,10 @@
 <script lang="ts">
     import Layout from "$lib/components/Layout.svelte";
     import Center from "$lib/components/Center.svelte";
-    import {action} from "$frz/scripts/action.ts";
-    import {href} from "$frz/scripts/href.ts";
+    import {action} from "$lib/utilities/scripts/action.ts";
+    import {href} from "$lib/utilities/scripts/href.ts";
     import {getContext} from "svelte";
-    import type {View} from "$frz/types.ts";
+    import type {View} from "$lib/utilities/types.ts";
 
     const view = getContext("view") as View<unknown>
 </script>

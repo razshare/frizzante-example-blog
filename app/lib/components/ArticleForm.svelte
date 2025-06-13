@@ -1,5 +1,5 @@
 <script>
-    import {action} from "$frz/scripts/action.ts";
+    import {action} from "$lib/utilities/scripts/action.ts";
 </script>
 
 <form method="POST" {...action("/board")}>
