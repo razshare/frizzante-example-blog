@@ -15,17 +15,12 @@ dev: configure-air update check
 	make package-watch & \
 	wait
 
-update: configure-bun
-	go mod tidy
-	cd app && \
-	../bin/bun update
-
-check: configure-bun
+check: update
 	cd app && \
 	../bin/bun x eslint . && \
 	../bin/bun x svelte-check --tsconfig ./tsconfig.json
 
-package-watch: configure-bun
+package-watch: update
 	rm app/dist -fr
 	mkdir app/dist/client -p
 	touch app/dist/client/index.html
@@ -35,7 +30,7 @@ package-watch: configure-bun
 	../bin/bun x vite build --logLevel info --outDir dist/client --emptyOutDir --watch & \
 	wait
 
-package: configure-bun
+package: update
 	rm app/dist -fr
 	mkdir app/dist/client -p
 	touch app/dist/client/index.html
@@ -43,6 +38,11 @@ package: configure-bun
 	../bin/bun x vite build --logLevel info --ssr lib/utilities/frz/scripts/server.ts --outDir dist --emptyOutDir && \
 	../bin/bun x vite build --logLevel info --outDir dist/client --emptyOutDir && \
 	node_modules/.bin/esbuild dist/server.js --bundle --outfile=dist/server.js --format=cjs --allow-overwrite
+
+update: configure-bun
+	go mod tidy
+	cd app && \
+	../bin/bun update
 
 configure-bun:
 	# Check requirements...
