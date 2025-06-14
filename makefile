@@ -1,11 +1,20 @@
 ###### Composites ######
 test: update check package
+	rm app/dist -fr
+	mkdir app/dist/client -p
+	touch app/dist/client/index.html
 	CGO_ENABLED=1 go test ./...
 
 build: update check package
+	rm app/dist -fr
+	mkdir app/dist/client -p
+	touch app/dist/client/index.html
 	CGO_ENABLED=1 go build -o bin/app .
 
 dev: configure-air update check
+	rm app/dist -fr
+	mkdir app/dist/client -p
+	touch app/dist/client/index.html
 	DEV=1 CGO_ENABLED=1 ./bin/air \
 	--build.cmd "go build -o bin/app ." \
 	--build.bin "bin/app" \
@@ -22,9 +31,6 @@ check: update
 	../bin/bun x svelte-check --tsconfig ./tsconfig.json
 
 package-watch: update
-	rm app/dist -fr
-	mkdir app/dist/client -p
-	touch app/dist/client/index.html
 	cd app && \
 	../bin/bun x vite build --logLevel info --ssr lib/utilities/frz/scripts/server.ts --outDir dist --emptyOutDir --watch & \
 	cd app && \
@@ -32,9 +38,6 @@ package-watch: update
 	wait
 
 package: update
-	rm app/dist -fr
-	mkdir app/dist/client -p
-	touch app/dist/client/index.html
 	cd app && \
 	../bin/bun x vite build --logLevel info --ssr lib/utilities/frz/scripts/server.ts --outDir dist --emptyOutDir && \
 	../bin/bun x vite build --logLevel info --outDir dist/client --emptyOutDir && \
