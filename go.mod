@@ -5,7 +5,7 @@ go 1.24
 require (
 	github.com/mattn/go-sqlite3 v1.14.28
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
-	github.com/razshare/frizzante v1.0.5
+	github.com/razshare/frizzante v1.2.0
 )
 
 require (

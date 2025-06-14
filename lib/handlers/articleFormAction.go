@@ -2,18 +2,34 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	uuid "github.com/nu7hatch/gouuid"
 	"github.com/razshare/frizzante/frz"
 	"main/lib"
 	"main/lib/database"
 	"main/lib/generated"
+	"strings"
 	"time"
 )
 
 func ArticleFormAction(c *frz.Connection) {
 	// Find page.
-	page := c.ReceiveQuery("page")
+	form := c.ReceiveForm()
+	title := strings.Trim(form.Get("title"), " ")
+	content := strings.Trim(form.Get("content"), " ")
+
+	if title == "" {
+		c.SendView(frz.View{Name: "ArticleForm", Data: map[string]any{
+			"error": "article title cannot be empty",
+		}})
+		return
+	}
+
+	if content == "" {
+		c.SendView(frz.View{Name: "ArticleForm", Data: map[string]any{
+			"error": "article content cannot be empty",
+		}})
+		return
+	}
 
 	state, _ := frz.Session(c, lib.State{})
 	articleId, articleIdError := uuid.NewV4()
@@ -24,13 +40,13 @@ func ArticleFormAction(c *frz.Connection) {
 		return
 	}
 
-	form := c.ReceiveForm()
 	addArticleError := database.Queries.AddArticle(context.Background(), generated.AddArticleParams{
 		ID:        articleId.String(),
-		Title:     form.Get("title"),
+		Title:     title,
 		AccountID: state.AccountId,
 		CreatedAt: time.Now().Unix(),
 	})
+
 	if nil != addArticleError {
 		c.SendView(frz.View{Name: "Board", Data: map[string]any{
 			"error": addArticleError.Error(),
@@ -49,18 +65,13 @@ func ArticleFormAction(c *frz.Connection) {
 	addContentError := database.Queries.AddArticleContent(context.Background(), generated.AddArticleContentParams{
 		ID:        articleContentId.String(),
 		ArticleID: articleId.String(),
-		Content:   form.Get("content"),
+		Content:   content,
 	})
 
 	if nil != addContentError {
 		c.SendView(frz.View{Name: "Board", Data: map[string]any{
 			"error": addContentError.Error(),
 		}})
-		return
-	}
-
-	if page != "" {
-		c.SendNavigate(fmt.Sprintf("/board?page=%s", page))
 		return
 	}
 
