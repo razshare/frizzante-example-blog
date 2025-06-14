@@ -2,6 +2,7 @@
     div {
         justify-self: center;
         align-self: center;
+        text-align: center;
     }
 </style>
 
