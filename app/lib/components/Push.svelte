@@ -17,7 +17,7 @@
 </style>
 
 <script lang="ts">
-    import type {Snippet} from "svelte";
+    import type { Snippet } from "svelte"
 
     type Props = {
         left?: boolean
@@ -36,11 +36,6 @@
     }: Props = $props()
 </script>
 
-<div
-        class:left
-        class:right
-        class:top
-        class:bottom
->
+<div class:left class:right class:top class:bottom>
     {@render children()}
 </div>

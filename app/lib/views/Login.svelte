@@ -7,21 +7,20 @@
         width: 100%;
     }
 
-    .LoginTitle, .AdditionalOptions {
+    .LoginTitle,
+    .AdditionalOptions {
         text-align: center;
     }
-
 </style>
 
 <script lang="ts">
-    import Layout from "$lib/components/Layout.svelte";
-    import Center from "$lib/components/Center.svelte";
-    import {action} from "$lib/utilities/scripts/action.ts";
-    import {href} from "$lib/utilities/scripts/href.ts";
-    import {getContext} from "svelte";
-    import type {View} from "$lib/utilities/types.ts";
+    import Layout from "$lib/components/Layout.svelte"
+    import Center from "$lib/components/Center.svelte"
+    import { action } from "$lib/utilities/scripts/action.ts"
+    import { href } from "$lib/utilities/scripts/href.ts"
 
-    const view = getContext("view") as View<unknown>
+    type Props = { error: string }
+    let {error}:Props = $props()
 </script>
 
 <Layout title="Login">
@@ -29,17 +28,27 @@
         <article>
             <h1 class="LoginTitle">Login</h1>
             <form method="POST" {...action("/login")}>
-                <input type="email" name="id" placeholder="Email" aria-label="Email">
-                <input type="password" name="password" placeholder="Password" aria-label="Password">
+                <input
+                    type="email"
+                    name="id"
+                    placeholder="Email"
+                    aria-label="Email"
+                />
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    aria-label="Password"
+                />
                 <button>Continue</button>
             </form>
-            <br/>
+            <br />
             <p class="AdditionalOptions">
                 or <a {...href("/register")}>register a new account</a>
             </p>
-            {#if view.error}
+            {#if error}
                 <Center>
-                    <div class="error">{view.error}</div>
+                    <div class="error">{error}</div>
                 </Center>
             {/if}
         </article>

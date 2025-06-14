@@ -5,7 +5,7 @@ import (
 	"main/lib"
 )
 
-func GetLogout(c *frz.Connection) {
+func LogoutAction(c *frz.Connection) {
 	state, operator := frz.Session(c, lib.State{})
 	defer operator.Save(state)
 	state.Verified = false

@@ -2,67 +2,77 @@ package handlers
 
 import (
 	"context"
-	uuid "github.com/nu7hatch/gouuid"
 	"github.com/razshare/frizzante/frz"
-	"main/lib"
 	"main/lib/database"
 	"main/lib/generated"
-	"time"
+	"main/lib/notifiers"
+	"strconv"
 )
 
-func GetBoard(c *frz.Connection) {
-	articles, articleError := database.Queries.SqlFindArticles(
+var pageSize int64 = 10
+
+func ReceivePage(c *frz.Connection) int64 {
+	var p int64
+
+	// Find page.
+	if stringified := c.ReceiveQuery("page"); stringified != "" {
+		var parseError error
+		p, parseError = strconv.ParseInt(stringified, 10, 64)
+		if parseError != nil {
+			notifiers.Console.SendError(parseError)
+			return 0
+		}
+	}
+
+	// Guard against unusual pages.
+	if p <= 0 {
+		p = 0
+	}
+	return p
+}
+
+func Board(c *frz.Connection) {
+	// Find page.
+	page := ReceivePage(c)
+
+	// Find articles.
+	articles, articleError := database.Queries.FindArticles(
 		context.Background(),
-		generated.SqlFindArticlesParams{
-			Offset: 0,
-			Limit:  10,
+		generated.FindArticlesParams{
+			Offset: pageSize * page,
+			Limit:  pageSize,
 		},
 	)
 
+	// Make sure "articles" is not nil.
+	if articles == nil {
+		articles = []generated.FindArticlesRow{}
+	}
+
+	// Check for errors.
 	if nil != articleError {
-		c.SendView(frz.View{Name: "Board", Error: articleError.Error()})
+		c.SendView(frz.View{Name: "Board", Data: map[string]any{
+			"error": articleError.Error(),
+		}})
 		return
 	}
 
-	c.SendView(frz.View{Name: "Board", Data: articles})
-}
+	// Find the first item in the next page.
+	nextArticles, nextArticlesError := database.Queries.FindArticles(
+		context.Background(),
+		generated.FindArticlesParams{
+			Offset: pageSize * (page + 1),
+			Limit:  1,
+		},
+	)
 
-func PostBoard(c *frz.Connection) {
-	state, _ := frz.Session(c, lib.State{})
-	articleId, articleIdError := uuid.NewV4()
-	if nil != articleIdError {
-		c.SendView(frz.View{Name: "Board", Error: articleIdError.Error()})
-		return
-	}
+	// Check if next page has items.
+	hasMore := nextArticlesError == nil && nextArticles != nil && len(nextArticles) > 0
 
-	form := c.ReceiveForm()
-	addArticleError := database.Queries.SqlAddArticle(context.Background(), generated.SqlAddArticleParams{
-		ID:        articleId.String(),
-		AccountID: state.AccountId,
-		CreatedAt: time.Now().Unix(),
-	})
-	if nil != addArticleError {
-		c.SendView(frz.View{Name: "Board", Error: addArticleError.Error()})
-		return
-	}
-
-	articleContentId, articleContentIdError := uuid.NewV4()
-	if nil != articleContentIdError {
-		c.SendView(frz.View{Name: "Board", Error: articleContentIdError.Error()})
-		return
-	}
-
-	addContentError := database.Queries.SqlAddArticleContent(context.Background(), generated.SqlAddArticleContentParams{
-		ID:        articleContentId.String(),
-		ArticleID: articleId.String(),
-		Title:     form.Get("title"),
-		Content:   form.Get("content"),
-	})
-
-	if nil != addContentError {
-		c.SendView(frz.View{Name: "Board", Error: addContentError.Error()})
-		return
-	}
-
-	c.SendNavigate("/board")
+	// Send the view.
+	c.SendView(frz.View{Name: "Board", Data: map[string]any{
+		"page":     page,
+		"hasMore":  hasMore,
+		"articles": articles,
+	}})
 }

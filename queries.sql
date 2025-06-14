@@ -1,11 +1,11 @@
--- name: SqlVerifyAccount :one
+-- name: VerifyAccount :one
 select id
 from user_account
 where id = ?
   and Password = ?
 limit 1;
 
--- name: SqlAddAccount :exec
+-- name: AddAccount :exec
 insert into user_account(id,
                          display_name,
                          password,
@@ -13,73 +13,77 @@ insert into user_account(id,
                          updated_at)
 values (?, ?, ?, ?, ?);
 
--- name: SqlChangeAccount :exec
+-- name: ChangeAccount :exec
 update user_account
 set display_name = ?,
     password     = ?,
     updated_at   = ?
 where id = ?;
 
--- name: SqlAddArticle :exec
+-- name: AddArticle :exec
 insert into article(id,
+                    title,
                     created_at,
                     account_id)
-values (?, ?, ?);
+values (?, ?, ?, ?);
 
--- name: SqlAddArticleContent :exec
+-- name: AddArticleContent :exec
 insert into article_content(id,
                             created_at,
                             article_id,
-                            title,
                             content)
-values (?, ?, ?, ?, ?);
+values (?, ?, ?, ?);
 
--- name: SqlFindArticleContent :one
+-- name: FindArticleContent :one
 select content
 from article_content
 where article_id = ?
 order by created_at desc
 limit 1;
 
--- name: SqlRemoveArticle :exec
+-- name: RemoveArticle :exec
 delete
 from article
 where id = ?;
 
--- name: SqlAddComment :exec
+-- name: AddComment :exec
 insert into comment(id,
                     created_at,
                     account_id,
                     article_id)
 values (?, ?, ?, ?);
 
--- name: SqlAddCommentContent :exec
+-- name: AddCommentContent :exec
 insert into comment_content(id,
                             created_at,
                             comment_id,
                             content)
 values (?, ?, ?, ?);
 
--- name: SqlFindCommentContent :one
+-- name: FindCommentContent :one
 select content
 from comment_content
 where id = ?
 order by created_at desc
 limit 1;
 
--- name: SqlRemoveComment :exec
+-- name: RemoveComment :exec
 delete
 from comment
 where id = ?;
 
--- name: SqlFindArticles :many
-select id,
-       created_at,
-       account_id
+-- name: FindArticles :many
+select article.id,
+       article.title,
+       article.created_at,
+       article.account_id,
+       article_content.content
 from article
+inner join article_content on article.id = article_content.article_id
+order by article.created_at desc
 limit ? offset ?;
 
--- name: SqlFindCommentsByArticleId :many
+-- name: FindCommentsByArticleId :many
 select id,
        created_at,
        account_id,
@@ -88,7 +92,7 @@ from comment
 where article_id = ?
 limit ? offset ?;
 
--- name: SqlFindAccounts :many
+-- name: FindAccounts :many
 select id,
        display_name,
        created_at,
@@ -96,7 +100,7 @@ select id,
 from user_account
 limit ? offset ?;
 
--- name: SqlFindAccountById :one
+-- name: FindAccountById :one
 select id,
        display_name,
        created_at,

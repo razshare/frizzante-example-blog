@@ -9,7 +9,7 @@ import (
 	"context"
 )
 
-const sqlAddAccount = `-- name: SqlAddAccount :exec
+const addAccount = `-- name: AddAccount :exec
 insert into user_account(id,
                          display_name,
                          password,
@@ -18,7 +18,7 @@ insert into user_account(id,
 values (?, ?, ?, ?, ?)
 `
 
-type SqlAddAccountParams struct {
+type AddAccountParams struct {
 	ID          string
 	DisplayName string
 	Password    string
@@ -26,8 +26,8 @@ type SqlAddAccountParams struct {
 	UpdatedAt   int64
 }
 
-func (q *Queries) SqlAddAccount(ctx context.Context, arg SqlAddAccountParams) error {
-	_, err := q.db.ExecContext(ctx, sqlAddAccount,
+func (q *Queries) AddAccount(ctx context.Context, arg AddAccountParams) error {
+	_, err := q.db.ExecContext(ctx, addAccount,
 		arg.ID,
 		arg.DisplayName,
 		arg.Password,
@@ -37,53 +37,57 @@ func (q *Queries) SqlAddAccount(ctx context.Context, arg SqlAddAccountParams) er
 	return err
 }
 
-const sqlAddArticle = `-- name: SqlAddArticle :exec
+const addArticle = `-- name: AddArticle :exec
 insert into article(id,
+                    title,
                     created_at,
                     account_id)
-values (?, ?, ?)
+values (?, ?, ?, ?)
 `
 
-type SqlAddArticleParams struct {
+type AddArticleParams struct {
 	ID        string
+	Title     string
 	CreatedAt int64
 	AccountID string
 }
 
-func (q *Queries) SqlAddArticle(ctx context.Context, arg SqlAddArticleParams) error {
-	_, err := q.db.ExecContext(ctx, sqlAddArticle, arg.ID, arg.CreatedAt, arg.AccountID)
+func (q *Queries) AddArticle(ctx context.Context, arg AddArticleParams) error {
+	_, err := q.db.ExecContext(ctx, addArticle,
+		arg.ID,
+		arg.Title,
+		arg.CreatedAt,
+		arg.AccountID,
+	)
 	return err
 }
 
-const sqlAddArticleContent = `-- name: SqlAddArticleContent :exec
+const addArticleContent = `-- name: AddArticleContent :exec
 insert into article_content(id,
                             created_at,
                             article_id,
-                            title,
                             content)
-values (?, ?, ?, ?, ?)
+values (?, ?, ?, ?)
 `
 
-type SqlAddArticleContentParams struct {
+type AddArticleContentParams struct {
 	ID        string
 	CreatedAt int64
 	ArticleID string
-	Title     string
 	Content   string
 }
 
-func (q *Queries) SqlAddArticleContent(ctx context.Context, arg SqlAddArticleContentParams) error {
-	_, err := q.db.ExecContext(ctx, sqlAddArticleContent,
+func (q *Queries) AddArticleContent(ctx context.Context, arg AddArticleContentParams) error {
+	_, err := q.db.ExecContext(ctx, addArticleContent,
 		arg.ID,
 		arg.CreatedAt,
 		arg.ArticleID,
-		arg.Title,
 		arg.Content,
 	)
 	return err
 }
 
-const sqlAddComment = `-- name: SqlAddComment :exec
+const addComment = `-- name: AddComment :exec
 insert into comment(id,
                     created_at,
                     account_id,
@@ -91,15 +95,15 @@ insert into comment(id,
 values (?, ?, ?, ?)
 `
 
-type SqlAddCommentParams struct {
+type AddCommentParams struct {
 	ID        string
 	CreatedAt int64
 	AccountID string
 	ArticleID string
 }
 
-func (q *Queries) SqlAddComment(ctx context.Context, arg SqlAddCommentParams) error {
-	_, err := q.db.ExecContext(ctx, sqlAddComment,
+func (q *Queries) AddComment(ctx context.Context, arg AddCommentParams) error {
+	_, err := q.db.ExecContext(ctx, addComment,
 		arg.ID,
 		arg.CreatedAt,
 		arg.AccountID,
@@ -108,7 +112,7 @@ func (q *Queries) SqlAddComment(ctx context.Context, arg SqlAddCommentParams) er
 	return err
 }
 
-const sqlAddCommentContent = `-- name: SqlAddCommentContent :exec
+const addCommentContent = `-- name: AddCommentContent :exec
 insert into comment_content(id,
                             created_at,
                             comment_id,
@@ -116,15 +120,15 @@ insert into comment_content(id,
 values (?, ?, ?, ?)
 `
 
-type SqlAddCommentContentParams struct {
+type AddCommentContentParams struct {
 	ID        string
 	CreatedAt int64
 	CommentID string
 	Content   string
 }
 
-func (q *Queries) SqlAddCommentContent(ctx context.Context, arg SqlAddCommentContentParams) error {
-	_, err := q.db.ExecContext(ctx, sqlAddCommentContent,
+func (q *Queries) AddCommentContent(ctx context.Context, arg AddCommentContentParams) error {
+	_, err := q.db.ExecContext(ctx, addCommentContent,
 		arg.ID,
 		arg.CreatedAt,
 		arg.CommentID,
@@ -133,7 +137,7 @@ func (q *Queries) SqlAddCommentContent(ctx context.Context, arg SqlAddCommentCon
 	return err
 }
 
-const sqlChangeAccount = `-- name: SqlChangeAccount :exec
+const changeAccount = `-- name: ChangeAccount :exec
 update user_account
 set display_name = ?,
     password     = ?,
@@ -141,15 +145,15 @@ set display_name = ?,
 where id = ?
 `
 
-type SqlChangeAccountParams struct {
+type ChangeAccountParams struct {
 	DisplayName string
 	Password    string
 	UpdatedAt   int64
 	ID          string
 }
 
-func (q *Queries) SqlChangeAccount(ctx context.Context, arg SqlChangeAccountParams) error {
-	_, err := q.db.ExecContext(ctx, sqlChangeAccount,
+func (q *Queries) ChangeAccount(ctx context.Context, arg ChangeAccountParams) error {
+	_, err := q.db.ExecContext(ctx, changeAccount,
 		arg.DisplayName,
 		arg.Password,
 		arg.UpdatedAt,
@@ -158,7 +162,7 @@ func (q *Queries) SqlChangeAccount(ctx context.Context, arg SqlChangeAccountPara
 	return err
 }
 
-const sqlFindAccountById = `-- name: SqlFindAccountById :one
+const findAccountById = `-- name: FindAccountById :one
 select id,
        display_name,
        created_at,
@@ -167,16 +171,16 @@ from user_account
 where id = ?
 `
 
-type SqlFindAccountByIdRow struct {
+type FindAccountByIdRow struct {
 	ID          string
 	DisplayName string
 	CreatedAt   int64
 	UpdatedAt   int64
 }
 
-func (q *Queries) SqlFindAccountById(ctx context.Context, id string) (SqlFindAccountByIdRow, error) {
-	row := q.db.QueryRowContext(ctx, sqlFindAccountById, id)
-	var i SqlFindAccountByIdRow
+func (q *Queries) FindAccountById(ctx context.Context, id string) (FindAccountByIdRow, error) {
+	row := q.db.QueryRowContext(ctx, findAccountById, id)
+	var i FindAccountByIdRow
 	err := row.Scan(
 		&i.ID,
 		&i.DisplayName,
@@ -186,7 +190,7 @@ func (q *Queries) SqlFindAccountById(ctx context.Context, id string) (SqlFindAcc
 	return i, err
 }
 
-const sqlFindAccounts = `-- name: SqlFindAccounts :many
+const findAccounts = `-- name: FindAccounts :many
 select id,
        display_name,
        created_at,
@@ -195,27 +199,27 @@ from user_account
 limit ? offset ?
 `
 
-type SqlFindAccountsParams struct {
+type FindAccountsParams struct {
 	Limit  int64
 	Offset int64
 }
 
-type SqlFindAccountsRow struct {
+type FindAccountsRow struct {
 	ID          string
 	DisplayName string
 	CreatedAt   int64
 	UpdatedAt   int64
 }
 
-func (q *Queries) SqlFindAccounts(ctx context.Context, arg SqlFindAccountsParams) ([]SqlFindAccountsRow, error) {
-	rows, err := q.db.QueryContext(ctx, sqlFindAccounts, arg.Limit, arg.Offset)
+func (q *Queries) FindAccounts(ctx context.Context, arg FindAccountsParams) ([]FindAccountsRow, error) {
+	rows, err := q.db.QueryContext(ctx, findAccounts, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []SqlFindAccountsRow
+	var items []FindAccountsRow
 	for rows.Next() {
-		var i SqlFindAccountsRow
+		var i FindAccountsRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.DisplayName,
@@ -235,7 +239,7 @@ func (q *Queries) SqlFindAccounts(ctx context.Context, arg SqlFindAccountsParams
 	return items, nil
 }
 
-const sqlFindArticleContent = `-- name: SqlFindArticleContent :one
+const findArticleContent = `-- name: FindArticleContent :one
 select content
 from article_content
 where article_id = ?
@@ -243,36 +247,54 @@ order by created_at desc
 limit 1
 `
 
-func (q *Queries) SqlFindArticleContent(ctx context.Context, articleID string) (string, error) {
-	row := q.db.QueryRowContext(ctx, sqlFindArticleContent, articleID)
+func (q *Queries) FindArticleContent(ctx context.Context, articleID string) (string, error) {
+	row := q.db.QueryRowContext(ctx, findArticleContent, articleID)
 	var content string
 	err := row.Scan(&content)
 	return content, err
 }
 
-const sqlFindArticles = `-- name: SqlFindArticles :many
-select id,
-       created_at,
-       account_id
+const findArticles = `-- name: FindArticles :many
+select article.id,
+       article.title,
+       article.created_at,
+       article.account_id,
+       article_content.content
 from article
+inner join article_content on article.id = article_content.article_id
+order by article.created_at desc
 limit ? offset ?
 `
 
-type SqlFindArticlesParams struct {
+type FindArticlesParams struct {
 	Limit  int64
 	Offset int64
 }
 
-func (q *Queries) SqlFindArticles(ctx context.Context, arg SqlFindArticlesParams) ([]Article, error) {
-	rows, err := q.db.QueryContext(ctx, sqlFindArticles, arg.Limit, arg.Offset)
+type FindArticlesRow struct {
+	ID        string
+	Title     string
+	CreatedAt int64
+	AccountID string
+	Content   string
+}
+
+func (q *Queries) FindArticles(ctx context.Context, arg FindArticlesParams) ([]FindArticlesRow, error) {
+	rows, err := q.db.QueryContext(ctx, findArticles, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Article
+	var items []FindArticlesRow
 	for rows.Next() {
-		var i Article
-		if err := rows.Scan(&i.ID, &i.CreatedAt, &i.AccountID); err != nil {
+		var i FindArticlesRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.CreatedAt,
+			&i.AccountID,
+			&i.Content,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -286,7 +308,7 @@ func (q *Queries) SqlFindArticles(ctx context.Context, arg SqlFindArticlesParams
 	return items, nil
 }
 
-const sqlFindCommentContent = `-- name: SqlFindCommentContent :one
+const findCommentContent = `-- name: FindCommentContent :one
 select content
 from comment_content
 where id = ?
@@ -294,14 +316,14 @@ order by created_at desc
 limit 1
 `
 
-func (q *Queries) SqlFindCommentContent(ctx context.Context, id string) (string, error) {
-	row := q.db.QueryRowContext(ctx, sqlFindCommentContent, id)
+func (q *Queries) FindCommentContent(ctx context.Context, id string) (string, error) {
+	row := q.db.QueryRowContext(ctx, findCommentContent, id)
 	var content string
 	err := row.Scan(&content)
 	return content, err
 }
 
-const sqlFindCommentsByArticleId = `-- name: SqlFindCommentsByArticleId :many
+const findCommentsByArticleId = `-- name: FindCommentsByArticleId :many
 select id,
        created_at,
        account_id,
@@ -311,14 +333,14 @@ where article_id = ?
 limit ? offset ?
 `
 
-type SqlFindCommentsByArticleIdParams struct {
+type FindCommentsByArticleIdParams struct {
 	ArticleID string
 	Limit     int64
 	Offset    int64
 }
 
-func (q *Queries) SqlFindCommentsByArticleId(ctx context.Context, arg SqlFindCommentsByArticleIdParams) ([]Comment, error) {
-	rows, err := q.db.QueryContext(ctx, sqlFindCommentsByArticleId, arg.ArticleID, arg.Limit, arg.Offset)
+func (q *Queries) FindCommentsByArticleId(ctx context.Context, arg FindCommentsByArticleIdParams) ([]Comment, error) {
+	rows, err := q.db.QueryContext(ctx, findCommentsByArticleId, arg.ArticleID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -345,29 +367,29 @@ func (q *Queries) SqlFindCommentsByArticleId(ctx context.Context, arg SqlFindCom
 	return items, nil
 }
 
-const sqlRemoveArticle = `-- name: SqlRemoveArticle :exec
+const removeArticle = `-- name: RemoveArticle :exec
 delete
 from article
 where id = ?
 `
 
-func (q *Queries) SqlRemoveArticle(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, sqlRemoveArticle, id)
+func (q *Queries) RemoveArticle(ctx context.Context, id string) error {
+	_, err := q.db.ExecContext(ctx, removeArticle, id)
 	return err
 }
 
-const sqlRemoveComment = `-- name: SqlRemoveComment :exec
+const removeComment = `-- name: RemoveComment :exec
 delete
 from comment
 where id = ?
 `
 
-func (q *Queries) SqlRemoveComment(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, sqlRemoveComment, id)
+func (q *Queries) RemoveComment(ctx context.Context, id string) error {
+	_, err := q.db.ExecContext(ctx, removeComment, id)
 	return err
 }
 
-const sqlVerifyAccount = `-- name: SqlVerifyAccount :one
+const verifyAccount = `-- name: VerifyAccount :one
 select id
 from user_account
 where id = ?
@@ -375,13 +397,13 @@ where id = ?
 limit 1
 `
 
-type SqlVerifyAccountParams struct {
+type VerifyAccountParams struct {
 	ID       string
 	Password string
 }
 
-func (q *Queries) SqlVerifyAccount(ctx context.Context, arg SqlVerifyAccountParams) (string, error) {
-	row := q.db.QueryRowContext(ctx, sqlVerifyAccount, arg.ID, arg.Password)
+func (q *Queries) VerifyAccount(ctx context.Context, arg VerifyAccountParams) (string, error) {
+	row := q.db.QueryRowContext(ctx, verifyAccount, arg.ID, arg.Password)
 	var id string
 	err := row.Scan(&id)
 	return id, err

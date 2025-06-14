@@ -11,6 +11,7 @@ create table if not exists user_account
 create table if not exists article
 (
     id         varchar(36) not null,
+    title      varchar(36) not null,
     created_at int         not null,
     account_id varchar(36) not null,
     primary key (id),
@@ -22,7 +23,6 @@ create table if not exists article_content
     id         varchar(36) not null,
     created_at int         not null,
     article_id varchar(36) not null,
-    title      varchar(36) not null,
     content    text        not null,
     primary key (id),
     foreign key (article_id) references article (id)

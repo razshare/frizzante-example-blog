@@ -17,15 +17,15 @@ func main() {
 		WithNotifier(notifiers.Console).
 		AddGuard(frz.Guard{Name: "verified", Handler: guards.Verified, Tags: []string{"protected"}}).
 		AddGuard(frz.Guard{Name: "active", Handler: guards.Active, Tags: []string{"protected"}}).
-		AddRoute(frz.Route{Pattern: "GET /", Handler: handlers.GetDefault}).
-		AddRoute(frz.Route{Pattern: "GET /expired", Handler: handlers.GetExpired}).
-		AddRoute(frz.Route{Pattern: "GET /login", Handler: handlers.GetLogin}).
-		AddRoute(frz.Route{Pattern: "POST /login", Handler: handlers.PostLogin}).
-		AddRoute(frz.Route{Pattern: "GET /logout", Handler: handlers.GetLogout}).
-		AddRoute(frz.Route{Pattern: "GET /register", Handler: handlers.GetRegister}).
-		AddRoute(frz.Route{Pattern: "POST /register", Handler: handlers.PostRegister}).
-		AddRoute(frz.Route{Pattern: "GET /account", Handler: handlers.GetAccount, Tags: []string{"protected"}}).
-		AddRoute(frz.Route{Pattern: "GET /board", Handler: handlers.GetBoard, Tags: []string{"protected"}}).
-		AddRoute(frz.Route{Pattern: "POST /board", Handler: handlers.PostBoard, Tags: []string{"protected"}}).
+		AddRoute(frz.Route{Pattern: "GET /", Handler: handlers.Default}).
+		AddRoute(frz.Route{Pattern: "GET /expired", Handler: handlers.Expired}).
+		AddRoute(frz.Route{Pattern: "GET /login", Handler: handlers.Login}).
+		AddRoute(frz.Route{Pattern: "POST /login", Handler: handlers.LoginAction}).
+		AddRoute(frz.Route{Pattern: "GET /logout", Handler: handlers.LogoutAction}).
+		AddRoute(frz.Route{Pattern: "GET /register", Handler: handlers.Register}).
+		AddRoute(frz.Route{Pattern: "POST /register", Handler: handlers.RegisterAction}).
+		AddRoute(frz.Route{Pattern: "GET /article-form", Handler: handlers.ArticleForm, Tags: []string{"protected"}}).
+		AddRoute(frz.Route{Pattern: "POST /article-form", Handler: handlers.ArticleFormAction, Tags: []string{"protected"}}).
+		AddRoute(frz.Route{Pattern: "GET /board", Handler: handlers.Board, Tags: []string{"protected"}}).
 		Start()
 }

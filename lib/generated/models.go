@@ -6,6 +6,7 @@ package generated
 
 type Article struct {
 	ID        string
+	Title     string
 	CreatedAt int64
 	AccountID string
 }
@@ -14,7 +15,6 @@ type ArticleContent struct {
 	ID        string
 	CreatedAt int64
 	ArticleID string
-	Title     string
 	Content   string
 }
 

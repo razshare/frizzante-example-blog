@@ -5,28 +5,18 @@
 </style>
 
 <script lang="ts">
-    import {href} from "$lib/utilities/scripts/href.ts";
-    import {getContext} from "svelte";
-    import type {View} from "$lib/utilities/types.ts";
-
-    const view = getContext("view") as View<unknown>
+    import { href } from "$lib/utilities/scripts/href.ts"
 </script>
 
 <nav>
     <ul>
-        <li><strong>Forum</strong></li>
+        <li></li>
     </ul>
     <ul>
         <li>
-            {#if "Account" === view.name}
-                <a {...href("/board")}>
-                    <button>Board</button>
-                </a>
-            {:else}
-                <a {...href("/account")}>
-                    <button>Account</button>
-                </a>
-            {/if}
+            <a {...href("/article-form")}>
+                <button>New Article</button>
+            </a>
         </li>
         <li>
             <a {...href("/logout")}>

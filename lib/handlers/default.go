@@ -2,6 +2,6 @@ package handlers
 
 import "github.com/razshare/frizzante/frz"
 
-func GetDefault(c *frz.Connection) {
-	c.SendFileOrElse(func() { GetLogin(c) })
+func Default(c *frz.Connection) {
+	c.SendFileOrElse(func() { Login(c) })
 }
