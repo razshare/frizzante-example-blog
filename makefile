@@ -1,10 +1,10 @@
-test: configure-bun update check package
+test: update check package
 	CGO_ENABLED=1 go test ./...
 
-build: configure-bun update check package
+build: update check package
 	CGO_ENABLED=1 go build -o bin/app .
 
-dev: configure update check
+dev: configure-air update check
 	DEV=1 CGO_ENABLED=1 ./bin/air \
 	--build.cmd "go build -o bin/app ." \
 	--build.bin "bin/app" \
@@ -15,17 +15,17 @@ dev: configure update check
 	make package-watch & \
 	wait
 
-update:
+update: configure-bun
 	go mod tidy
 	cd app && \
 	../bin/bun update
 
-check:
+check: configure-bun
 	cd app && \
 	../bin/bun x eslint . && \
 	../bin/bun x svelte-check --tsconfig ./tsconfig.json
 
-package-watch:
+package-watch: configure-bun
 	rm app/dist -fr
 	mkdir app/dist/client -p
 	touch app/dist/client/index.html
@@ -35,7 +35,7 @@ package-watch:
 	../bin/bun x vite build --logLevel info --outDir dist/client --emptyOutDir --watch & \
 	wait
 
-package:
+package: configure-bun
 	rm app/dist -fr
 	mkdir app/dist/client -p
 	touch app/dist/client/index.html
@@ -95,7 +95,7 @@ generate: configure-frizzante configure-sqlc
 	rm lib/utilities/sqlc -fr
 	sqlc generate
 
-format:
+format: configure-bun
 	cd app && \
 	../bin/bun x prettier --write .
 
