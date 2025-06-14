@@ -1,9 +1,9 @@
 <script lang="ts">
     type Props = {
         value: string
-        size: string
-        fill: string
-        stroke: string
+        size?: string
+        fill?: string
+        stroke?: string
     }
 
     let {

@@ -7,7 +7,7 @@ import (
 	"github.com/razshare/frizzante/frz"
 	"main/lib"
 	"main/lib/database"
-	"main/lib/generated"
+	"main/lib/utilities/sqlc"
 	"time"
 )
 
@@ -18,7 +18,7 @@ func LoginAction(c *frz.Connection) {
 	id := form.Get("id")
 	password := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("password"))))
 
-	_, accountError := database.Queries.VerifyAccount(context.Background(), generated.VerifyAccountParams{
+	_, accountError := database.Queries.VerifyAccount(context.Background(), sqlc.VerifyAccountParams{
 		ID:       id,
 		Password: password,
 	})

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/razshare/frizzante/frz"
 	"main/lib/database"
-	"main/lib/generated"
+	"main/lib/utilities/sqlc"
 )
 
 func RegisterAction(c *frz.Connection) {
@@ -33,7 +33,7 @@ func RegisterAction(c *frz.Connection) {
 		return
 	}
 
-	addError := database.Queries.AddAccount(context.Background(), generated.AddAccountParams{
+	addError := database.Queries.AddAccount(context.Background(), sqlc.AddAccountParams{
 		ID:          id,
 		DisplayName: displayName,
 		Password:    password,

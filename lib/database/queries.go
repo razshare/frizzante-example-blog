@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
-	"main/lib/generated"
+	"main/lib/utilities/sqlc"
 )
 
-var Queries *generated.Queries
+var Queries *sqlc.Queries
 
 func init() {
 	db, dbError := sql.Open("sqlite3", "file:database.sqlite?cache=shared")
@@ -15,5 +15,5 @@ func init() {
 		log.Fatal(dbError)
 	}
 
-	Queries = generated.New(db)
+	Queries = sqlc.New(db)
 }

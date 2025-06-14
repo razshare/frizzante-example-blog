@@ -3,9 +3,10 @@ package handlers
 import (
 	"context"
 	"github.com/razshare/frizzante/frz"
+	"main/lib"
 	"main/lib/database"
-	"main/lib/generated"
 	"main/lib/notifiers"
+	"main/lib/utilities/sqlc"
 	"strconv"
 )
 
@@ -38,7 +39,7 @@ func Board(c *frz.Connection) {
 	// Find articles.
 	articles, articleError := database.Queries.FindArticles(
 		context.Background(),
-		generated.FindArticlesParams{
+		sqlc.FindArticlesParams{
 			Offset: pageSize * page,
 			Limit:  pageSize,
 		},
@@ -46,7 +47,7 @@ func Board(c *frz.Connection) {
 
 	// Make sure "articles" is not nil.
 	if articles == nil {
-		articles = []generated.FindArticlesRow{}
+		articles = []sqlc.FindArticlesRow{}
 	}
 
 	// Check for errors.
@@ -60,7 +61,7 @@ func Board(c *frz.Connection) {
 	// Find the first item in the next page.
 	nextArticles, nextArticlesError := database.Queries.FindArticles(
 		context.Background(),
-		generated.FindArticlesParams{
+		sqlc.FindArticlesParams{
 			Offset: pageSize * (page + 1),
 			Limit:  1,
 		},
@@ -69,8 +70,12 @@ func Board(c *frz.Connection) {
 	// Check if next page has items.
 	hasMore := nextArticlesError == nil && nextArticles != nil && len(nextArticles) > 0
 
+	state, _ := frz.Session(c, lib.State{})
+
 	// Send the view.
 	c.SendView(frz.View{Name: "Board", Data: map[string]any{
+		"verified": state.Verified,
+		"expired":  state.Expired,
 		"page":     page,
 		"hasMore":  hasMore,
 		"articles": articles,

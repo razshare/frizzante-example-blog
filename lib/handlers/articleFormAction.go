@@ -6,7 +6,7 @@ import (
 	"github.com/razshare/frizzante/frz"
 	"main/lib"
 	"main/lib/database"
-	"main/lib/generated"
+	"main/lib/utilities/sqlc"
 	"strings"
 	"time"
 )
@@ -40,7 +40,7 @@ func ArticleFormAction(c *frz.Connection) {
 		return
 	}
 
-	addArticleError := database.Queries.AddArticle(context.Background(), generated.AddArticleParams{
+	addArticleError := database.Queries.AddArticle(context.Background(), sqlc.AddArticleParams{
 		ID:        articleId.String(),
 		Title:     title,
 		AccountID: state.AccountId,
@@ -62,7 +62,7 @@ func ArticleFormAction(c *frz.Connection) {
 		return
 	}
 
-	addContentError := database.Queries.AddArticleContent(context.Background(), generated.AddArticleContentParams{
+	addContentError := database.Queries.AddArticleContent(context.Background(), sqlc.AddArticleContentParams{
 		ID:        articleContentId.String(),
 		ArticleID: articleId.String(),
 		Content:   content,

@@ -10,13 +10,13 @@
 </style>
 
 <script lang="ts">
-    import { action } from "$lib/utilities/scripts/action.ts"
-    import { href } from "$lib/utilities/scripts/href.ts"
+    import { action } from "$lib/utilities/frz/scripts/action.ts"
+    import { href } from "$lib/utilities/frz/scripts/href.ts"
     import Layout from "$lib/components/Layout.svelte"
     import Center from "$lib/components/Center.svelte"
 
     type Props = { error: string }
-    let {error}:Props = $props()
+    let { error }: Props = $props()
 </script>
 
 <Layout title="Register">

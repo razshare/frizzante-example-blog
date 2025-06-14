@@ -16,11 +16,11 @@
 <script lang="ts">
     import Layout from "$lib/components/Layout.svelte"
     import Center from "$lib/components/Center.svelte"
-    import { action } from "$lib/utilities/scripts/action.ts"
-    import { href } from "$lib/utilities/scripts/href.ts"
+    import { action } from "$lib/utilities/frz/scripts/action.ts"
+    import { href } from "$lib/utilities/frz/scripts/href.ts"
 
     type Props = { error: string }
-    let {error}:Props = $props()
+    let { error }: Props = $props()
 </script>
 
 <Layout title="Login">

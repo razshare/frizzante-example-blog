@@ -24,8 +24,8 @@ func main() {
 		AddRoute(frz.Route{Pattern: "GET /logout", Handler: handlers.LogoutAction}).
 		AddRoute(frz.Route{Pattern: "GET /register", Handler: handlers.Register}).
 		AddRoute(frz.Route{Pattern: "POST /register", Handler: handlers.RegisterAction}).
+		AddRoute(frz.Route{Pattern: "GET /board", Handler: handlers.Board}).
 		AddRoute(frz.Route{Pattern: "GET /article-form", Handler: handlers.ArticleForm, Tags: []string{"protected"}}).
 		AddRoute(frz.Route{Pattern: "POST /article-form", Handler: handlers.ArticleFormAction, Tags: []string{"protected"}}).
-		AddRoute(frz.Route{Pattern: "GET /board", Handler: handlers.Board, Tags: []string{"protected"}}).
 		Start()
 }

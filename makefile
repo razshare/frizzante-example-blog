@@ -30,7 +30,7 @@ package-watch:
 	mkdir app/dist/client -p
 	touch app/dist/client/index.html
 	cd app && \
-	../bin/bun x vite build --logLevel info --ssr lib/utilities/scripts/server.ts --outDir dist --emptyOutDir --watch & \
+	../bin/bun x vite build --logLevel info --ssr lib/utilities/frz/scripts/server.ts --outDir dist --emptyOutDir --watch & \
 	cd app && \
 	../bin/bun x vite build --logLevel info --outDir dist/client --emptyOutDir --watch & \
 	wait
@@ -40,7 +40,7 @@ package:
 	mkdir app/dist/client -p
 	touch app/dist/client/index.html
 	cd app && \
-	../bin/bun x vite build --logLevel info --ssr lib/utilities/scripts/server.ts --outDir dist --emptyOutDir && \
+	../bin/bun x vite build --logLevel info --ssr lib/utilities/frz/scripts/server.ts --outDir dist --emptyOutDir && \
 	../bin/bun x vite build --logLevel info --outDir dist/client --emptyOutDir
 
 configure-bun:
@@ -61,7 +61,7 @@ configure-frizzante:
 	# Make bin...
 	mkdir bin -p
 	# Get frizzante...
-	which bin/frizzante || (curl -fsSL https://github.com/razshare/frizzante/releases/download/v1.2.0/frizzante-amd64.zip -o bin/frizzante.zip && \
+	which bin/frizzante || (curl -fsSL https://github.com/razshare/frizzante/releases/download/v1.2.2/frizzante-amd64.zip -o bin/frizzante.zip && \
 	unzip -j bin/frizzante.zip -d bin && rm bin/frizzante.zip -f)
 	chmod +x bin/frizzante
 
@@ -86,10 +86,13 @@ configure-sqlc:
 
 configure: configure-bun configure-air configure-frizzante configure-sqlc
 
-generate: configure
+generate: configure-frizzante configure-sqlc
 	# Generate frizzante utilities...
-	rm app/lib/utilities -fr
-	./bin/frizzante -generate -utilities -out="app/lib/utilities"
+	rm app/lib/utilities/frz -fr
+	./bin/frizzante -generate -utilities -out="app/lib/utilities/frz"
+	# Generate sqlc utilities...
+	rm lib/utilities/sqlc -fr
+	sqlc generate
 
 format:
 	cd app && \
@@ -108,4 +111,3 @@ hooks:
 	printf "#!/usr/bin/env bash\n" > .git/hooks/pre-commit
 	printf "make test" >> .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
-

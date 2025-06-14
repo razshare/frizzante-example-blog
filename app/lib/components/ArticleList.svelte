@@ -15,8 +15,8 @@
         padding: 1rem;
         display: grid;
         grid-template-areas:
-        "title created-at"
-        "content content";
+            "title created-at"
+            "content content";
         grid-template-columns: 1fr auto;
     }
     .title {
@@ -34,16 +34,18 @@
 </style>
 
 <script lang="ts">
-    import {href} from "$lib/utilities/scripts/href.ts";
-    import type {Article} from "$lib/types.ts";
+    import { href } from "$lib/utilities/frz/scripts/href.ts"
+    import type { Article } from "$lib/types.ts"
+    import Icon from "$lib/components/Icon.svelte"
+    import { mdiArrowLeft, mdiArrowRight } from "@mdi/js"
 
     type Props = {
-        page:number,
-        hasMore:boolean,
-        articles:Article[],
+        page: number
+        hasMore: boolean
+        articles: Article[]
     }
 
-    let {page, articles, hasMore}:Props = $props()
+    let { page, articles, hasMore }: Props = $props()
 </script>
 
 {#if articles.length === 0}
@@ -51,8 +53,29 @@
 {:else}
     {#snippet navigator()}
         <div class="items">
-            <button disabled={page <= 0} class="previous" {...href(`/board?page=${page-1}`)}>&lt; Previous</button>
-            <button disabled={!hasMore} class="next" {...href(`/board?page=${page+1}`)}>Next &gt;</button>
+            {#if page > 0}
+                <a class="previous" {...href(`/board?page=${page - 1}`)}>
+                    <Icon value={mdiArrowLeft} />
+                    <span>Previous</span>
+                </a>
+            {:else}
+                <span class="previous">
+                    <Icon value={mdiArrowLeft} />
+                    <span>Previous</span>
+                </span>
+            {/if}
+
+            {#if hasMore}
+                <a class="next" {...href(`/board?page=${page + 1}`)}>
+                    <span>Next</span>
+                    <Icon value={mdiArrowRight} />
+                </a>
+            {:else}
+                <span class="next">
+                    <span>Next</span>
+                    <Icon value={mdiArrowRight} />
+                </span>
+            {/if}
         </div>
     {/snippet}
 

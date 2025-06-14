@@ -5,7 +5,16 @@
 </style>
 
 <script lang="ts">
-    import { href } from "$lib/utilities/scripts/href.ts"
+    import { href } from "$lib/utilities/frz/scripts/href.ts"
+    import Icon from "$lib/components/Icon.svelte"
+    import { mdiLogout, mdiPlusBox } from "@mdi/js"
+
+    type Props = {
+        verified: boolean
+        expired: boolean
+    }
+
+    let { verified, expired }: Props = $props()
 </script>
 
 <nav>
@@ -13,15 +22,29 @@
         <li></li>
     </ul>
     <ul>
-        <li>
-            <a {...href("/article-form")}>
-                <button>New Article</button>
-            </a>
-        </li>
-        <li>
-            <a {...href("/logout")}>
-                <button>Logout</button>
-            </a>
-        </li>
+        {#if verified && !expired}
+            <li>
+                <a {...href("/logout")}>
+                    <span>Logout</span>
+                    <Icon value={mdiLogout} />
+                </a>
+            </li>
+        {:else}
+            <li>
+                <a {...href("/login")}>
+                    <span>Login</span>
+                    <Icon value={mdiLogout} />
+                </a>
+            </li>
+        {/if}
+
+        {#if verified && !expired}
+            <li>
+                <a {...href("/article-form")}>
+                    <span>New Article</span>
+                    <Icon value={mdiPlusBox} />
+                </a>
+            </li>
+        {/if}
     </ul>
 </nav>
