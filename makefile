@@ -1,3 +1,4 @@
+###### Composites ######
 test: update check package
 	CGO_ENABLED=1 go test ./...
 
@@ -44,6 +45,34 @@ update: configure-bun
 	cd app && \
 	../bin/bun update
 
+format: configure-bun
+	cd app && \
+	../bin/bun x prettier --write .
+
+generate: configure-frizzante
+	# Generate frizzante utilities...
+	rm app/lib/utilities/frz -fr
+	./bin/frizzante -generate -utilities -out="app/lib/utilities/frz"
+	# Generate sqlc utilities...
+	rm app/lib/utilities/frz -fr
+	./bin/sqlc generate
+
+###### Primitives ######
+
+clean:
+	go clean
+	rm bin -fr
+	mkdir bin -p
+	rm app/dist -fr
+	mkdir app/dist/client -p
+	touch app/dist/client/index.html
+	rm app/node_modules -fr
+
+hooks:
+	printf "#!/usr/bin/env bash\n" > .git/hooks/pre-commit
+	printf "make test" >> .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-commit
+
 configure-bun:
 	# Check requirements...
 	command -v unzip >/dev/null || error 'unzip is required to install and configure dependencies'
@@ -62,7 +91,7 @@ configure-frizzante:
 	# Make bin...
 	mkdir bin -p
 	# Get frizzante...
-	which bin/frizzante || (curl -fsSL https://github.com/razshare/frizzante/releases/download/v1.2.2/frizzante-amd64.zip -o bin/frizzante.zip && \
+	which bin/frizzante || (curl -fsSL https://github.com/razshare/frizzante/releases/download/v1.2.5/frizzante-amd64.zip -o bin/frizzante.zip && \
 	unzip -j bin/frizzante.zip -d bin && rm bin/frizzante.zip -f)
 	chmod +x bin/frizzante
 
@@ -87,28 +116,4 @@ configure-sqlc:
 
 configure: configure-bun configure-air configure-frizzante configure-sqlc
 
-generate: configure-frizzante configure-sqlc
-	# Generate frizzante utilities...
-	rm app/lib/utilities/frz -fr
-	./bin/frizzante -generate -utilities -out="app/lib/utilities/frz"
-	# Generate sqlc utilities...
-	rm lib/utilities/sqlc -fr
-	sqlc generate
 
-format: configure-bun
-	cd app && \
-	../bin/bun x prettier --write .
-
-clean:
-	go clean
-	rm bin -fr
-	mkdir bin -p
-	rm app/dist -fr
-	mkdir app/dist/client -p
-	touch app/dist/client/index.html
-	rm app/node_modules -fr
-
-hooks:
-	printf "#!/usr/bin/env bash\n" > .git/hooks/pre-commit
-	printf "make test" >> .git/hooks/pre-commit
-	chmod +x .git/hooks/pre-commit
