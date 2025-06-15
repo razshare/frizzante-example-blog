@@ -7,7 +7,7 @@
 <script lang="ts">
     import { href } from "$lib/utilities/frz/scripts/href.ts"
     import Icon from "$lib/components/Icon.svelte"
-    import { mdiLogout, mdiPlusBox } from "@mdi/js"
+    import {mdiAccountPlus, mdiLogout, mdiPlusBox} from "@mdi/js"
 
     type Props = {
         verified: boolean
@@ -30,6 +30,12 @@
                 </a>
             </li>
         {:else}
+            <li>
+                <a {...href("/register")}>
+                    <span>Register</span>
+                    <Icon value={mdiAccountPlus} />
+                </a>
+            </li>
             <li>
                 <a {...href("/login")}>
                     <span>Login</span>
