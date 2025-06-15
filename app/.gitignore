@@ -56,4 +56,5 @@ go.work.sum
 *.db
 
 # Frizzante
-/dist
+/dist/*
+!/dist/.gitkeep
