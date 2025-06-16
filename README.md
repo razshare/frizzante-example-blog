@@ -33,3 +33,7 @@ make build
 ```
 
 This will create a standalone `bin/app` binary file.
+
+# Account
+
+You can login with **email** `admin@admin.admin` and **password** `admin`.
