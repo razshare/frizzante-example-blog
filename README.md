@@ -24,6 +24,10 @@ Start development mode with
 make dev
 ```
 
+> [!NOTE]
+> In development mode you can login with a default admin account
+> with **email** `admin@admin.admin` and **password** `admin`.
+
 # Build
 
 Build for production with
@@ -33,7 +37,3 @@ make build
 ```
 
 This will create a standalone `bin/app` binary file.
-
-# Account
-
-You can login with **email** `admin@admin.admin` and **password** `admin`.
