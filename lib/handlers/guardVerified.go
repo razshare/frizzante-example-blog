@@ -7,7 +7,9 @@ import (
 )
 
 func GuardVerified(con *connections.Connection, allow func()) {
-	state, _ := sessions.Start[lib.State](con)
+	state, operator := sessions.StartEmpty[lib.State](con)
+	defer operator.Save(state)
+
 	if !state.Verified {
 		con.SendNavigate("/login")
 		return

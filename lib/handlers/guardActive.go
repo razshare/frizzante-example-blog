@@ -8,10 +8,10 @@ import (
 )
 
 func GuardActive(con *connections.Connection, allow func()) {
-	state, operator := sessions.Start[lib.State](con)
+	state, operator := sessions.StartEmpty[lib.State](con)
 	defer operator.Save(state)
 
-	if time.Since(state.LastActivity) > 5*time.Second {
+	if time.Since(state.LastActivity) > 30*time.Minute {
 		con.SendNavigate("/expired")
 		return
 	}
