@@ -4,18 +4,17 @@ import (
 	"embed"
 	"github.com/razshare/frizzante/guards"
 	"github.com/razshare/frizzante/routes"
-	"github.com/razshare/frizzante/servers"
+	"github.com/razshare/frizzante/server"
 	"main/lib"
 	"main/lib/handlers"
 )
 
 //go:embed app/dist
 var efs embed.FS
-var server = servers.New()
 
 func main() {
-	server.Efs = efs
-	server.Notifier = lib.Notifier
+	server.WithEfs(efs)
+	server.WithNotifier(lib.Notifier)
 	server.AddGuard(guards.Guard{Name: "verified", Handler: handlers.GuardVerified, Tags: []string{"protected"}})
 	server.AddGuard(guards.Guard{Name: "active", Handler: handlers.GuardActive, Tags: []string{"active"}})
 	server.AddRoute(routes.Route{Pattern: "GET /", Handler: handlers.Default})
