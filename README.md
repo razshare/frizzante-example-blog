@@ -18,12 +18,6 @@ Generate sqlc utilities with
 make generate
 ```
 
-Update dependencies with
-
-```sh
-make update
-```
-
 Start development mode with
 
 ```sh

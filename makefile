@@ -1,63 +1,65 @@
+########################
 ###### Composites ######
-test: configure-bun check package
+########################
+test: configure-bun install check package
 	CGO_ENABLED=1 go test ./...
 
-build: configure-bun check package
-	CGO_ENABLED=1 go build -o bin/app .
+build: configure-bun install check package
+	CGO_ENABLED=1 go build -o .gen/bin/app .
 
-dev: configure-air configure-bun check retouch
-	DEV=1 CGO_ENABLED=1 ./bin/air \
-	--build.cmd "go build -o bin/app ." \
-	--build.bin "bin/app" \
-	--build.exclude_dir "app/dist,app/node_modules,bin,archive,sessions,tmp,.git,.github" \
-	--build.exclude_regex "_test.go" \
-	--build.include_ext "go" \
-	--build.log "go-build-errors.log" & \
+dev: configure-air configure-bun install check package
+	mkdir .gen/tmp -p
+	mkdir app/dist -p
+	touch app/dist/.gitkeep
+	touch app/dist/server.js
+	DEV=1 CGO_ENABLED=1 ./.gen/bin/air & \
 	make package-watch & \
 	wait
 
 check: configure-bun
 	cd app && \
-	../bin/bun x eslint . && \
-	../bin/bun x svelte-check --tsconfig ./tsconfig.json
+	../.gen/bin/bun x eslint . && \
+	../.gen/bin/bun x svelte-check --tsconfig ./tsconfig.json
 
 package-watch: configure-bun
 	cd app && \
-	../bin/bun x vite build --logLevel info --ssr lib/utilities/frz/scripts/server.ts --outDir dist --watch & \
+	../.gen/bin/bun x vite build --logLevel info --ssr lib/utilities/frz/scripts/server.ts --outDir dist --watch & \
 	cd app && \
-	../bin/bun x vite build --logLevel info --outDir dist/client --watch & \
+	../.gen/bin/bun x vite build --logLevel info --outDir dist/client --watch & \
 	wait
 
 package: configure-bun
 	cd app && \
-	../bin/bun x vite build --logLevel info --ssr lib/utilities/frz/scripts/server.ts --outDir dist --emptyOutDir && \
-	../bin/bun x vite build --logLevel info --outDir dist/client --emptyOutDir && \
-	node_modules/.bin/esbuild dist/server.js --bundle --outfile=dist/server.js --format=cjs --allow-overwrite
+	../.gen/bin/bun x vite build --logLevel info --ssr lib/utilities/frz/scripts/server.ts --outDir dist --emptyOutDir && \
+	../.gen/bin/bun x vite build --logLevel info --outDir dist/client --emptyOutDir && \
+	node_modules/.bin/esbuild dist/server.js --bundle --outfile=dist/server.js --format=cjs --allow-overwrite && \
+	touch dist/.gitkeep
 
-update: configure-bun
+install: configure-bun
 	go mod tidy
 	cd app && \
-	../bin/bun update
+	../.gen/bin/bun install
+
+update: configure-bun
+	cd app && \
+	../.gen/bin/bun update
 
 format: configure-bun
 	cd app && \
-	../bin/bun x prettier --write .
+	../.gen/bin/bun x prettier --write .
 
-generate: configure-frizzante
-	# Generate frizzante utilities...
-	rm app/lib/utilities/frz -fr
-	./bin/frizzante -generate -utilities -out="app/lib/utilities/frz"
+generate: configure-sqlc
+	.gen/bin/sqlc generate
 
-clean: retouch
-	go clean
-	rm bin -fr
-	mkdir bin -p
-	rm app/node_modules -fr
-
+########################
 ###### Primitives ######
-
-retouch:
+########################
+clean:
+### Remove...
+	go clean
 	rm app/dist -fr
+	rm app/node_modules -fr
+### Initialize...
 	mkdir app/dist -p
 	touch app/dist/.gitkeep
 	touch app/dist/server.js
@@ -71,42 +73,35 @@ configure-bun:
 	# Check requirements...
 	command -v unzip >/dev/null || error 'unzip is required to install and configure dependencies'
 	command -v curl >/dev/null || error 'curl is required to install and configure dependencies'
-	# Make bin...
-	mkdir bin -p
+	# Make .gen/bin...
+	mkdir .gen/bin -p
 	# Get bun...
-	which bin/bun || (curl -fsSL https://github.com/oven-sh/bun/releases/download/bun-v1.2.16/bun-linux-x64.zip -o bin/bun.zip && \
-	unzip -j bin/bun.zip -d bin && rm bin/bun.zip -f)
-	chmod +x bin/bun
-
-configure-frizzante:
-	# Check requirements...
-	command -v unzip >/dev/null || error 'unzip is required to install and configure dependencies'
-	command -v curl >/dev/null || error 'curl is required to install and configure dependencies'
-	# Make bin...
-	mkdir bin -p
-	# Get frizzante...
-	which bin/frizzante || (curl -fsSL https://github.com/razshare/frizzante/releases/download/v1.2.5/frizzante-amd64.zip -o bin/frizzante.zip && \
-	unzip -j bin/frizzante.zip -d bin && rm bin/frizzante.zip -f)
-	chmod +x bin/frizzante
+	which .gen/bin/bun || (curl -fsSL https://github.com/oven-sh/bun/releases/download/bun-v1.2.16/bun-linux-x64.zip -o .gen/bin/bun.zip && \
+	unzip -j .gen/bin/bun.zip -d .gen/bin && rm .gen/bin/bun.zip -f)
+	chmod +x .gen/bin/bun
 
 configure-air:
 	# Check requirements...
 	command -v unzip >/dev/null || error 'unzip is required to install and configure dependencies'
 	command -v curl >/dev/null || error 'curl is required to install and configure dependencies'
-	# Make bin...
-	mkdir bin -p
+	# Make .gen/bin...
+	mkdir .gen/bin -p
 	# Get air...
-	which bin/air || (curl -fsSL https://github.com/air-verse/air/releases/download/v1.62.0/air_1.62.0_linux_amd64 -o bin/air)
-	chmod +x bin/air
+	which .gen/bin/air || (curl -fsSL https://github.com/air-verse/air/releases/download/v1.62.0/air_1.62.0_linux_amd64 -o .gen/bin/air)
+	chmod +x .gen/bin/air
 
 configure-sqlc:
 	# Check requirements...
 	command -v unzip >/dev/null || error 'unzip is required to install and configure dependencies'
 	command -v curl >/dev/null || error 'curl is required to install and configure dependencies'
+	# Make .gen/bin...
+	mkdir .gen/bin -p
 	# Get sqlc...
-	which bin/sqlc || (curl -fsSL https://github.com/sqlc-dev/sqlc/releases/download/v1.29.0/sqlc_1.29.0_linux_amd64.zip -o bin/sqlc.zip && \
-	unzip -j bin/sqlc.zip -d bin && rm bin/sqlc.zip -f)
-	chmod +x bin/sqlc
+	which .gen/bin/sqlc || (curl -fsSL https://github.com/sqlc-dev/sqlc/releases/download/v1.29.0/sqlc_1.29.0_linux_amd64.zip -o .gen/bin/sqlc.zip && \
+	unzip -j .gen/bin/sqlc.zip -d .gen/bin && rm .gen/bin/sqlc.zip -f)
+	chmod +x .gen/bin/sqlc
 
-configure: configure-bun configure-air configure-frizzante configure-sqlc
+configure: configure-bun configure-air configure-sqlc
+
+
 

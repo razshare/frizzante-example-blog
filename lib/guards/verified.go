@@ -1,15 +1,16 @@
 package guards
 
 import (
-	"github.com/razshare/frizzante/frz"
+	"github.com/razshare/frizzante/libcon"
+	"github.com/razshare/frizzante/libsession"
 	"main/lib"
 )
 
-func Verified(c *frz.Connection, allow func()) {
-	state, _ := frz.Session(c, lib.State{})
+func Verified(con *libcon.Connection, allow func()) {
+	state, _ := libsession.Session(con, lib.State{})
 
 	if !state.Verified {
-		c.SendNavigate("/login")
+		con.SendNavigate("/login")
 		return
 	}
 

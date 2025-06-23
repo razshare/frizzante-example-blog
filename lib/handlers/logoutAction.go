@@ -1,13 +1,14 @@
 package handlers
 
 import (
-	"github.com/razshare/frizzante/frz"
+	"github.com/razshare/frizzante/libcon"
+	"github.com/razshare/frizzante/libsession"
 	"main/lib"
 )
 
-func LogoutAction(c *frz.Connection) {
-	state, operator := frz.Session(c, lib.State{})
+func LogoutAction(con *libcon.Connection) {
+	state, operator := libsession.Session(con, lib.State{})
 	defer operator.Save(state)
 	state.Verified = false
-	c.SendNavigate("/login")
+	con.SendNavigate("/login")
 }

@@ -1,17 +1,18 @@
 package guards
 
 import (
-	"github.com/razshare/frizzante/frz"
+	"github.com/razshare/frizzante/libcon"
+	"github.com/razshare/frizzante/libsession"
 	"main/lib"
 	"time"
 )
 
-func Active(c *frz.Connection, allow func()) {
-	state, operator := frz.Session(c, lib.State{})
+func Active(con *libcon.Connection, allow func()) {
+	state, operator := libsession.Session(con, lib.State{})
 	defer operator.Save(state)
 
 	if time.Since(state.LastActivity) > 30*time.Minute {
-		c.SendNavigate("/expired")
+		con.SendNavigate("/expired")
 		return
 	}
 

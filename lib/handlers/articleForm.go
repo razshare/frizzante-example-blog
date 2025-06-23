@@ -1,7 +1,10 @@
 package handlers
 
-import "github.com/razshare/frizzante/frz"
+import (
+	"github.com/razshare/frizzante/libcon"
+	"github.com/razshare/frizzante/libview"
+)
 
-func ArticleForm(c *frz.Connection) {
-	c.SendView(frz.View{Name: "ArticleForm"})
+func ArticleForm(con *libcon.Connection) {
+	con.SendView(libview.View{Name: "ArticleForm"})
 }

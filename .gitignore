@@ -56,7 +56,4 @@ go.work.sum
 *.db
 
 # Frizzante
-/bin
-/frz
-/dist
-/sessions
+/.gen

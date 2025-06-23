@@ -2,7 +2,10 @@ package handlers
 
 import (
 	"context"
-	"github.com/razshare/frizzante/frz"
+	"github.com/razshare/frizzante/libcon"
+	"github.com/razshare/frizzante/libsession"
+	"github.com/razshare/frizzante/libview"
+
 	"main/lib"
 	"main/lib/database"
 	"main/lib/notifiers"
@@ -12,13 +15,13 @@ import (
 
 var pageSize int64 = 10
 
-func ReceivePage(c *frz.Connection) int64 {
-	var p int64
+func ReceivePage(con *libcon.Connection) int64 {
+	var page int64
 
 	// Find page.
-	if stringified := c.ReceiveQuery("page"); stringified != "" {
+	if stringified := con.ReceiveQuery("page"); stringified != "" {
 		var parseError error
-		p, parseError = strconv.ParseInt(stringified, 10, 64)
+		page, parseError = strconv.ParseInt(stringified, 10, 64)
 		if parseError != nil {
 			notifiers.Console.SendError(parseError)
 			return 0
@@ -26,15 +29,15 @@ func ReceivePage(c *frz.Connection) int64 {
 	}
 
 	// Guard against unusual pages.
-	if p <= 0 {
-		p = 0
+	if page <= 0 {
+		page = 0
 	}
-	return p
+	return page
 }
 
-func Board(c *frz.Connection) {
+func Board(con *libcon.Connection) {
 	// Find page.
-	page := ReceivePage(c)
+	page := ReceivePage(con)
 
 	// Find articles.
 	articles, articleError := database.Queries.FindArticles(
@@ -52,7 +55,7 @@ func Board(c *frz.Connection) {
 
 	// Check for errors.
 	if nil != articleError {
-		c.SendView(frz.View{Name: "Board", Data: map[string]any{
+		con.SendView(libview.View{Name: "Board", Data: map[string]any{
 			"error": articleError.Error(),
 		}})
 		return
@@ -70,10 +73,10 @@ func Board(c *frz.Connection) {
 	// Check if next page has items.
 	hasMore := nextArticlesError == nil && nextArticles != nil && len(nextArticles) > 0
 
-	state, _ := frz.Session(c, lib.State{})
+	state, _ := libsession.Session(con, lib.State{})
 
 	// Send the view.
-	c.SendView(frz.View{Name: "Board", Data: map[string]any{
+	con.SendView(libview.View{Name: "Board", Data: map[string]any{
 		"verified": state.Verified,
 		"expired":  state.Expired,
 		"page":     page,

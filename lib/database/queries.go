@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"embed"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/razshare/frizzante/fs"
+	"github.com/razshare/frizzante/libfs"
 	"log"
 	"main/lib/utilities/sqlc"
 	"os"
@@ -16,7 +16,7 @@ var dbf embed.FS
 var Queries *sqlc.Queries
 
 func init() {
-	if !fs.FileExists("database.sqlite") {
+	if !libfs.IsFile("database.sqlite") {
 		data, readError := dbf.ReadFile("database.sqlite")
 		if readError != nil {
 			log.Fatal(readError)

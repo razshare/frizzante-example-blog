@@ -1,7 +1,10 @@
 package handlers
 
-import "github.com/razshare/frizzante/frz"
+import (
+	"github.com/razshare/frizzante/libcon"
+	"github.com/razshare/frizzante/libview"
+)
 
-func Login(c *frz.Connection) {
-	c.SendView(frz.View{Name: "Login"})
+func Login(con *libcon.Connection) {
+	con.SendView(libview.View{Name: "Login"})
 }
