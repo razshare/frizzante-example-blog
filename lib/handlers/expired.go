@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"github.com/razshare/frizzante/libcon"
-	"github.com/razshare/frizzante/libview"
+	"github.com/razshare/frizzante/connections"
+	"github.com/razshare/frizzante/views"
 )
 
-func Expired(con *libcon.Connection) {
-	con.SendView(libview.View{Name: "Expired"})
+func Expired(con *connections.Connection) {
+	con.SendView(views.View{Name: "Expired"})
 }

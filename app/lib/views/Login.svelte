@@ -45,6 +45,7 @@
             <br />
             <p class="AdditionalOptions">
                 or <a {...href("/register")}>register a new account</a>
+                , <a {...href("/board")}>go back to board</a>
             </p>
             {#if error}
                 <Center>

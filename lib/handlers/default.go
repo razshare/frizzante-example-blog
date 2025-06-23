@@ -1,7 +1,9 @@
 package handlers
 
-import "github.com/razshare/frizzante/libcon"
+import "github.com/razshare/frizzante/connections"
 
-func Default(con *libcon.Connection) {
-	con.SendFileOrElse(func() { Board(con) })
+func Default(con *connections.Connection) {
+	con.SendFileOrElse(func() {
+		con.SendNavigate("/board")
+	})
 }

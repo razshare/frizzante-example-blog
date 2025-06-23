@@ -4,13 +4,13 @@ import (
 	"context"
 	"crypto/sha256"
 	"fmt"
-	"github.com/razshare/frizzante/libcon"
-	"github.com/razshare/frizzante/libview"
+	"github.com/razshare/frizzante/connections"
+	"github.com/razshare/frizzante/views"
 	"main/lib/database"
 	"main/lib/utilities/sqlc"
 )
 
-func RegisterAction(con *libcon.Connection) {
+func RegisterAction(con *connections.Connection) {
 	form := con.ReceiveForm()
 	id := form.Get("id")
 
@@ -18,7 +18,7 @@ func RegisterAction(con *libcon.Connection) {
 	rawPassword := form.Get("password")
 
 	if "" == id || "" == displayName || "" == rawPassword {
-		con.SendView(libview.View{Name: "Register", Data: map[string]any{
+		con.SendView(views.View{Name: "Register", Data: map[string]any{
 			"error": "please fill all fields",
 		}})
 		return
@@ -28,7 +28,7 @@ func RegisterAction(con *libcon.Connection) {
 
 	_, accountError := database.Queries.FindAccountById(context.Background(), id)
 	if nil == accountError {
-		con.SendView(libview.View{Name: "Register", Data: map[string]any{
+		con.SendView(views.View{Name: "Register", Data: map[string]any{
 			"error": fmt.Sprintf("account `%s` already exists", id),
 		}})
 		return
@@ -41,7 +41,7 @@ func RegisterAction(con *libcon.Connection) {
 	})
 
 	if nil != addError {
-		con.SendView(libview.View{Name: "Register", Data: map[string]any{
+		con.SendView(views.View{Name: "Register", Data: map[string]any{
 			"error": addError.Error(),
 		}})
 		return

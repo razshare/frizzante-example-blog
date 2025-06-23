@@ -4,17 +4,17 @@ import (
 	"context"
 	"crypto/sha256"
 	"fmt"
-	"github.com/razshare/frizzante/libcon"
-	"github.com/razshare/frizzante/libsession"
-	"github.com/razshare/frizzante/libview"
+	"github.com/razshare/frizzante/connections"
+	"github.com/razshare/frizzante/sessions"
+	"github.com/razshare/frizzante/views"
 	"main/lib"
 	"main/lib/database"
 	"main/lib/utilities/sqlc"
 	"time"
 )
 
-func LoginAction(con *libcon.Connection) {
-	state, operator := libsession.Session(con, lib.State{})
+func LoginAction(con *connections.Connection) {
+	state, operator := sessions.Start[lib.State](con)
 	defer operator.Save(state)
 	form := con.ReceiveForm()
 	id := form.Get("id")
@@ -26,7 +26,7 @@ func LoginAction(con *libcon.Connection) {
 	})
 
 	if nil != accountError {
-		con.SendView(libview.View{Name: "Login", Data: map[string]any{
+		con.SendView(views.View{Name: "Login", Data: map[string]any{
 			"error": "invalid credentials",
 		}})
 		return

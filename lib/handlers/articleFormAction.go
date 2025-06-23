@@ -3,10 +3,9 @@ package handlers
 import (
 	"context"
 	uuid "github.com/nu7hatch/gouuid"
-	"github.com/razshare/frizzante/libcon"
-	"github.com/razshare/frizzante/libsession"
-	"github.com/razshare/frizzante/libview"
-
+	"github.com/razshare/frizzante/connections"
+	"github.com/razshare/frizzante/sessions"
+	"github.com/razshare/frizzante/views"
 	"main/lib"
 	"main/lib/database"
 	"main/lib/utilities/sqlc"
@@ -14,30 +13,30 @@ import (
 	"time"
 )
 
-func ArticleFormAction(con *libcon.Connection) {
+func ArticleFormAction(con *connections.Connection) {
 	// Find page.
 	form := con.ReceiveForm()
 	title := strings.Trim(form.Get("title"), " ")
 	content := strings.Trim(form.Get("content"), " ")
 
 	if title == "" {
-		con.SendView(libview.View{Name: "ArticleForm", Data: map[string]any{
+		con.SendView(views.View{Name: "ArticleForm", Data: map[string]any{
 			"error": "article title cannot be empty",
 		}})
 		return
 	}
 
 	if content == "" {
-		con.SendView(libview.View{Name: "ArticleForm", Data: map[string]any{
+		con.SendView(views.View{Name: "ArticleForm", Data: map[string]any{
 			"error": "article content cannot be empty",
 		}})
 		return
 	}
 
-	state, _ := libsession.Session(con, lib.State{})
+	state, _ := sessions.Start[lib.State](con)
 	articleId, articleIdError := uuid.NewV4()
 	if nil != articleIdError {
-		con.SendView(libview.View{Name: "Board", Data: map[string]any{
+		con.SendView(views.View{Name: "Board", Data: map[string]any{
 			"error": articleIdError.Error(),
 		}})
 		return
@@ -51,7 +50,7 @@ func ArticleFormAction(con *libcon.Connection) {
 	})
 
 	if nil != addArticleError {
-		con.SendView(libview.View{Name: "Board", Data: map[string]any{
+		con.SendView(views.View{Name: "Board", Data: map[string]any{
 			"error": addArticleError.Error(),
 		}})
 		return
@@ -59,7 +58,7 @@ func ArticleFormAction(con *libcon.Connection) {
 
 	articleContentId, articleContentIdError := uuid.NewV4()
 	if nil != articleContentIdError {
-		con.SendView(libview.View{Name: "Board", Data: map[string]any{
+		con.SendView(views.View{Name: "Board", Data: map[string]any{
 			"error": articleContentIdError.Error(),
 		}})
 		return
@@ -72,7 +71,7 @@ func ArticleFormAction(con *libcon.Connection) {
 	})
 
 	if nil != addContentError {
-		con.SendView(libview.View{Name: "Board", Data: map[string]any{
+		con.SendView(views.View{Name: "Board", Data: map[string]any{
 			"error": addContentError.Error(),
 		}})
 		return
