@@ -64,6 +64,9 @@ clean:
 	touch app/dist/.gitkeep
 	touch app/dist/server.js
 
+restore-frizzante-utilities:
+	go run github.com/razshare/frizzante -restore-utilities -out="app/lib/utilities"
+
 hooks:
 	printf "#!/usr/bin/env bash\n" > .git/hooks/pre-commit
 	printf "make test" >> .git/hooks/pre-commit
