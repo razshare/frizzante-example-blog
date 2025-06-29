@@ -55,10 +55,6 @@ generate:
 ### Generate queries...
 	sqlc generate
 
-publish:
-### Publish...
-	./publish.sh
-
 clean:
 ### Remove...
 	go clean
