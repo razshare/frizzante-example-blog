@@ -1,7 +1,7 @@
 import { getContext } from "svelte"
-import type { View } from "../types.ts"
-import { route } from "./route.ts"
-import { swaps } from "./swaps.ts"
+import type { View } from "$frizzante/types.ts"
+import { route } from "$frizzante/scripts/route.ts"
+import { swaps } from "$frizzante/scripts/swaps.ts"
 
 export function action(path = ""): {
     action: string

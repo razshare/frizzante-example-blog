@@ -16,6 +16,7 @@ export default defineConfig({
         alias: {
             $lib: "./lib",
             $frizzante: "./frizzante",
+            $exports: "./exports",
         },
     },
     build: {
