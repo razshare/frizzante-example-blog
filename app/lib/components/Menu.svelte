@@ -5,7 +5,7 @@
 </style>
 
 <script lang="ts">
-    import { href } from "$lib/utilities/frz/scripts/href.ts"
+    import { href } from "../../frizzante/scripts/href.ts"
     import Icon from "$lib/components/Icon.svelte"
     import {mdiAccountPlus, mdiLogout, mdiPlusBox} from "@mdi/js"
 

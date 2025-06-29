@@ -1,7 +1,7 @@
 import { getContext } from "svelte"
-import type { View } from "$lib/utilities/frz/types.ts"
-import { route } from "$lib/utilities/frz/scripts/route.ts"
-import { swaps } from "$lib/utilities/frz/scripts/swaps.ts"
+import type { View } from "../types.ts"
+import { route } from "./route.ts"
+import { swaps } from "./swaps.ts"
 
 export function href(path = ""): {
     href: string

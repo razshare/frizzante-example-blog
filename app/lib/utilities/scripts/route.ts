@@ -1,5 +1,5 @@
-import type { View } from "$lib/utilities/frz/types.ts"
-import { swaps } from "$lib/utilities/frz/scripts/swaps.ts"
+import type { View } from "../../../frizzante/types.ts"
+import { swaps } from "../../../frizzante/scripts/swaps.ts"
 
 const IS_BROWSER = typeof document !== "undefined"
 let started = false

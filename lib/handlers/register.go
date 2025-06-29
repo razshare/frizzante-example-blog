@@ -7,7 +7,7 @@ import (
 	"github.com/razshare/frizzante/connections"
 	"github.com/razshare/frizzante/views"
 	"main/lib/database"
-	"main/lib/utilities/sqlc"
+	"main/lib/database/sqlc"
 )
 
 func Register(con *connections.Connection) {

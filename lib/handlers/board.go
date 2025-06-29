@@ -7,7 +7,7 @@ import (
 	"github.com/razshare/frizzante/views"
 	"main/lib"
 	"main/lib/database"
-	"main/lib/utilities/sqlc"
+	"main/lib/database/sqlc"
 	"strconv"
 )
 

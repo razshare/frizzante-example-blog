@@ -10,8 +10,8 @@
 </style>
 
 <script lang="ts">
-    import { action } from "$lib/utilities/frz/scripts/action.ts"
-    import { href } from "$lib/utilities/frz/scripts/href.ts"
+    import { action } from "../../frizzante/scripts/action.ts"
+    import { href } from "../../frizzante/scripts/href.ts"
     import Layout from "$lib/components/Layout.svelte"
     import Center from "$lib/components/Center.svelte"
 

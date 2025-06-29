@@ -34,7 +34,7 @@
 </style>
 
 <script lang="ts">
-    import { href } from "$lib/utilities/frz/scripts/href.ts"
+    import { href } from "../../frizzante/scripts/href.ts"
     import type { Article } from "$lib/types.ts"
     import Icon from "$lib/components/Icon.svelte"
     import { mdiArrowLeft, mdiArrowRight } from "@mdi/js"
