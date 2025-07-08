@@ -18,8 +18,8 @@ func Login(con *connections.Connection) {
 }
 
 func LoginAction(con *connections.Connection) {
-	state, operator := sessions.StartEmpty[lib.State](con)
-	defer operator.Save(state)
+	session := sessions.StartEmpty[lib.State](con)
+	defer session.Save()
 
 	form := con.ReceiveForm()
 	id := form.Get("id")
@@ -37,9 +37,9 @@ func LoginAction(con *connections.Connection) {
 		return
 	}
 
-	state.LastActivity = time.Now()
-	state.Verified = true
-	state.AccountId = id
+	session.State.LastActivity = time.Now()
+	session.State.Verified = true
+	session.State.AccountId = id
 
 	con.SendNavigate("/board")
 }

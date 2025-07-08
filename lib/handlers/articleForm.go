@@ -37,8 +37,8 @@ func ArticleFormAction(con *connections.Connection) {
 		return
 	}
 
-	state, operator := sessions.StartEmpty[lib.State](con)
-	defer operator.Save(state)
+	session := sessions.StartEmpty[lib.State](con)
+	defer session.Save()
 
 	articleId, articleIdError := uuid.NewV4()
 	if nil != articleIdError {
@@ -51,7 +51,7 @@ func ArticleFormAction(con *connections.Connection) {
 	addArticleError := database.Queries.AddArticle(context.Background(), sqlc.AddArticleParams{
 		ID:        articleId.String(),
 		Title:     title,
-		AccountID: state.AccountId,
+		AccountID: session.State.AccountId,
 		CreatedAt: time.Now().Unix(),
 	})
 

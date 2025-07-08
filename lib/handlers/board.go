@@ -71,13 +71,13 @@ func Board(con *connections.Connection) {
 	// Check if next page has items.
 	hasMore := nextArticlesError == nil && nextArticles != nil && len(nextArticles) > 0
 
-	state, operator := sessions.StartEmpty[lib.State](con)
-	defer operator.Save(state)
+	session := sessions.StartEmpty[lib.State](con)
+	defer session.Save()
 
 	// Send the views.
 	con.SendView(views.View{Name: "Board", Data: map[string]any{
-		"verified": state.Verified,
-		"expired":  state.Expired,
+		"verified": session.State.Verified,
+		"expired":  session.State.Expired,
 		"page":     page,
 		"hasMore":  hasMore,
 		"articles": articles,

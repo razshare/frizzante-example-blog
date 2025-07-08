@@ -7,9 +7,9 @@ import (
 )
 
 func LogoutAction(con *connections.Connection) {
-	state, operator := sessions.StartEmpty[lib.State](con)
-	defer operator.Save(state)
+	session := sessions.StartEmpty[lib.State](con)
+	defer session.Save()
 
-	state.Verified = false
+	session.State.Verified = false
 	con.SendNavigate("/login")
 }
