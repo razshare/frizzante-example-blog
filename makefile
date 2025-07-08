@@ -1,13 +1,37 @@
 ########################
 ###### Composites ######
 ########################
-test: install check package
+test: package
 	CGO_ENABLED=1 go test
 
-build: install check package
+build: package
 	CGO_ENABLED=1 go build -o .gen/bin/app .
 
-dev: install
+package-watch: touch
+	cd app && \
+	bunx vite build --logLevel info --ssr frizzante/scripts/server.ts --outDir dist --emptyOutDir false --watch & \
+	cd app && \
+	bunx vite build --logLevel info --outDir dist/client --emptyOutDir false --watch & \
+	cd app && \
+	bunx svelte-check --tsconfig ./tsconfig.json --watch --preserveWatchOutput & \
+	wait
+
+package: check touch
+	cd app && \
+	bunx vite build --logLevel info --ssr frizzante/scripts/server.ts --outDir dist && \
+	bunx vite build --logLevel info --outDir dist/client && \
+	node_modules/.bin/esbuild dist/server.js --bundle --outfile=dist/server.js --format=cjs --allow-overwrite && \
+	touch dist/.gitkeep
+
+check: touch
+	cd app && \
+	bunx eslint . && \
+	bunx svelte-check --tsconfig ./tsconfig.json
+
+########################
+###### Primitives ######
+########################
+dev:
 	mkdir .gen/tmp -p
 	mkdir app/dist -p
 	touch app/dist/.gitkeep
@@ -16,59 +40,37 @@ dev: install
 	make package-watch & \
 	wait
 
-check: touch
-	cd app && \
-	bunx eslint . && \
-	bunx svelte-check --tsconfig ./tsconfig.json
+clean:
+	go clean
+	rm app/dist -fr
+	rm .gen/tmp -fr
+	rm .vite -fr
 
-package-watch: touch
-	cd app && \
-	bunx vite build --logLevel info --ssr frizzante/scripts/server.ts --outDir dist --watch & \
-	cd app && \
-	bunx vite build --logLevel info --outDir dist/client --watch & \
-	wait
+touch:
+	mkdir app/dist -p
+	touch app/dist/.gitkeep
+	touch app/dist/server.js
 
-package: touch
+format:
 	cd app && \
-	bunx vite build --logLevel info --ssr frizzante/scripts/server.ts --outDir dist --emptyOutDir && \
-	bunx vite build --logLevel info --outDir dist/client --emptyOutDir && \
-	node_modules/.bin/esbuild dist/server.js --bundle --outfile=dist/server.js --format=cjs --allow-overwrite && \
-	touch dist/.gitkeep
+	bunx prettier --write .
 
-install: touch
+install:
 	go mod tidy
 	cd app && \
 	bun install
 
-update: touch
+update:
+	go get -u ./...
+	go mod tidy
 	cd app && \
 	bun update
 
-format: touch
-	cd app && \
-	bunx prettier --write .
-
-########################
-###### Primitives ######
-########################
-generate:
-### Generate queries...
-	sqlc generate
-
-clean:
-### Remove...
-	go clean
-	rm app/dist -fr
-	rm app/node_modules -fr
-	make touch
-
-touch:
-### Initialize...
-	mkdir app/dist -p
-	touch app/dist/.gitkeep
-	touch app/dist/server.js
 
 hooks:
 	printf "#!/usr/bin/env bash\n" > .git/hooks/pre-commit
 	printf "make test" >> .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
+
+generate:
+	sqlc generate
