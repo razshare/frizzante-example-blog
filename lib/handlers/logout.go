@@ -8,8 +8,8 @@ import (
 
 func LogoutAction(con *connections.Connection) {
 	session := sessions.StartEmpty[lib.State](con)
-	defer session.Save()
+	defer sessions.Save(session)
 
 	session.State.Verified = false
-	con.SendNavigate("/login")
+	connections.SendNavigate(con, "/login")
 }

@@ -6,5 +6,5 @@ import (
 )
 
 func Expired(con *connections.Connection) {
-	con.SendView(views.View{Name: "Expired"})
+	connections.SendView(con, views.View{Name: "Expired"})
 }

@@ -8,10 +8,10 @@ import (
 
 func GuardVerified(con *connections.Connection, allow func()) {
 	session := sessions.StartEmpty[lib.State](con)
-	defer session.Save()
+	defer sessions.Save(session)
 
 	if !session.State.Verified {
-		con.SendNavigate("/login")
+		connections.SendNavigate(con, "/login")
 		return
 	}
 	allow()

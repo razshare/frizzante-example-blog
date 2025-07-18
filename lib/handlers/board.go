@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"github.com/razshare/frizzante/connections"
+	"github.com/razshare/frizzante/notifiers"
 	"github.com/razshare/frizzante/sessions"
 	"github.com/razshare/frizzante/views"
 	"main/lib"
@@ -17,11 +18,11 @@ func ReceivePage(con *connections.Connection) int64 {
 	var page int64
 
 	// Find page.
-	if stringified := con.ReceiveQuery("page"); stringified != "" {
+	if stringified := connections.ReceiveQuery(con, "page"); stringified != "" {
 		var parseError error
 		page, parseError = strconv.ParseInt(stringified, 10, 64)
 		if parseError != nil {
-			lib.Notifier.SendError(parseError)
+			notifiers.SendError(con.Notifier, parseError)
 			return 0
 		}
 	}
@@ -53,7 +54,7 @@ func Board(con *connections.Connection) {
 
 	// Check for errors.
 	if nil != articleError {
-		con.SendView(views.View{Name: "Board", Data: map[string]any{
+		connections.SendView(con, views.View{Name: "Board", Data: map[string]any{
 			"error": articleError.Error(),
 		}})
 		return
@@ -72,10 +73,10 @@ func Board(con *connections.Connection) {
 	hasMore := nextArticlesError == nil && nextArticles != nil && len(nextArticles) > 0
 
 	session := sessions.StartEmpty[lib.State](con)
-	defer session.Save()
+	defer sessions.Save(session)
 
 	// Send the views.
-	con.SendView(views.View{Name: "Board", Data: map[string]any{
+	connections.SendView(con, views.View{Name: "Board", Data: map[string]any{
 		"verified": session.State.Verified,
 		"expired":  session.State.Expired,
 		"page":     page,

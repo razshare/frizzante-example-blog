@@ -2,6 +2,9 @@ module main
 
 go 1.24
 
+// TODO: remove when merging in main.
+replace github.com/razshare/frizzante => /home/raz/Github/razshare/frizzante
+
 require (
 	github.com/mattn/go-sqlite3 v1.14.28
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d

@@ -14,14 +14,14 @@ import (
 )
 
 func Login(con *connections.Connection) {
-	con.SendView(views.View{Name: "Login"})
+	connections.SendView(con, views.View{Name: "Login"})
 }
 
 func LoginAction(con *connections.Connection) {
 	session := sessions.StartEmpty[lib.State](con)
-	defer session.Save()
+	defer sessions.Save(session)
 
-	form := con.ReceiveForm()
+	form := connections.ReceiveForm(con)
 	id := form.Get("id")
 	password := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("password"))))
 
@@ -31,7 +31,7 @@ func LoginAction(con *connections.Connection) {
 	})
 
 	if nil != accountError {
-		con.SendView(views.View{Name: "Login", Data: map[string]any{
+		connections.SendView(con, views.View{Name: "Login", Data: map[string]any{
 			"error": "invalid credentials",
 		}})
 		return
@@ -41,5 +41,5 @@ func LoginAction(con *connections.Connection) {
 	session.State.Verified = true
 	session.State.AccountId = id
 
-	con.SendNavigate("/board")
+	connections.SendNavigate(con, "/board")
 }
