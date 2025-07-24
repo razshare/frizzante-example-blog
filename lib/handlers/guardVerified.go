@@ -7,7 +7,7 @@ import (
 )
 
 func GuardVerified(con *connections.Connection, allow func()) {
-	session := sessions.StartEmpty[lib.State](con)
+	session := sessions.Start[lib.State](con)
 	defer session.Save()
 
 	if !session.State.Verified {
