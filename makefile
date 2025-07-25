@@ -1,3 +1,6 @@
+configure:
+	frizzante --configure
+
 test:
 	frizzante --test
 
