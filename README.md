@@ -4,14 +4,32 @@ This is a blog application that uses [sqlc](https://sqlc.dev/) and [sqlite](http
 
 # Prerequisites
 
-> [!NOTE]
-> #### Prerequisites
-> Install `build-essential`, `sqlc` and `frizzante`.
+### Install build tools
+
+On Linux
+```sh
+sudo apt-get install build-essential
+```
+
+On Darwin (MacOS)
+
+```sh
+xcode-select --install
+```
+
+### Install  `frizzante` and `sqlc`
+
+```sh
+go install github.com/razshare/frizzante@latest
+go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+```
+
+>[!TIP]
+>Remember to add Go binaries to your path.
 >
 > ```sh
-> sudo apt install build-essential
-> go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
-> go install github.com/razshare/frizzante@latest
+> export GOPATH=$HOME/go
+> export PATH=$PATH:$GOPATH/bin
 > ```
 
 # Get Started
