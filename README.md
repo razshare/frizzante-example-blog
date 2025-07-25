@@ -6,19 +6,23 @@ This is a blog application that uses [sqlc](https://sqlc.dev/) and [sqlite](http
 
 > [!NOTE]
 > #### Prerequisites
-> Make sure you have `frizzante`, `air`, `sqlc`, `bun` and `build-essential` installed on your machine.
+> Install `build-essential`, `sqlc` and `frizzante`.
 >
 > ```sh
 > sudo apt install build-essential
-> go install github.com/razshare/frizzante@latest
-> go install github.com/air-verse/air@latest
 > go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
-> which bun || curl -fsSL https://bun.sh/install | bash
+> go install github.com/razshare/frizzante@latest
 > ```
 
 # Get Started
 
-Generate sqlc utilities with
+Configure project
+
+```sh
+make configure
+```
+
+Generate sqlc code
 
 ```sh
 make generate
@@ -42,4 +46,4 @@ Build for production with
 make build
 ```
 
-This will create a standalone `bin/app` binary file.
+This will create a standalone `.gen/bin/app` binary file.
