@@ -28,8 +28,8 @@ func main() {
 	server.AddRoute(routes.Route{Pattern: "GET /board", Handler: handlers.Board})
 
 	// Order matters here, first check for "protected", then for "active".
-	// This way a sessions that is verified but expired, sees the message "Your sessions has expired",
-	// while a sessions that has never been verified to begin with, is redirected to the login page.
+	// This way a session that is verified but expired, sees the message "Your sessions has expired",
+	// while a session that has never been verified to begin with, is redirected to the login page.
 	server.AddRoute(routes.Route{Pattern: "GET /article-form", Handler: handlers.ArticleForm, Tags: []string{"protected", "active"}})
 	server.AddRoute(routes.Route{Pattern: "POST /article-form", Handler: handlers.ArticleFormAction, Tags: []string{"protected", "active"}})
 	server.AddRoute(routes.Route{Pattern: "GET /article-remove", Handler: handlers.ArticleRemove, Tags: []string{"protected", "active"}})
