@@ -71,7 +71,7 @@ func Board(con *connections.Connection) {
 	// Check if next page has items.
 	hasMore := nextArticlesError == nil && nextArticles != nil && len(nextArticles) > 0
 
-	session := sessions.Start[lib.State](con)
+	session := sessions.New(con, lib.State{}).Start()
 	defer session.Save()
 
 	// Send the views.

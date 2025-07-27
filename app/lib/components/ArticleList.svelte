@@ -15,15 +15,19 @@
         padding: 1rem;
         display: grid;
         grid-template-areas:
-            "title created-at"
-            "content content";
-        grid-template-columns: 1fr auto;
+            "title created-at remove"
+            "content content content";
+        grid-template-columns: 1fr auto auto;
+        gap: 1rem;
     }
     .title {
         grid-area: title;
     }
     .created-at {
         grid-area: created-at;
+    }
+    .remove {
+        grid-area: remove;
     }
     .content {
         grid-area: content;
@@ -34,7 +38,7 @@
 </style>
 
 <script lang="ts">
-    import { href } from "../../frizzante/scripts/href.ts"
+    import { href } from "$frizzante/core/scripts/href.ts"
     import type { Article } from "$lib/types.ts"
     import Icon from "$lib/components/Icon.svelte"
     import { mdiArrowLeft, mdiArrowRight } from "@mdi/js"
@@ -87,6 +91,9 @@
         <div class="article">
             <h1 class="title">{article.Title}</h1>
             <span class="created-at">{createdAt}</span>
+            <span class="remove">
+                <a {...href(`/article-remove?id=${article.ID}`)}>[Remove]</a>
+            </span>
             <div class="content">{article.Content}</div>
         </div>
     {/each}
