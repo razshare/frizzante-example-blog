@@ -393,7 +393,7 @@ const verifyAccount = `-- name: VerifyAccount :one
 select id
 from user_account
 where id = ?
-  and Password = ?
+  and password = ?
 limit 1
 `
 
