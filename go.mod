@@ -2,12 +2,10 @@ module main
 
 go 1.24
 
-replace github.com/razshare/frizzante => /home/raz/Github/razshare/frizzante
-
 require (
-	github.com/mattn/go-sqlite3 v1.14.29
+	github.com/mattn/go-sqlite3 v1.14.30
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
-	github.com/razshare/frizzante v1.14.43
+	github.com/razshare/frizzante v1.15.0
 )
 
 require (
