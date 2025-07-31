@@ -3,9 +3,10 @@ module main
 go 1.24
 
 require (
+	github.com/joho/godotenv v1.5.1
 	github.com/mattn/go-sqlite3 v1.14.29
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
-	github.com/razshare/frizzante v1.14.31
+	github.com/razshare/frizzante v1.14.43
 )
 
 require (
