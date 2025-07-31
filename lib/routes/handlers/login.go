@@ -18,7 +18,7 @@ func Login(connection *connections.Connection) {
 }
 
 func LoginAction(connection *connections.Connection) {
-	session := sessions.Start(connection, state.State{})
+	session := sessions.New(connection, state.State{}).Start()
 	defer session.Save()
 
 	form := connection.ReceiveForm()

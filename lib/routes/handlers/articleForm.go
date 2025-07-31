@@ -37,7 +37,7 @@ func ArticleFormAction(connection *connections.Connection) {
 		return
 	}
 
-	session := sessions.Start(connection, state.State{})
+	session := sessions.New(connection, state.State{}).Start()
 	defer session.Save()
 
 	articleId, articleIdError := uuid.NewV4()

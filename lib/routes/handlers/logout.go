@@ -7,7 +7,7 @@ import (
 )
 
 func LogoutAction(connection *connections.Connection) {
-	session := sessions.Start(connection, state.State{})
+	session := sessions.New(connection, state.State{}).Start()
 	defer session.Save()
 
 	session.State.Verified = false

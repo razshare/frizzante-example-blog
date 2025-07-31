@@ -8,7 +8,7 @@ import (
 )
 
 func GuardActive(connection *connections.Connection, allow func()) {
-	session := sessions.Start(connection, state.State{})
+	session := sessions.New(connection, state.State{}).Start()
 	defer session.Save()
 
 	if time.Since(session.State.LastActivity) > 30*time.Minute {
