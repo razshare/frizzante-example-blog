@@ -3,16 +3,16 @@ package handlers
 import (
 	"github.com/razshare/frizzante/connections"
 	"github.com/razshare/frizzante/sessions"
-	"main/lib"
+	"main/lib/state"
 	"time"
 )
 
-func GuardActive(con *connections.Connection, allow func()) {
-	session := sessions.New(con, lib.State{}).Start()
+func GuardActive(connection *connections.Connection, allow func()) {
+	session := sessions.Start(connection, state.State{})
 	defer session.Save()
 
 	if time.Since(session.State.LastActivity) > 30*time.Minute {
-		con.SendNavigate("/expired")
+		connection.SendNavigate("/expired")
 		return
 	}
 

@@ -7,21 +7,21 @@ import (
 	"github.com/razshare/frizzante/connections"
 	"github.com/razshare/frizzante/sessions"
 	"github.com/razshare/frizzante/views"
-	"main/lib"
 	"main/lib/database"
 	"main/lib/database/sqlc"
+	"main/lib/state"
 	"time"
 )
 
-func Login(con *connections.Connection) {
-	con.SendView(views.View{Name: "Login"})
+func Login(connection *connections.Connection) {
+	connection.SendView(views.View{Name: "Login"})
 }
 
-func LoginAction(con *connections.Connection) {
-	session := sessions.New(con, lib.State{}).Start()
+func LoginAction(connection *connections.Connection) {
+	session := sessions.Start(connection, state.State{})
 	defer session.Save()
 
-	form := con.ReceiveForm()
+	form := connection.ReceiveForm()
 	id := form.Get("id")
 	password := fmt.Sprintf("%x", sha256.Sum256([]byte(form.Get("password"))))
 
@@ -31,7 +31,7 @@ func LoginAction(con *connections.Connection) {
 	})
 
 	if nil != accountError {
-		con.SendView(views.View{Name: "Login", Data: map[string]any{
+		connection.SendView(views.View{Name: "Login", Data: map[string]any{
 			"error": "invalid credentials",
 		}})
 		return
@@ -41,5 +41,5 @@ func LoginAction(con *connections.Connection) {
 	session.State.Verified = true
 	session.State.AccountId = id
 
-	con.SendNavigate("/board")
+	connection.SendNavigate("/board")
 }

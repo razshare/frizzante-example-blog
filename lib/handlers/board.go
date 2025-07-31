@@ -4,24 +4,25 @@ import (
 	"context"
 	"github.com/razshare/frizzante/connections"
 	"github.com/razshare/frizzante/sessions"
+	"github.com/razshare/frizzante/traces"
 	"github.com/razshare/frizzante/views"
-	"main/lib"
 	"main/lib/database"
 	"main/lib/database/sqlc"
+	"main/lib/state"
 	"strconv"
 )
 
 var pageSize int64 = 10
 
-func ReceivePage(con *connections.Connection) int64 {
+func ReceivePage(connection *connections.Connection) int64 {
 	var page int64
 
 	// Find page.
-	if stringified := con.ReceiveQuery("page"); stringified != "" {
+	if stringified := connection.ReceiveQuery("page"); stringified != "" {
 		var parseError error
 		page, parseError = strconv.ParseInt(stringified, 10, 64)
 		if parseError != nil {
-			lib.Notifier.SendError(parseError)
+			traces.Trace(connection.ErrorLog, parseError)
 			return 0
 		}
 	}
@@ -33,9 +34,9 @@ func ReceivePage(con *connections.Connection) int64 {
 	return page
 }
 
-func Board(con *connections.Connection) {
+func Board(connection *connections.Connection) {
 	// Find page.
-	page := ReceivePage(con)
+	page := ReceivePage(connection)
 
 	// Find articles.
 	articles, articleError := database.Queries.FindArticles(
@@ -53,7 +54,7 @@ func Board(con *connections.Connection) {
 
 	// Check for errors.
 	if nil != articleError {
-		con.SendView(views.View{Name: "Board", Data: map[string]any{
+		connection.SendView(views.View{Name: "Board", Data: map[string]any{
 			"error": articleError.Error(),
 		}})
 		return
@@ -71,11 +72,11 @@ func Board(con *connections.Connection) {
 	// Check if next page has items.
 	hasMore := nextArticlesError == nil && nextArticles != nil && len(nextArticles) > 0
 
-	session := sessions.New(con, lib.State{}).Start()
+	session := sessions.Start(connection, state.State{})
 	defer session.Save()
 
 	// Send the views.
-	con.SendView(views.View{Name: "Board", Data: map[string]any{
+	connection.SendView(views.View{Name: "Board", Data: map[string]any{
 		"verified": session.State.Verified,
 		"expired":  session.State.Expired,
 		"page":     page,

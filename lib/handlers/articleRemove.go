@@ -7,15 +7,15 @@ import (
 	"main/lib/database"
 )
 
-func ArticleRemove(con *connections.Connection) {
-	id := con.ReceiveQuery("id")
+func ArticleRemove(connection *connections.Connection) {
+	id := connection.ReceiveQuery("id")
 	removeError := database.Queries.RemoveArticle(context.Background(), id)
 	if removeError != nil {
-		con.SendView(views.View{Name: "Board", Data: map[string]any{
+		connection.SendView(views.View{Name: "Board", Data: map[string]any{
 			"error": removeError,
 		}})
 		return
 	}
 
-	con.SendNavigate("/board")
+	connection.SendNavigate("/board")
 }

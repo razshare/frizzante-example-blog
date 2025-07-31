@@ -2,8 +2,8 @@ package handlers
 
 import "github.com/razshare/frizzante/connections"
 
-func Default(con *connections.Connection) {
-	con.SendFileOrElse(func() {
-		con.SendNavigate("/board")
+func Default(connection *connections.Connection) {
+	connection.SendFileOrElse(func() {
+		connection.SendNavigate("/board")
 	})
 }

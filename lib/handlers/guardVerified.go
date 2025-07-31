@@ -3,15 +3,15 @@ package handlers
 import (
 	"github.com/razshare/frizzante/connections"
 	"github.com/razshare/frizzante/sessions"
-	"main/lib"
+	"main/lib/state"
 )
 
-func GuardVerified(con *connections.Connection, allow func()) {
-	session := sessions.New(con, lib.State{}).Start()
+func GuardVerified(connection *connections.Connection, allow func()) {
+	session := sessions.Start(connection, state.State{})
 	defer session.Save()
 
 	if !session.State.Verified {
-		con.SendNavigate("/login")
+		connection.SendNavigate("/login")
 		return
 	}
 	allow()

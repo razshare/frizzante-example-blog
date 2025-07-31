@@ -10,19 +10,19 @@ import (
 	"main/lib/database/sqlc"
 )
 
-func Register(con *connections.Connection) {
-	con.SendView(views.View{Name: "Register"})
+func Register(connection *connections.Connection) {
+	connection.SendView(views.View{Name: "Register"})
 }
 
-func RegisterAction(con *connections.Connection) {
-	form := con.ReceiveForm()
+func RegisterAction(connection *connections.Connection) {
+	form := connection.ReceiveForm()
 	id := form.Get("id")
 
 	displayName := form.Get("displayName")
 	rawPassword := form.Get("password")
 
 	if "" == id || "" == displayName || "" == rawPassword {
-		con.SendView(views.View{Name: "Register", Data: map[string]any{
+		connection.SendView(views.View{Name: "Register", Data: map[string]any{
 			"error": "please fill all fields",
 		}})
 		return
@@ -32,7 +32,7 @@ func RegisterAction(con *connections.Connection) {
 
 	_, accountError := database.Queries.FindAccountById(context.Background(), id)
 	if nil == accountError {
-		con.SendView(views.View{Name: "Register", Data: map[string]any{
+		connection.SendView(views.View{Name: "Register", Data: map[string]any{
 			"error": fmt.Sprintf("account `%s` already exists", id),
 		}})
 		return
@@ -45,11 +45,11 @@ func RegisterAction(con *connections.Connection) {
 	})
 
 	if nil != addError {
-		con.SendView(views.View{Name: "Register", Data: map[string]any{
+		connection.SendView(views.View{Name: "Register", Data: map[string]any{
 			"error": addError.Error(),
 		}})
 		return
 	}
 
-	con.SendNavigate("/login")
+	connection.SendNavigate("/login")
 }

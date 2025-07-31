@@ -6,43 +6,43 @@ import (
 	"github.com/razshare/frizzante/connections"
 	"github.com/razshare/frizzante/sessions"
 	"github.com/razshare/frizzante/views"
-	"main/lib"
 	"main/lib/database"
 	"main/lib/database/sqlc"
+	"main/lib/state"
 	"strings"
 	"time"
 )
 
-func ArticleForm(con *connections.Connection) {
-	con.SendView(views.View{Name: "ArticleForm"})
+func ArticleForm(connection *connections.Connection) {
+	connection.SendView(views.View{Name: "ArticleForm"})
 }
 
-func ArticleFormAction(con *connections.Connection) {
+func ArticleFormAction(connection *connections.Connection) {
 	// Find page.
-	form := con.ReceiveForm()
+	form := connection.ReceiveForm()
 	title := strings.Trim(form.Get("title"), " ")
 	content := strings.Trim(form.Get("content"), " ")
 
 	if title == "" {
-		con.SendView(views.View{Name: "ArticleForm", Data: map[string]any{
+		connection.SendView(views.View{Name: "ArticleForm", Data: map[string]any{
 			"error": "article title cannot be empty",
 		}})
 		return
 	}
 
 	if content == "" {
-		con.SendView(views.View{Name: "ArticleForm", Data: map[string]any{
+		connection.SendView(views.View{Name: "ArticleForm", Data: map[string]any{
 			"error": "article content cannot be empty",
 		}})
 		return
 	}
 
-	session := sessions.New(con, lib.State{}).Start()
+	session := sessions.Start(connection, state.State{})
 	defer session.Save()
 
 	articleId, articleIdError := uuid.NewV4()
 	if nil != articleIdError {
-		con.SendView(views.View{Name: "Board", Data: map[string]any{
+		connection.SendView(views.View{Name: "Board", Data: map[string]any{
 			"error": articleIdError.Error(),
 		}})
 		return
@@ -56,7 +56,7 @@ func ArticleFormAction(con *connections.Connection) {
 	})
 
 	if nil != addArticleError {
-		con.SendView(views.View{Name: "Board", Data: map[string]any{
+		connection.SendView(views.View{Name: "Board", Data: map[string]any{
 			"error": addArticleError.Error(),
 		}})
 		return
@@ -64,7 +64,7 @@ func ArticleFormAction(con *connections.Connection) {
 
 	articleContentId, articleContentIdError := uuid.NewV4()
 	if nil != articleContentIdError {
-		con.SendView(views.View{Name: "Board", Data: map[string]any{
+		connection.SendView(views.View{Name: "Board", Data: map[string]any{
 			"error": articleContentIdError.Error(),
 		}})
 		return
@@ -77,11 +77,11 @@ func ArticleFormAction(con *connections.Connection) {
 	})
 
 	if nil != addContentError {
-		con.SendView(views.View{Name: "Board", Data: map[string]any{
+		connection.SendView(views.View{Name: "Board", Data: map[string]any{
 			"error": addContentError.Error(),
 		}})
 		return
 	}
 
-	con.SendNavigate("/board")
+	connection.SendNavigate("/board")
 }
