@@ -1,0 +1,54 @@
+package board
+
+import (
+	"context"
+	"github.com/razshare/frizzante/client"
+	"github.com/razshare/frizzante/receive"
+	"github.com/razshare/frizzante/send"
+	"github.com/razshare/frizzante/view"
+	"main/lib/database"
+	"main/lib/database/sqlc"
+	"main/lib/session"
+)
+
+func View(c *client.Client) {
+	p := Paginate(c)
+
+	a, err := database.Queries.FindArticles(
+		context.Background(),
+		sqlc.FindArticlesParams{
+			Offset: ps * p,
+
+			// Get an additional element.
+			// If this element is present in the result,
+			// then it means the next page is available.
+			// We will then shave this element away when
+			// sending the slice to the view.
+			Limit: ps + 1,
+		},
+	)
+
+	if err != nil {
+		send.View(c, view.View{Name: "Board", Data: map[string]any{
+			"error": err.Error(),
+		}})
+		return
+	}
+
+	l := len(a)
+
+	hm := l == int(ps)+1
+
+	s := session.Start(receive.SessionId(c))
+
+	t := a[:l]
+
+	// Send the views.
+	send.View(c, view.View{Name: "Board", Data: map[string]any{
+		"verified": s.Verified,
+		"expired":  s.Expired,
+		"page":     p,
+		"hasMore":  hm,
+		"articles": t,
+	}})
+}
