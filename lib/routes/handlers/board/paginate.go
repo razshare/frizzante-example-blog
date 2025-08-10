@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-var ps int64 = 10
+var PageSize int64 = 10
 
 func Paginate(c *client.Client) int64 {
 	var p int64

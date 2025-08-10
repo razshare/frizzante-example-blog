@@ -17,14 +17,14 @@ func View(c *client.Client) {
 	a, err := database.Queries.FindArticles(
 		context.Background(),
 		sqlc.FindArticlesParams{
-			Offset: ps * p,
+			Offset: PageSize * p,
 
 			// Get an additional element.
 			// If this element is present in the result,
 			// then it means the next page is available.
 			// We will then shave this element away when
 			// sending the slice to the view.
-			Limit: ps + 1,
+			Limit: PageSize + 1,
 		},
 	)
 
@@ -37,7 +37,7 @@ func View(c *client.Client) {
 
 	l := len(a)
 
-	hm := l == int(ps)+1
+	hm := l == int(PageSize)+1
 
 	s := session.Start(receive.SessionId(c))
 

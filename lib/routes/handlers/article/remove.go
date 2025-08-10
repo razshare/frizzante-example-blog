@@ -1,4 +1,4 @@
-package article_form
+package article
 
 import (
 	"context"

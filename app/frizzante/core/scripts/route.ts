@@ -1,6 +1,6 @@
 import type { View } from "$frizzante/core/types.ts"
 import { IS_BROWSER } from "$frizzante/core/constants.ts"
-import { swaps } from "$frizzante/core/scripts/swaps.ts"
+import { swap } from "$frizzante/core/scripts/swap.ts"
 
 let started = false
 
@@ -9,24 +9,14 @@ export function route(view: View<never>): void {
         return
     }
 
+    const anchor = document.createElement("a")
+
     const listener = async function pop(e: PopStateEvent) {
         e.preventDefault()
-
-        const id = e.state ?? ""
-        const current = swaps.find(id)
-
-        if (!current) {
-            await swaps.swap(view).withPath("/").play()
-            return
-        }
-
-        if (current.position() + 1 != swaps.position()) {
-            swaps.teleport(current.position() + 1)
-            await current.play()
-        } else {
-            await current.withUpdate(true).play()
-        }
+        anchor.href = (e.state ?? "/") as string
+        await swap(anchor, view)
     }
+
     window.addEventListener("popstate", listener)
     started = true
 }

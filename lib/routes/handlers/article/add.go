@@ -1,4 +1,4 @@
-package article_form
+package article
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-func Action(c *client.Client) {
+func Add(c *client.Client) {
 	f := receive.Form(c)
 	t := strings.Trim(f.Get("title"), " ")
 	cn := strings.Trim(f.Get("content"), " ")
@@ -37,7 +37,7 @@ func Action(c *client.Client) {
 
 	aid, err := uuid.NewV4()
 	if nil != err {
-		send.View(c, view.View{Name: "Board", Data: map[string]any{
+		send.View(c, view.View{Name: "ArticleForm", Data: map[string]any{
 			"error": err.Error(),
 		}})
 		return
@@ -51,7 +51,7 @@ func Action(c *client.Client) {
 	})
 
 	if err != nil {
-		send.View(c, view.View{Name: "Board", Data: map[string]any{
+		send.View(c, view.View{Name: "ArticleForm", Data: map[string]any{
 			"error": err.Error(),
 		}})
 		return
@@ -59,7 +59,7 @@ func Action(c *client.Client) {
 
 	acid, err := uuid.NewV4()
 	if err != nil {
-		send.View(c, view.View{Name: "Board", Data: map[string]any{
+		send.View(c, view.View{Name: "ArticleForm", Data: map[string]any{
 			"error": err.Error(),
 		}})
 		return
@@ -72,7 +72,7 @@ func Action(c *client.Client) {
 	})
 
 	if err != nil {
-		send.View(c, view.View{Name: "Board", Data: map[string]any{
+		send.View(c, view.View{Name: "ArticleForm", Data: map[string]any{
 			"error": err.Error(),
 		}})
 		return

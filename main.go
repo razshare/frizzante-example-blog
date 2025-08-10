@@ -6,6 +6,7 @@ import (
 	"github.com/razshare/frizzante/route"
 	"github.com/razshare/frizzante/server"
 	"main/lib/routes/guards"
+	"main/lib/routes/handlers/article"
 	"main/lib/routes/handlers/article_form"
 	"main/lib/routes/handlers/board"
 	"main/lib/routes/handlers/expired"
@@ -39,7 +40,7 @@ func main() {
 		// This way a session that is verified but expired, sees the message "Your sessions has expired",
 		// while a session that has never been verified to begin with, is redirected to the login page.
 		{Pattern: "GET /article-form", Handler: article_form.View, Tags: []string{"protected", "active"}},
-		{Pattern: "POST /article-form", Handler: article_form.Action, Tags: []string{"protected", "active"}},
-		{Pattern: "GET /article-remove", Handler: article_form.Remove, Tags: []string{"protected", "active"}},
+		{Pattern: "POST /article-form", Handler: article.Add, Tags: []string{"protected", "active"}},
+		{Pattern: "GET /article-remove", Handler: article.Remove, Tags: []string{"protected", "active"}},
 	}
 }
