@@ -1,9 +1,15 @@
-import type { View } from "$frizzante/core/types.ts"
+import type { HistoryEntry, View } from "$frizzante/core/types.ts"
+
+let lastView: false | string = false
 
 export async function swap(
     target: HTMLAnchorElement | HTMLFormElement,
     view: View<unknown>,
 ): Promise<() => void> {
+    if (lastView === false) {
+        lastView = location.toString()
+    }
+
     let res: Response
     let method: "GET" | "POST" = "GET"
     const body: Record<string, string> = {}
@@ -33,10 +39,12 @@ export async function swap(
 
         if (method === "GET") {
             query = `${params.toString()}`
-            if (form.action.includes("?")) {
-                query = "&" + query
-            } else {
-                query = "?" + query
+            if (query !== "") {
+                if (form.action.includes("?")) {
+                    query = "&" + query
+                } else {
+                    query = "?" + query
+                }
             }
             res = await fetch(`${form.action}${query}`, {
                 headers: {
@@ -68,11 +76,21 @@ export async function swap(
     view.name = json.name
     view.renderMode = json.renderMode
 
+    const sameView = lastView === res.url
+    lastView = res.url
+
     return function push() {
-        if(method !== "GET"){
+        if (sameView) {
             return
         }
 
-        window.history.pushState(res.url, "", res.url)
+        const entry: HistoryEntry = {
+            nodeName: target.nodeName,
+            method,
+            url: res.url,
+            body,
+        }
+
+        window.history.pushState(JSON.stringify(entry), "", res.url)
     }
 }
