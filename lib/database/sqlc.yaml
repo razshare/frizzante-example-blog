@@ -6,4 +6,4 @@ sql:
     gen:
       go:
         package: "sqlc"
-        out: "lib/database/sqlc"
+        out: "sqlc"

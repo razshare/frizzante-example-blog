@@ -14,7 +14,7 @@ import (
 func View(c *client.Client) {
 	p := Paginate(c)
 
-	a, err := database.Queries.FindArticles(
+	arts, err := database.Queries.FindArticles(
 		context.Background(),
 		sqlc.FindArticlesParams{
 			Offset: PageSize * p,
@@ -35,13 +35,17 @@ func View(c *client.Client) {
 		return
 	}
 
-	l := len(a)
+	l := len(arts)
 
 	hm := l == int(PageSize)+1
 
 	s := session.Start(receive.SessionId(c))
 
-	t := a[:l]
+	arts = arts[:l]
+
+	if arts == nil {
+		arts = make([]sqlc.Article, 0)
+	}
 
 	// Send the views.
 	send.View(c, view.View{Name: "Board", Props: map[string]any{
@@ -49,7 +53,7 @@ func View(c *client.Client) {
 		"expired":  s.Expired,
 		"page":     p,
 		"hasMore":  hm,
-		"articles": t,
+		"articles": arts,
 		"error":    "",
 	}})
 }

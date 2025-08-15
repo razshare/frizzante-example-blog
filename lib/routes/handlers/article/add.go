@@ -46,29 +46,9 @@ func Add(c *client.Client) {
 	err = database.Queries.AddArticle(context.Background(), sqlc.AddArticleParams{
 		ID:        aid.String(),
 		Title:     t,
+		Content:   cn,
 		AccountID: s.AccountId,
 		CreatedAt: time.Now().Unix(),
-	})
-
-	if err != nil {
-		send.View(c, view.View{Name: "ArticleForm", Props: map[string]any{
-			"error": err.Error(),
-		}})
-		return
-	}
-
-	acid, err := uuid.NewV4()
-	if err != nil {
-		send.View(c, view.View{Name: "ArticleForm", Props: map[string]any{
-			"error": err.Error(),
-		}})
-		return
-	}
-
-	err = database.Queries.AddArticleContent(context.Background(), sqlc.AddArticleContentParams{
-		ID:        acid.String(),
-		ArticleID: aid.String(),
-		Content:   cn,
 	})
 
 	if err != nil {

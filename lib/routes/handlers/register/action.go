@@ -29,7 +29,7 @@ func Action(c *client.Client) {
 	hash := fmt.Sprintf("%x", sha256.Sum256([]byte(psw)))
 
 	_, err := database.Queries.FindAccountById(context.Background(), id)
-	if err != nil {
+	if err == nil {
 		send.View(c, view.View{Name: "Register", Props: map[string]any{
 			"error": fmt.Sprintf("account `%s` already exists", id),
 		}})

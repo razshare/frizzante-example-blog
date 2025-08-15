@@ -1,7 +1,6 @@
 package article
 
 import (
-	"context"
 	"github.com/razshare/frizzante/client"
 	"github.com/razshare/frizzante/receive"
 	"github.com/razshare/frizzante/send"
@@ -12,7 +11,7 @@ import (
 func Remove(c *client.Client) {
 	id := receive.Query(c, "id")
 
-	err := database.Queries.RemoveArticle(context.Background(), id)
+	err := database.Queries.RemoveArticle(c.Request.Context(), id)
 
 	if err != nil {
 		send.View(c, view.View{Name: "Board", Props: map[string]any{

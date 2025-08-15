@@ -10,12 +10,7 @@ import (
 )
 
 const addAccount = `-- name: AddAccount :exec
-insert into user_account(id,
-                         display_name,
-                         password,
-                         created_at,
-                         updated_at)
-values (?, ?, ?, ?, ?)
+insert into user_account(id, display_name, password, created_at, updated_at) values (?, ?, ?, ?, ?)
 `
 
 type AddAccountParams struct {
@@ -38,16 +33,13 @@ func (q *Queries) AddAccount(ctx context.Context, arg AddAccountParams) error {
 }
 
 const addArticle = `-- name: AddArticle :exec
-insert into article(id,
-                    title,
-                    created_at,
-                    account_id)
-values (?, ?, ?, ?)
+insert into article(id, title, content, created_at, account_id) values (?, ?, ?, ?, ?)
 `
 
 type AddArticleParams struct {
 	ID        string
 	Title     string
+	Content   string
 	CreatedAt int64
 	AccountID string
 }
@@ -56,119 +48,15 @@ func (q *Queries) AddArticle(ctx context.Context, arg AddArticleParams) error {
 	_, err := q.db.ExecContext(ctx, addArticle,
 		arg.ID,
 		arg.Title,
+		arg.Content,
 		arg.CreatedAt,
 		arg.AccountID,
-	)
-	return err
-}
-
-const addArticleContent = `-- name: AddArticleContent :exec
-insert into article_content(id,
-                            created_at,
-                            article_id,
-                            content)
-values (?, ?, ?, ?)
-`
-
-type AddArticleContentParams struct {
-	ID        string
-	CreatedAt int64
-	ArticleID string
-	Content   string
-}
-
-func (q *Queries) AddArticleContent(ctx context.Context, arg AddArticleContentParams) error {
-	_, err := q.db.ExecContext(ctx, addArticleContent,
-		arg.ID,
-		arg.CreatedAt,
-		arg.ArticleID,
-		arg.Content,
-	)
-	return err
-}
-
-const addComment = `-- name: AddComment :exec
-insert into comment(id,
-                    created_at,
-                    account_id,
-                    article_id)
-values (?, ?, ?, ?)
-`
-
-type AddCommentParams struct {
-	ID        string
-	CreatedAt int64
-	AccountID string
-	ArticleID string
-}
-
-func (q *Queries) AddComment(ctx context.Context, arg AddCommentParams) error {
-	_, err := q.db.ExecContext(ctx, addComment,
-		arg.ID,
-		arg.CreatedAt,
-		arg.AccountID,
-		arg.ArticleID,
-	)
-	return err
-}
-
-const addCommentContent = `-- name: AddCommentContent :exec
-insert into comment_content(id,
-                            created_at,
-                            comment_id,
-                            content)
-values (?, ?, ?, ?)
-`
-
-type AddCommentContentParams struct {
-	ID        string
-	CreatedAt int64
-	CommentID string
-	Content   string
-}
-
-func (q *Queries) AddCommentContent(ctx context.Context, arg AddCommentContentParams) error {
-	_, err := q.db.ExecContext(ctx, addCommentContent,
-		arg.ID,
-		arg.CreatedAt,
-		arg.CommentID,
-		arg.Content,
-	)
-	return err
-}
-
-const changeAccount = `-- name: ChangeAccount :exec
-update user_account
-set display_name = ?,
-    password     = ?,
-    updated_at   = ?
-where id = ?
-`
-
-type ChangeAccountParams struct {
-	DisplayName string
-	Password    string
-	UpdatedAt   int64
-	ID          string
-}
-
-func (q *Queries) ChangeAccount(ctx context.Context, arg ChangeAccountParams) error {
-	_, err := q.db.ExecContext(ctx, changeAccount,
-		arg.DisplayName,
-		arg.Password,
-		arg.UpdatedAt,
-		arg.ID,
 	)
 	return err
 }
 
 const findAccountById = `-- name: FindAccountById :one
-select id,
-       display_name,
-       created_at,
-       updated_at
-from user_account
-where id = ?
+select id, display_name, created_at, updated_at from user_account where id = ?
 `
 
 type FindAccountByIdRow struct {
@@ -190,80 +78,8 @@ func (q *Queries) FindAccountById(ctx context.Context, id string) (FindAccountBy
 	return i, err
 }
 
-const findAccounts = `-- name: FindAccounts :many
-select id,
-       display_name,
-       created_at,
-       updated_at
-from user_account
-limit ? offset ?
-`
-
-type FindAccountsParams struct {
-	Limit  int64
-	Offset int64
-}
-
-type FindAccountsRow struct {
-	ID          string
-	DisplayName string
-	CreatedAt   int64
-	UpdatedAt   int64
-}
-
-func (q *Queries) FindAccounts(ctx context.Context, arg FindAccountsParams) ([]FindAccountsRow, error) {
-	rows, err := q.db.QueryContext(ctx, findAccounts, arg.Limit, arg.Offset)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []FindAccountsRow
-	for rows.Next() {
-		var i FindAccountsRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.DisplayName,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const findArticleContent = `-- name: FindArticleContent :one
-select content
-from article_content
-where article_id = ?
-order by created_at desc
-limit 1
-`
-
-func (q *Queries) FindArticleContent(ctx context.Context, articleID string) (string, error) {
-	row := q.db.QueryRowContext(ctx, findArticleContent, articleID)
-	var content string
-	err := row.Scan(&content)
-	return content, err
-}
-
 const findArticles = `-- name: FindArticles :many
-select article.id,
-       article.title,
-       article.created_at,
-       article.account_id,
-       article_content.content
-from article
-inner join article_content on article.id = article_content.article_id
-order by article.created_at desc
-limit ? offset ?
+select id, title, content, created_at, account_id from article limit ? offset ?
 `
 
 type FindArticlesParams struct {
@@ -271,88 +87,21 @@ type FindArticlesParams struct {
 	Offset int64
 }
 
-type FindArticlesRow struct {
-	ID        string
-	Title     string
-	CreatedAt int64
-	AccountID string
-	Content   string
-}
-
-func (q *Queries) FindArticles(ctx context.Context, arg FindArticlesParams) ([]FindArticlesRow, error) {
+func (q *Queries) FindArticles(ctx context.Context, arg FindArticlesParams) ([]Article, error) {
 	rows, err := q.db.QueryContext(ctx, findArticles, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []FindArticlesRow
+	var items []Article
 	for rows.Next() {
-		var i FindArticlesRow
+		var i Article
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
-			&i.CreatedAt,
-			&i.AccountID,
 			&i.Content,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const findCommentContent = `-- name: FindCommentContent :one
-select content
-from comment_content
-where id = ?
-order by created_at desc
-limit 1
-`
-
-func (q *Queries) FindCommentContent(ctx context.Context, id string) (string, error) {
-	row := q.db.QueryRowContext(ctx, findCommentContent, id)
-	var content string
-	err := row.Scan(&content)
-	return content, err
-}
-
-const findCommentsByArticleId = `-- name: FindCommentsByArticleId :many
-select id,
-       created_at,
-       account_id,
-       article_id
-from comment
-where article_id = ?
-limit ? offset ?
-`
-
-type FindCommentsByArticleIdParams struct {
-	ArticleID string
-	Limit     int64
-	Offset    int64
-}
-
-func (q *Queries) FindCommentsByArticleId(ctx context.Context, arg FindCommentsByArticleIdParams) ([]Comment, error) {
-	rows, err := q.db.QueryContext(ctx, findCommentsByArticleId, arg.ArticleID, arg.Limit, arg.Offset)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Comment
-	for rows.Next() {
-		var i Comment
-		if err := rows.Scan(
-			&i.ID,
 			&i.CreatedAt,
 			&i.AccountID,
-			&i.ArticleID,
 		); err != nil {
 			return nil, err
 		}
@@ -368,9 +117,7 @@ func (q *Queries) FindCommentsByArticleId(ctx context.Context, arg FindCommentsB
 }
 
 const removeArticle = `-- name: RemoveArticle :exec
-delete
-from article
-where id = ?
+delete from article where id = ?
 `
 
 func (q *Queries) RemoveArticle(ctx context.Context, id string) error {
@@ -378,23 +125,8 @@ func (q *Queries) RemoveArticle(ctx context.Context, id string) error {
 	return err
 }
 
-const removeComment = `-- name: RemoveComment :exec
-delete
-from comment
-where id = ?
-`
-
-func (q *Queries) RemoveComment(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, removeComment, id)
-	return err
-}
-
 const verifyAccount = `-- name: VerifyAccount :one
-select id
-from user_account
-where id = ?
-  and password = ?
-limit 1
+select id from user_account where id = ? and password = ? limit 1
 `
 
 type VerifyAccountParams struct {

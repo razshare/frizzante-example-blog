@@ -7,29 +7,9 @@ package sqlc
 type Article struct {
 	ID        string
 	Title     string
+	Content   string
 	CreatedAt int64
 	AccountID string
-}
-
-type ArticleContent struct {
-	ID        string
-	CreatedAt int64
-	ArticleID string
-	Content   string
-}
-
-type Comment struct {
-	ID        string
-	CreatedAt int64
-	AccountID string
-	ArticleID string
-}
-
-type CommentContent struct {
-	ID        string
-	CreatedAt int64
-	CommentID string
-	Content   string
 }
 
 type UserAccount struct {
