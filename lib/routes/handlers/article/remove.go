@@ -15,7 +15,7 @@ func Remove(c *client.Client) {
 	err := database.Queries.RemoveArticle(context.Background(), id)
 
 	if err != nil {
-		send.View(c, view.View{Name: "Board", Data: map[string]any{
+		send.View(c, view.View{Name: "Board", Props: map[string]any{
 			"error": err,
 		}})
 		return

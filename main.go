@@ -5,6 +5,7 @@ import (
 	"github.com/razshare/frizzante/guard"
 	"github.com/razshare/frizzante/route"
 	"github.com/razshare/frizzante/server"
+	"github.com/razshare/frizzante/svelte/ssr"
 	"main/lib/routes/guards"
 	"main/lib/routes/handlers/article"
 	"main/lib/routes/handlers/article_form"
@@ -14,20 +15,24 @@ import (
 	"main/lib/routes/handlers/login"
 	"main/lib/routes/handlers/logout"
 	"main/lib/routes/handlers/register"
+	"os"
 )
 
 //go:embed app/dist
 var efs embed.FS
-var conf = server.Default()
+var srv = server.New()
+var dev = os.Getenv("DEV") == "1"
+var render = ssr.New(ssr.Config{Efs: efs, Disk: dev})
 
 func main() {
-	defer server.Start(conf)
-	conf.Container.Efs = efs
-	conf.Guards = []guard.Guard{
+	defer server.Start(srv)
+	srv.Efs = efs
+	srv.Render = render
+	srv.Guards = []guard.Guard{
 		{Name: "verified", Handler: guards.Verified, Tags: []string{"protected"}},
 		{Name: "active", Handler: guards.Active, Tags: []string{"active"}},
 	}
-	conf.Routes = []route.Route{
+	srv.Routes = []route.Route{
 		{Pattern: "GET /", Handler: fallback.View},
 		{Pattern: "GET /expired", Handler: expired.View},
 		{Pattern: "GET /login", Handler: login.View},

@@ -29,7 +29,7 @@ func View(c *client.Client) {
 	)
 
 	if err != nil {
-		send.View(c, view.View{Name: "Board", Data: map[string]any{
+		send.View(c, view.View{Name: "Board", Props: map[string]any{
 			"error": err.Error(),
 		}})
 		return
@@ -44,11 +44,12 @@ func View(c *client.Client) {
 	t := a[:l]
 
 	// Send the views.
-	send.View(c, view.View{Name: "Board", Data: map[string]any{
+	send.View(c, view.View{Name: "Board", Props: map[string]any{
 		"verified": s.Verified,
 		"expired":  s.Expired,
 		"page":     p,
 		"hasMore":  hm,
 		"articles": t,
+		"error":    "",
 	}})
 }

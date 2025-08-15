@@ -20,7 +20,7 @@ func Action(c *client.Client) {
 	psw := f.Get("password")
 
 	if id == "" || n == "" || psw == "" {
-		send.View(c, view.View{Name: "Register", Data: map[string]any{
+		send.View(c, view.View{Name: "Register", Props: map[string]any{
 			"error": "please fill all fields",
 		}})
 		return
@@ -30,7 +30,7 @@ func Action(c *client.Client) {
 
 	_, err := database.Queries.FindAccountById(context.Background(), id)
 	if err != nil {
-		send.View(c, view.View{Name: "Register", Data: map[string]any{
+		send.View(c, view.View{Name: "Register", Props: map[string]any{
 			"error": fmt.Sprintf("account `%s` already exists", id),
 		}})
 		return
@@ -43,7 +43,7 @@ func Action(c *client.Client) {
 	})
 
 	if err != nil {
-		send.View(c, view.View{Name: "Register", Data: map[string]any{
+		send.View(c, view.View{Name: "Register", Props: map[string]any{
 			"error": err.Error(),
 		}})
 		return

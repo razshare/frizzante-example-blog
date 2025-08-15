@@ -1,7 +1,8 @@
 export type View<T> = {
     name: string
-    data: T
-    renderMode: number
+    props: T
+    render: number
+    align: number
 }
 
 export type HistoryEntry = {
@@ -10,3 +11,4 @@ export type HistoryEntry = {
     url: string
     body: Record<string, string>
 }
+

@@ -1,13 +1,13 @@
 import type { HistoryEntry, View } from "$frizzante/core/types.ts"
 
-let lastView: false | string = false
+let lastUrl: false | string = false
 
 export async function swap(
     target: HTMLAnchorElement | HTMLFormElement,
     view: View<unknown>,
 ): Promise<() => void> {
-    if (lastView === false) {
-        lastView = location.toString()
+    if (lastUrl === false) {
+        lastUrl = location.toString()
     }
 
     let res: Response
@@ -70,17 +70,37 @@ export async function swap(
         return function push() {}
     }
 
-    const json = JSON.parse(txt)
+    const remote = JSON.parse(txt)
 
-    view.data = json.data
-    view.name = json.name
-    view.renderMode = json.renderMode
+    view.align = remote.align
+    view.name = remote.name
+    view.render = remote.render
+    if (view.align === 0) {
+        if (typeof view.props != "object") {
+            console.warn(
+                "view alignment intends to merge props, but local view props is not an object",
+            )
+            // Noop.
+        } else if (typeof remote.props != "object") {
+            console.warn(
+                "view alignment intends to merge props, but remote props is not an object",
+            )
+            // Noop.
+        } else {
+            view.props = {
+                ...view.props,
+                ...remote.props,
+            }
+        }
+    } else {
+        view.props = remote.props
+    }
 
-    const sameView = lastView === res.url
-    lastView = res.url
+    const stationary = lastUrl === res.url
+    lastUrl = res.url
 
     return function push() {
-        if (sameView) {
+        if (stationary) {
             return
         }
 
@@ -94,3 +114,4 @@ export async function swap(
         window.history.pushState(JSON.stringify(entry), "", res.url)
     }
 }
+

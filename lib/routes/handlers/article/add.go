@@ -20,14 +20,14 @@ func Add(c *client.Client) {
 	cn := strings.Trim(f.Get("content"), " ")
 
 	if t == "" {
-		send.View(c, view.View{Name: "ArticleForm", Data: map[string]any{
+		send.View(c, view.View{Name: "ArticleForm", Props: map[string]any{
 			"error": "article title cannot be empty",
 		}})
 		return
 	}
 
 	if cn == "" {
-		send.View(c, view.View{Name: "ArticleForm", Data: map[string]any{
+		send.View(c, view.View{Name: "ArticleForm", Props: map[string]any{
 			"error": "article content cannot be empty",
 		}})
 		return
@@ -37,7 +37,7 @@ func Add(c *client.Client) {
 
 	aid, err := uuid.NewV4()
 	if nil != err {
-		send.View(c, view.View{Name: "ArticleForm", Data: map[string]any{
+		send.View(c, view.View{Name: "ArticleForm", Props: map[string]any{
 			"error": err.Error(),
 		}})
 		return
@@ -51,7 +51,7 @@ func Add(c *client.Client) {
 	})
 
 	if err != nil {
-		send.View(c, view.View{Name: "ArticleForm", Data: map[string]any{
+		send.View(c, view.View{Name: "ArticleForm", Props: map[string]any{
 			"error": err.Error(),
 		}})
 		return
@@ -59,7 +59,7 @@ func Add(c *client.Client) {
 
 	acid, err := uuid.NewV4()
 	if err != nil {
-		send.View(c, view.View{Name: "ArticleForm", Data: map[string]any{
+		send.View(c, view.View{Name: "ArticleForm", Props: map[string]any{
 			"error": err.Error(),
 		}})
 		return
@@ -72,7 +72,7 @@ func Add(c *client.Client) {
 	})
 
 	if err != nil {
-		send.View(c, view.View{Name: "ArticleForm", Data: map[string]any{
+		send.View(c, view.View{Name: "ArticleForm", Props: map[string]any{
 			"error": err.Error(),
 		}})
 		return

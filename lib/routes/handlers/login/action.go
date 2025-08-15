@@ -28,7 +28,7 @@ func Action(c *client.Client) {
 	})
 
 	if err != nil {
-		send.View(c, view.View{Name: "Login", Data: map[string]any{
+		send.View(c, view.View{Name: "Login", Props: map[string]any{
 			"error": "invalid credentials",
 		}})
 		return

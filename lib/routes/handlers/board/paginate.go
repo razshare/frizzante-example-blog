@@ -16,7 +16,7 @@ func Paginate(c *client.Client) int64 {
 		var err error
 		p, err = strconv.ParseInt(pstr, 10, 64)
 		if err != nil {
-			c.Scope.Container.Config.ErrorLog.Println(err, stack.Trace())
+			c.Scope.ErrorLog.Println(err, stack.Trace())
 			return 0
 		}
 	}
