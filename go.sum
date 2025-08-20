@@ -32,6 +32,8 @@ github.com/go-sourcemap/sourcemap v2.1.4+incompatible h1:a+iTbH5auLKxaNwQFg0B+TC
 github.com/go-sourcemap/sourcemap v2.1.4+incompatible/go.mod h1:F8jJfvm2KbVjc5NqelyYJmf/v5J0dwNLS2mL4sNA1Jg=
 github.com/google/pprof v0.0.0-20250630185457-6e76a2b096b5 h1:xhMrHhTJ6zxu3gA4enFM9MLn9AY7613teCdFnlUVbSQ=
 github.com/google/pprof v0.0.0-20250630185457-6e76a2b096b5/go.mod h1:5hDyRhoBCxViHszMt12TnOpEI4VVi+U8Gm9iphldiMA=
+github.com/google/pprof v0.0.0-20250820193118-f64d9cf942d6 h1:EEHtgt9IwisQ2AZ4pIsMjahcegHh6rmhqxzIRQIyepY=
+github.com/google/pprof v0.0.0-20250820193118-f64d9cf942d6/go.mod h1:I6V7YzU0XDpsHqbsyrghnFZLO1gwK6NPTNvmetQIk9U=
 github.com/gorilla/websocket v1.5.3 h1:saDtZ6Pbx/0u+bgYQ3q96pZgCzfhKXGPqt7kZ72aNNg=
 github.com/gorilla/websocket v1.5.3/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/lucasb-eyer/go-colorful v1.2.0 h1:1nnpGOrhyZZuNyfu1QjKiUICQ74+3FNCN69Aj6K7nkY=
@@ -77,6 +79,8 @@ github.com/razshare/frizzante v1.22.12 h1:Mp3i8EaSMqh3IjI1DEwsLwzauluiD04pE0TTJu
 github.com/razshare/frizzante v1.22.12/go.mod h1:ZbgTE90t2XS+CdIeAVBEQq3mvH3/rb+FtLjCctABL6I=
 github.com/razshare/frizzante v1.22.15 h1:hbY09oPlbVaGWyFOwpN3i2IDeslfoslzXluS85ww+gQ=
 github.com/razshare/frizzante v1.22.15/go.mod h1:ZbgTE90t2XS+CdIeAVBEQq3mvH3/rb+FtLjCctABL6I=
+github.com/razshare/frizzante v1.22.26 h1:COt20+en6XBJyc1YMarqHcw1m2VRg6Liu4sDfe0zsTE=
+github.com/razshare/frizzante v1.22.26/go.mod h1:Lz/o8spyPzdGQFJm2Q30riPI9onneNSG+1Ctpmx0ydQ=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
 github.com/rivo/uniseg v0.4.7 h1:WUdvkW8uEhrYfLC4ZzdpI2ztxP1I582+49Oc5Mq64VQ=
 github.com/rivo/uniseg v0.4.7/go.mod h1:FN3SvrM+Zdj16jyLfmOkMNblXMcoc8DfTHruCPUcx88=
