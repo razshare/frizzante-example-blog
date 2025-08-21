@@ -6,6 +6,7 @@ import (
 	"github.com/razshare/frizzante/route"
 	"github.com/razshare/frizzante/server"
 	"github.com/razshare/frizzante/svelte/ssr"
+	"github.com/razshare/frizzante/tag"
 	"main/lib/routes/guards"
 	"main/lib/routes/handlers/article"
 	"main/lib/routes/handlers/article_form"
@@ -18,6 +19,9 @@ import (
 	"os"
 )
 
+const Active tag.Tag = 0
+const Protected tag.Tag = 1
+
 //go:embed app/dist
 var efs embed.FS
 var srv = server.New()
@@ -29,8 +33,8 @@ func main() {
 	srv.Efs = efs
 	srv.Render = render
 	srv.Guards = []guard.Guard{
-		{Name: "verified", Handler: guards.Verified, Tags: []string{"protected"}},
-		{Name: "active", Handler: guards.Active, Tags: []string{"active"}},
+		{Name: "verified", Handler: guards.Verified, Tags: []tag.Tag{Protected}},
+		{Name: "active", Handler: guards.Active, Tags: []tag.Tag{Active}},
 	}
 	srv.Routes = []route.Route{
 		{Pattern: "GET /", Handler: fallback.View},
@@ -44,8 +48,8 @@ func main() {
 		// Order matters here, first check for "protected", then for "active".
 		// This way a session that is verified but expired, sees the message "Your sessions has expired",
 		// while a session that has never been verified to begin with, is redirected to the login page.
-		{Pattern: "GET /article-form", Handler: article_form.View, Tags: []string{"protected", "active"}},
-		{Pattern: "POST /article-form", Handler: article.Add, Tags: []string{"protected", "active"}},
-		{Pattern: "GET /article-remove", Handler: article.Remove, Tags: []string{"protected", "active"}},
+		{Pattern: "GET /article-form", Handler: article_form.View, Tags: []tag.Tag{Protected, Active}},
+		{Pattern: "POST /article-form", Handler: article.Add, Tags: []tag.Tag{Protected, Active}},
+		{Pattern: "GET /article-remove", Handler: article.Remove, Tags: []tag.Tag{Protected, Active}},
 	}
 }
