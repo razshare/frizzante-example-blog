@@ -20,7 +20,7 @@ import (
 )
 
 const Active tag.Tag = 0
-const Protected tag.Tag = 1
+const Verified tag.Tag = 1
 
 //go:embed app/dist
 var efs embed.FS
@@ -33,7 +33,7 @@ func main() {
 	srv.Efs = efs
 	srv.Render = render
 	srv.Guards = []guard.Guard{
-		{Name: "verified", Handler: guards.Verified, Tags: []tag.Tag{Protected}},
+		{Name: "verified", Handler: guards.Verified, Tags: []tag.Tag{Verified}},
 		{Name: "active", Handler: guards.Active, Tags: []tag.Tag{Active}},
 	}
 	srv.Routes = []route.Route{
@@ -48,8 +48,8 @@ func main() {
 		// Order matters here, first check for "protected", then for "active".
 		// This way a session that is verified but expired, sees the message "Your sessions has expired",
 		// while a session that has never been verified to begin with, is redirected to the login page.
-		{Pattern: "GET /article-form", Handler: article_form.View, Tags: []tag.Tag{Protected, Active}},
-		{Pattern: "POST /article-form", Handler: article.Add, Tags: []tag.Tag{Protected, Active}},
-		{Pattern: "GET /article-remove", Handler: article.Remove, Tags: []tag.Tag{Protected, Active}},
+		{Pattern: "GET /article-form", Handler: article_form.View, Tags: []tag.Tag{Verified, Active}},
+		{Pattern: "POST /article-form", Handler: article.Add, Tags: []tag.Tag{Verified, Active}},
+		{Pattern: "GET /article-remove", Handler: article.Remove, Tags: []tag.Tag{Verified, Active}},
 	}
 }
