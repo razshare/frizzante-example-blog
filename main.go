@@ -45,7 +45,7 @@ func main() {
 		{Pattern: "GET /register", Handler: register.View},
 		{Pattern: "POST /register", Handler: register.Action},
 		{Pattern: "GET /board", Handler: board.View},
-		// Order matters here, first check for "protected", then for "active".
+		// Order matters here, first check for "verified", then for "active".
 		// This way a session that is verified but expired, sees the message "Your sessions has expired",
 		// while a session that has never been verified to begin with, is redirected to the login page.
 		{Pattern: "GET /article-form", Handler: article_form.View, Tags: []tag.Tag{Verified, Active}},
