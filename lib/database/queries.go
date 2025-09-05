@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"embed"
 	"log"
+	"main/lib/core/files"
 	"main/lib/database/sqlc"
 	"os"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/razshare/frizzante/files"
 )
 
 //go:embed source.sqlite
