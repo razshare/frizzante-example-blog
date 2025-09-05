@@ -2,11 +2,11 @@ package main
 
 import (
 	"embed"
-	"github.com/razshare/frizzante/guard"
-	"github.com/razshare/frizzante/route"
-	"github.com/razshare/frizzante/server"
-	"github.com/razshare/frizzante/svelte/ssr"
-	"github.com/razshare/frizzante/tag"
+	"main/lib/core/guard"
+	"main/lib/core/route"
+	"main/lib/core/server"
+	"main/lib/core/svelte/ssr"
+	"main/lib/core/tag"
 	"main/lib/guards"
 	"main/lib/routes/article"
 	"main/lib/routes/article_form"

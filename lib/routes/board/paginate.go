@@ -1,10 +1,11 @@
 package board
 
 import (
-	"github.com/razshare/frizzante/client"
-	"github.com/razshare/frizzante/receive"
-	"github.com/razshare/frizzante/stack"
+	"main/lib/core/client"
+	"main/lib/core/receive"
 	"strconv"
+
+	"github.com/razshare/frizzante/stack"
 )
 
 var PageSize int64 = 10

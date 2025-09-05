@@ -3,11 +3,12 @@ package database
 import (
 	"database/sql"
 	"embed"
-	_ "github.com/mattn/go-sqlite3"
-	"github.com/razshare/frizzante/files"
 	"log"
 	"main/lib/database/sqlc"
 	"os"
+
+	_ "github.com/mattn/go-sqlite3"
+	"github.com/razshare/frizzante/files"
 )
 
 //go:embed source.sqlite

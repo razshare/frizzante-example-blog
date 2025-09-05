@@ -1,9 +1,9 @@
 package article_form
 
 import (
-	"github.com/razshare/frizzante/client"
-	"github.com/razshare/frizzante/send"
-	"github.com/razshare/frizzante/view"
+	"main/lib/core/client"
+	"main/lib/core/send"
+	"main/lib/core/view"
 )
 
 func View(c *client.Client) {

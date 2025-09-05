@@ -15,11 +15,11 @@
 </style>
 
 <script lang="ts">
-    import { action } from "$frizzante/core/scripts/action.ts"
     import Layout from "$lib/components/Layout.svelte"
-    import { href } from "$frizzante/core/scripts/href.ts"
     import Icon from "$lib/components/Icon.svelte"
     import { mdiArrowLeft, mdiPlus } from "@mdi/js"
+    import {href} from "$lib/scripts/core/href.ts";
+    import {action} from "$lib/scripts/core/action.ts";
 
     type Props = { error: string }
     let { error }: Props = $props()

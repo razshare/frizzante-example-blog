@@ -38,10 +38,10 @@
 </style>
 
 <script lang="ts">
-    import { href } from "$frizzante/core/scripts/href.ts"
     import type { Article } from "$lib/types.ts"
     import Icon from "$lib/components/Icon.svelte"
     import { mdiArrowLeft, mdiArrowRight } from "@mdi/js"
+    import {href} from "$lib/scripts/core/href.ts";
 
     type Props = {
         page: number

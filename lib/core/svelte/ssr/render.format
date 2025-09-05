@@ -1,0 +1,6 @@
+const module={exports:{}};
+
+(function(){
+    %s
+    return render
+})()

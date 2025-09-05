@@ -2,10 +2,10 @@ package board
 
 import (
 	"context"
-	"github.com/razshare/frizzante/client"
-	"github.com/razshare/frizzante/receive"
-	"github.com/razshare/frizzante/send"
-	"github.com/razshare/frizzante/view"
+	"main/lib/core/client"
+	"main/lib/core/receive"
+	"main/lib/core/send"
+	"main/lib/core/view"
 	"main/lib/database"
 	"main/lib/database/sqlc"
 	"main/lib/session"

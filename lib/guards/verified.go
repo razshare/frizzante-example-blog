@@ -1,9 +1,9 @@
 package guards
 
 import (
-	"github.com/razshare/frizzante/client"
-	"github.com/razshare/frizzante/receive"
-	"github.com/razshare/frizzante/send"
+	"main/lib/core/client"
+	"main/lib/core/receive"
+	"main/lib/core/send"
 	"main/lib/session"
 )
 

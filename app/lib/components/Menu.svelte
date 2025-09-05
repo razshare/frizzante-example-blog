@@ -5,9 +5,9 @@
 </style>
 
 <script lang="ts">
-    import { href } from "$frizzante/core/scripts/href.ts"
     import Icon from "$lib/components/Icon.svelte"
     import {mdiAccountPlus, mdiLogout, mdiPlusBox} from "@mdi/js"
+    import {href} from "$lib/scripts/core/href.ts";
 
     type Props = {
         verified: boolean
