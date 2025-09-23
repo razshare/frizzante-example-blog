@@ -2,8 +2,9 @@ package receive
 
 import (
 	"io"
-	"main/lib/core/mock"
 	"testing"
+
+	"main/lib/core/mock"
 )
 
 func TestMessage(t *testing.T) {

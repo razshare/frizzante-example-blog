@@ -2,9 +2,10 @@ package embeds
 
 import (
 	"embed"
-	"main/lib/core/files"
 	"os"
 	"testing"
+
+	"main/lib/core/files"
 )
 
 //go:embed zip_test.go

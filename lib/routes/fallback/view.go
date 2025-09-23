@@ -5,8 +5,6 @@ import (
 	"main/lib/core/send"
 )
 
-func View(c *client.Client) {
-	send.FileOrElse(c, func() {
-		send.Navigate(c, "/board")
-	})
+func View(client *client.Client) {
+	send.FileOrElse(client, func() { send.Navigate(client, "/board") })
 }

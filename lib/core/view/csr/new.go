@@ -4,11 +4,12 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
-	"main/lib/core/embeds"
-	_view "main/lib/core/view"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"main/lib/core/embeds"
+	_view "main/lib/core/view"
 )
 
 //go:embed target.format
@@ -32,7 +33,7 @@ func New(conf Config) func(view _view.View) (html string, err error) {
 		app = "app"
 	}
 
-	var id = "svelte-app"
+	var id = "app"
 	var dist = filepath.Join(app, "dist")
 	var index = filepath.Join(dist, "client", "index.html")
 	var indexFixed = strings.ReplaceAll(index, "\\", "/")
@@ -54,7 +55,7 @@ func New(conf Config) func(view _view.View) (html string, err error) {
 		doc := string(data)
 
 		var props []byte
-		if props, err = json.Marshal(_view.Data(view)); err != nil {
+		if props, err = json.Marshal(_view.Wrap(view)); err != nil {
 			return "", err
 		}
 

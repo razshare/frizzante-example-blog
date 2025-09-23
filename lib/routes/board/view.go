@@ -8,16 +8,20 @@ import (
 	"main/lib/core/view"
 	"main/lib/database"
 	"main/lib/database/sqlc"
-	"main/lib/session"
+	"main/lib/session/memory"
 )
 
-func View(c *client.Client) {
-	p := Paginate(c)
+func View(client *client.Client) {
+	var page = Paginate(client)
+	var articles []sqlc.Article
+	var count int
+	var hasMore bool
+	var err error
 
-	arts, err := database.Queries.FindArticles(
+	if articles, err = database.Queries.FindArticles(
 		context.Background(),
 		sqlc.FindArticlesParams{
-			Offset: PageSize * p,
+			Offset: PageSize * page,
 
 			// Get an additional element.
 			// If this element is present in the result,
@@ -26,34 +30,25 @@ func View(c *client.Client) {
 			// sending the slice to the view.
 			Limit: PageSize + 1,
 		},
-	)
-
-	if err != nil {
-		send.View(c, view.View{Name: "Board", Props: map[string]any{
-			"error": err.Error(),
-		}})
+	); err != nil {
+		send.Navigatef(client, "/board?error=%s", err.Error())
 		return
 	}
 
-	l := len(arts)
+	count = len(articles)
+	hasMore = count == int(PageSize)+1
+	state := memory.Start(receive.SessionId(client))
 
-	hm := l == int(PageSize)+1
-
-	s := session.Start(receive.SessionId(c))
-
-	arts = arts[:l]
-
-	if arts == nil {
-		arts = make([]sqlc.Article, 0)
+	if articles = articles[:count]; articles == nil {
+		articles = make([]sqlc.Article, 0)
 	}
 
 	// Send the views.
-	send.View(c, view.View{Name: "Board", Props: map[string]any{
-		"verified": s.Verified,
-		"expired":  s.Expired,
-		"page":     p,
-		"hasMore":  hm,
-		"articles": arts,
-		"error":    "",
+	send.View(client, view.View{Name: "Board", Props: map[string]any{
+		"verified": state.Verified,
+		"expired":  state.Expired,
+		"page":     page,
+		"hasMore":  hasMore,
+		"articles": articles,
 	}})
 }

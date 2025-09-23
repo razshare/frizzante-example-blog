@@ -2,10 +2,11 @@ package embeds
 
 import (
 	"embed"
-	"main/lib/core/files"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"main/lib/core/files"
 )
 
 //go:embed dir

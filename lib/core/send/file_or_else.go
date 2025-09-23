@@ -4,19 +4,20 @@ import (
 	"bytes"
 	"fmt"
 	"io/fs"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"main/lib/core/client"
 	"main/lib/core/embeds"
 	"main/lib/core/files"
 	"main/lib/core/mime"
 	"main/lib/core/stack"
-	"net/http"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 // FileOrElse sends the file requested by the client, or else falls back.
-func FileOrElse(client *client.Client, or func()) {
+func FileOrElse(client *client.Client, orElse func()) {
 	if client.WebSocket != nil {
 		client.Config.ErrorLog.Println("file_or_else does not support web sockets", stack.Trace())
 		return
@@ -76,5 +77,5 @@ func FileOrElse(client *client.Client, or func()) {
 		return
 	}
 
-	or()
+	orElse()
 }

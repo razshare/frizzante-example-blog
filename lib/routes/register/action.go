@@ -7,47 +7,37 @@ import (
 	"main/lib/core/client"
 	"main/lib/core/receive"
 	"main/lib/core/send"
-	"main/lib/core/view"
 	"main/lib/database"
 	"main/lib/database/sqlc"
 )
 
-func Action(c *client.Client) {
-	f := receive.Form(c)
+func Action(client *client.Client) {
+	var err error
+	var id = receive.FormValue(client, "id")
+	var displayName = receive.FormValue(client, "displayName")
+	var password = receive.FormValue(client, "password")
+	var hash string
 
-	id := f.Get("id")
-	n := f.Get("displayName")
-	psw := f.Get("password")
-
-	if id == "" || n == "" || psw == "" {
-		send.View(c, view.View{Name: "Register", Props: map[string]any{
-			"error": "please fill all fields",
-		}})
+	if id == "" || displayName == "" || password == "" {
+		send.Navigate(client, "/register?error=please fill all fields")
 		return
 	}
 
-	hash := fmt.Sprintf("%x", sha256.Sum256([]byte(psw)))
+	hash = fmt.Sprintf("%x", sha256.Sum256([]byte(password)))
 
-	_, err := database.Queries.FindAccountById(context.Background(), id)
-	if err == nil {
-		send.View(c, view.View{Name: "Register", Props: map[string]any{
-			"error": fmt.Sprintf("account `%s` already exists", id),
-		}})
+	if _, err = database.Queries.FindAccountById(context.Background(), id); err == nil {
+		send.Navigatef(client, "/register?error=account %s already exists", id)
 		return
 	}
 
-	err = database.Queries.AddAccount(context.Background(), sqlc.AddAccountParams{
+	if err = database.Queries.AddAccount(context.Background(), sqlc.AddAccountParams{
 		ID:          id,
-		DisplayName: n,
+		DisplayName: displayName,
 		Password:    hash,
-	})
-
-	if err != nil {
-		send.View(c, view.View{Name: "Register", Props: map[string]any{
-			"error": err.Error(),
-		}})
+	}); err != nil {
+		send.Navigatef(client, "/register?error=%s", err.Error())
 		return
 	}
 
-	send.Navigate(c, "/login")
+	send.Navigate(client, "/login")
 }

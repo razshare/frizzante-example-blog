@@ -4,19 +4,19 @@ import (
 	"main/lib/core/client"
 	"main/lib/core/receive"
 	"main/lib/core/send"
-	"main/lib/session"
+	"main/lib/session/memory"
 	"time"
 )
 
-func Active(c *client.Client, allow func()) {
-	s := session.Start(receive.SessionId(c))
+func Active(client *client.Client, allow func()) {
+	state := memory.Start(receive.SessionId(client))
 
-	if time.Since(s.LastActivity) > 30*time.Minute {
-		send.Navigate(c, "/expired")
+	if time.Since(state.LastActivity) > 30*time.Minute {
+		send.Navigate(client, "/expired?error=session expired")
 		return
 	}
 
-	s.LastActivity = time.Now()
+	state.LastActivity = time.Now()
 
 	allow()
 }

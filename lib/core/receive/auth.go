@@ -2,9 +2,12 @@ package receive
 
 import "main/lib/core/client"
 
-// BasicAuth returns the username and password provided
-// in the request's Authorization header, if the request
-// uses HTTP Basic Authentication. See RFC 2617, Section 2
-func BasicAuth(client *client.Client) (user string, pass string, ok bool) {
-	return client.Request.BasicAuth()
+// BasicAuth reads the username and password provided
+// in the request's Authorization header and stores them into the value
+// pointed to by username and password, if the request uses HTTP Basic Authentication.
+//
+// See RFC 2617, Section 2
+func BasicAuth(client *client.Client) (username string, password string) {
+	username, password, _ = client.Request.BasicAuth()
+	return
 }

@@ -1,9 +1,8 @@
 package runtime
 
 import (
-	"main/lib/core/js"
-
 	"github.com/dop251/goja"
+	"main/lib/core/js"
 )
 
 // WithFunctions sets a map of functions.

@@ -4,11 +4,11 @@ import (
 	"main/lib/core/client"
 	"main/lib/core/receive"
 	"main/lib/core/send"
-	"main/lib/session"
+	"main/lib/session/memory"
 )
 
-func Action(c *client.Client) {
-	s := session.Start(receive.SessionId(c))
-	s.Verified = false
-	send.Navigate(c, "/login")
+func Action(client *client.Client) {
+	state := memory.Start(receive.SessionId(client))
+	state.Verified = false
+	send.Navigate(client, "/login")
 }

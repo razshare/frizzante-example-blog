@@ -2,10 +2,10 @@ package send
 
 import (
 	"fmt"
-	"main/lib/core/client"
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	"main/lib/core/client"
 	"main/lib/core/stack"
 )
 
@@ -31,7 +31,7 @@ func Content(client *client.Client, data []byte) {
 		return
 	}
 
-	if "" != client.EventName {
+	if client.EventName != "" {
 		EventContent(client, data)
 		return
 	}

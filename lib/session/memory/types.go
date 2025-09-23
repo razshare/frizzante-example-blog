@@ -1,8 +1,8 @@
-package session
+package memory
 
 import "time"
 
-type Session struct {
+type State struct {
 	LastActivity time.Time
 	Verified     bool
 	Expired      bool

@@ -6,8 +6,6 @@ import (
 	"main/lib/core/view"
 )
 
-func View(c *client.Client) {
-	send.View(c, view.View{Name: "Register", Props: map[string]any{
-		"error": "",
-	}})
+func View(client *client.Client) {
+	send.View(client, view.View{Name: "Register"})
 }

@@ -5,59 +5,48 @@ import (
 	"main/lib/core/client"
 	"main/lib/core/receive"
 	"main/lib/core/send"
-	"main/lib/core/view"
 	"main/lib/database"
 	"main/lib/database/sqlc"
-	"main/lib/session"
+	"main/lib/session/memory"
 	"strings"
 	"time"
 
 	uuid "github.com/nu7hatch/gouuid"
 )
 
-func Add(c *client.Client) {
-	f := receive.Form(c)
-	t := strings.Trim(f.Get("title"), " ")
-	cn := strings.Trim(f.Get("content"), " ")
+func Add(client *client.Client) {
+	var title string
+	var content string
+	var id *uuid.UUID
+	var err error
 
-	if t == "" {
-		send.View(c, view.View{Name: "ArticleForm", Props: map[string]any{
-			"error": "article title cannot be empty",
-		}})
+	if title = strings.Trim(receive.FormValue(client, "title"), " "); title == "" {
+		send.Navigate(client, "/article-form?error=article title cannot be empty")
 		return
 	}
 
-	if cn == "" {
-		send.View(c, view.View{Name: "ArticleForm", Props: map[string]any{
-			"error": "article content cannot be empty",
-		}})
+	if content = strings.Trim(receive.FormValue(client, "content"), " "); content == "" {
+		send.Navigate(client, "/article-form?error=article content cannot be empty")
 		return
 	}
 
-	s := session.Start(receive.SessionId(c))
+	state := memory.Start(receive.SessionId(client))
 
-	aid, err := uuid.NewV4()
-	if nil != err {
-		send.View(c, view.View{Name: "ArticleForm", Props: map[string]any{
-			"error": err.Error(),
-		}})
+	if id, err = uuid.NewV4(); nil != err {
+		send.Navigatef(client, "/article-form?error=%s", err.Error())
 		return
 	}
 
-	err = database.Queries.AddArticle(context.Background(), sqlc.AddArticleParams{
-		ID:        aid.String(),
-		Title:     t,
-		Content:   cn,
-		AccountID: s.AccountId,
+	if err = database.Queries.AddArticle(context.Background(), sqlc.AddArticleParams{
+		ID:        id.String(),
+		Title:     title,
+		Content:   content,
+		AccountID: state.AccountId,
 		CreatedAt: time.Now().Unix(),
-	})
-
-	if err != nil {
-		send.View(c, view.View{Name: "ArticleForm", Props: map[string]any{
-			"error": err.Error(),
-		}})
+	}); err != nil {
+		send.Navigatef(client, "/article-form?error=%s", err.Error())
 		return
 	}
 
-	send.Navigate(c, "/board")
+	send.Navigate(client, "/board")
 }

@@ -2,10 +2,11 @@ package send
 
 import (
 	"embed"
-	"main/lib/core/mock"
 	"net/url"
 	"strings"
 	"testing"
+
+	"main/lib/core/mock"
 )
 
 //go:embed file_or_else_test.go
@@ -16,11 +17,11 @@ func TestFileOrElse(t *testing.T) {
 	client.Config.Efs = EfsTestFileOrElse
 	client.Config.PublicRoot = ""
 	client.Request.RequestURI = "file_or_else_test.go"
-	var or bool
-	FileOrElse(client, func() { or = true })
+	var orElse bool
+	FileOrElse(client, func() { orElse = true })
 	writer := client.Writer.(*mock.ResponseWriter)
 
-	if or {
+	if orElse {
 		t.Fatal("else branch should not trigger")
 	}
 
@@ -34,11 +35,11 @@ func TestFileOrElseFromFs(t *testing.T) {
 	client.Config.PublicRoot = ""
 	client.Request.RequestURI = "file_or_else_test.go"
 	client.Request.URL = &url.URL{Path: "file_or_else_test.go"}
-	var or bool
-	FileOrElse(client, func() { or = true })
+	var orElse bool
+	FileOrElse(client, func() { orElse = true })
 	writer := client.Writer.(*mock.ResponseWriter)
 
-	if or {
+	if orElse {
 		t.Fatal("else branch should not trigger")
 	}
 
@@ -52,9 +53,9 @@ func TestFileOrElseShouldFail(t *testing.T) {
 	client.Config.Efs = EfsTestFileOrElse
 	client.Config.PublicRoot = ""
 	client.Request.RequestURI = "some_file.go"
-	var or bool
-	FileOrElse(client, func() { or = true })
-	if !or {
+	var orElse bool
+	FileOrElse(client, func() { orElse = true })
+	if !orElse {
 		t.Fatal("or else should trigger")
 	}
 }

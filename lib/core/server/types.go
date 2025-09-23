@@ -3,24 +3,25 @@ package server
 import (
 	"embed"
 	"log"
+	"net/http"
+
 	"main/lib/core/guard"
 	"main/lib/core/route"
-	_view "main/lib/core/view"
-	"net/http"
+	view "main/lib/core/view"
 )
 
 type Server struct {
 	*http.Server
-	PublicRoot  string
-	SecureAddr  string
 	Guards      []guard.Guard
 	Routes      []route.Route
-	InfoLog     *log.Logger
-	Channels    Channels
-	Efs         embed.FS
+	PublicRoot  string
+	SecureAddr  string
 	Certificate string
 	Key         string
-	Render      func(view _view.View) (html string, err error)
+	Channels    Channels
+	InfoLog     *log.Logger
+	Efs         embed.FS
+	Render      func(view view.View) (html string, err error)
 }
 
 type Channels struct {

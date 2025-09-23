@@ -1,10 +1,9 @@
 package receive
 
 import (
+	uuid "github.com/nu7hatch/gouuid"
 	"main/lib/core/client"
 	"main/lib/core/send"
-
-	uuid "github.com/nu7hatch/gouuid"
 	"main/lib/core/stack"
 )
 

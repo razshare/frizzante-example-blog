@@ -7,7 +7,5 @@ import (
 )
 
 func View(c *client.Client) {
-	send.View(c, view.View{Name: "Expired", Props: map[string]any{
-		"error": "",
-	}})
+	send.View(c, view.View{Name: "Expired"})
 }

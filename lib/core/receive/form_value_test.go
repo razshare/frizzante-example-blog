@@ -2,11 +2,12 @@ package receive
 
 import (
 	"bytes"
-	"main/lib/core/mock"
 	"testing"
+
+	"main/lib/core/mock"
 )
 
-func TestForm(t *testing.T) {
+func TestValue(t *testing.T) {
 	client := mock.NewClient()
 	client.Request.Header.Set("Content-Type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW")
 	boundary := client.Request.Body.(*mock.RequestBody)
@@ -21,7 +22,7 @@ func TestForm(t *testing.T) {
 		[]byte("\n"),
 	)
 
-	if Form(client).Get("key") != "value" {
+	if FormValue(client, "key") != "value" {
 		t.Fatal("key should be value")
 	}
 }

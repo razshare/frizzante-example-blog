@@ -3,22 +3,23 @@ package client
 import (
 	"embed"
 	"log"
-	_view "main/lib/core/view"
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	"main/lib/core/view"
 )
 
 type Client struct {
+	SessionId string
+	EventName string
+	EventId   int64
+	Status    int
 	Config    *Config
 	Request   *http.Request
 	WebSocket *websocket.Conn
 	Writer    http.ResponseWriter
-	SessionId string
-	EventName string
-	EventId   int64
 	Locked    bool
-	Status    int
+	Parsed    bool
 }
 
 type Config struct {
@@ -26,5 +27,5 @@ type Config struct {
 	Efs        embed.FS
 	ErrorLog   *log.Logger
 	InfoLog    *log.Logger
-	Render     func(view _view.View) (html string, err error)
+	Render     func(view view.View) (html string, err error)
 }

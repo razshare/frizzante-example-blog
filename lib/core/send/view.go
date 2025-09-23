@@ -1,11 +1,11 @@
 package send
 
 import (
-	"main/lib/core/client"
-	_view "main/lib/core/view"
 	"strings"
 
+	"main/lib/core/client"
 	"main/lib/core/stack"
+	_view "main/lib/core/view"
 )
 
 // View sends a view.
@@ -15,16 +15,16 @@ func View(client *client.Client, view _view.View) {
 	}
 
 	if strings.Contains(client.Request.Header.Get("Accept"), "application/json") {
-		if "" == client.Writer.Header().Get("Cache-Control") {
+		if client.Writer.Header().Get("Cache-Control") == "" {
 			Header(client, "Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
 		}
-		if "" == client.Writer.Header().Get("Pragma") {
+		if client.Writer.Header().Get("Pragma") == "" {
 			Header(client, "Pragma", "no-cache")
 		}
 		if view.Props == nil {
-			view.Props = map[string]any{}
+			view.Props = map[string]string{}
 		}
-		Json(client, _view.Data(view))
+		Json(client, _view.Wrap(view))
 		return
 	}
 
@@ -39,7 +39,7 @@ func View(client *client.Client, view _view.View) {
 		client.Config.ErrorLog.Println(err, stack.Trace())
 	}
 
-	if "" == client.Writer.Header().Get("Content-Type") {
+	if client.Writer.Header().Get("Content-Type") == "" {
 		Header(client, "Content-Type", "text/html")
 	}
 

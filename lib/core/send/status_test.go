@@ -1,8 +1,9 @@
 package send
 
 import (
-	"main/lib/core/mock"
 	"testing"
+
+	"main/lib/core/mock"
 )
 
 func TestStatus(t *testing.T) {

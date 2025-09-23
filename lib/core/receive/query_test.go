@@ -1,9 +1,10 @@
 package receive
 
 import (
-	"main/lib/core/mock"
 	"net/url"
 	"testing"
+
+	"main/lib/core/mock"
 )
 
 func TestQuery(t *testing.T) {

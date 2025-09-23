@@ -2,8 +2,9 @@ package send
 
 import (
 	"errors"
-	"main/lib/core/mock"
 	"testing"
+
+	"main/lib/core/mock"
 )
 
 func TestContent(t *testing.T) {

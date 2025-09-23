@@ -1,5 +1,12 @@
 package view
 
+type Data struct {
+	Name   string
+	Render RenderMode
+	Align  AlignMode
+	Props  any
+}
+
 type RenderMode int
 
 const (
@@ -19,7 +26,7 @@ const (
 type View struct {
 	Name       string
 	Title      string
-	Props      map[string]any
+	Props      any
 	AlignMode  AlignMode
 	RenderMode RenderMode
 }

@@ -1,11 +1,8 @@
-import type { HistoryEntry, View } from "$lib/scripts/core/types.ts"
+import type { HistoryEntry, View } from "$lib/scripts/core/types"
 
 let lastUrl: false | string = false
 
-export async function swap(
-    target: HTMLAnchorElement | HTMLFormElement,
-    view: View<unknown>,
-): Promise<() => void> {
+export async function swap(target: HTMLAnchorElement | HTMLFormElement, view: View<unknown>): Promise<() => void> {
     if (lastUrl === false) {
         lastUrl = location.toString()
     }
@@ -72,28 +69,24 @@ export async function swap(
 
     const remote = JSON.parse(txt)
 
-    view.align = remote.align
-    view.name = remote.name
-    view.render = remote.render
-    if (view.align === 0) {
-        if (typeof view.props != "object") {
-            console.warn(
-                "view alignment intends to merge props, but local view props is not an object",
-            )
+    view.Align = remote.Align
+    view.Name = remote.Name
+    view.Render = remote.Render
+    if (view.Align === 1) {
+        if (typeof view.Props != "object") {
+            console.warn("view alignment intends to merge props, but local view props is not an object")
             // Noop.
-        } else if (typeof remote.props != "object") {
-            console.warn(
-                "view alignment intends to merge props, but remote props is not an object",
-            )
+        } else if (typeof remote.Props != "object") {
+            console.warn("view alignment intends to merge props, but remote props is not an object")
             // Noop.
         } else {
-            view.props = {
-                ...view.props,
-                ...remote.props,
+            view.Props = {
+                ...view.Props,
+                ...remote.Props,
             }
         }
     } else {
-        view.props = remote.props
+        view.Props = remote.Props
     }
 
     const stationary = lastUrl === res.url
