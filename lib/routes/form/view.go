@@ -9,7 +9,7 @@ import (
 
 func View(client *client.Client) {
 	send.View(client, view.View{
-		Name: "ArticleForm",
+		Name: "Form",
 		Props: map[string]string{
 			"error": receive.Query(client, "error"),
 		},

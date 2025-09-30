@@ -1,4 +1,4 @@
-package form
+package article
 
 import (
 	"context"
@@ -21,19 +21,19 @@ func Add(client *client.Client) {
 	var err error
 
 	if title = strings.Trim(receive.FormValue(client, "title"), " "); title == "" {
-		send.Navigate(client, "/article?error=article title cannot be empty")
+		send.Navigate(client, "/form?error=article title cannot be empty")
 		return
 	}
 
 	if content = strings.Trim(receive.FormValue(client, "content"), " "); content == "" {
-		send.Navigate(client, "/article?error=article content cannot be empty")
+		send.Navigate(client, "/form?error=article content cannot be empty")
 		return
 	}
 
 	state := memory.Start(receive.SessionId(client))
 
 	if id, err = uuid.NewV4(); nil != err {
-		send.Navigatef(client, "/article?error=%s", err)
+		send.Navigatef(client, "/form?error=%s", err)
 		return
 	}
 
@@ -44,7 +44,7 @@ func Add(client *client.Client) {
 		AccountID: state.AccountId,
 		CreatedAt: time.Now().Unix(),
 	}); err != nil {
-		send.Navigatef(client, "/article?error=%s", err)
+		send.Navigatef(client, "/form?error=%s", err)
 		return
 	}
 

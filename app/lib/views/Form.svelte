@@ -32,7 +32,7 @@
             <span>Back</span>
         </a>
     </div>
-    <form method="POST" {...action()}>
+    <form method="POST" {...action("/article/add")}>
         <span>Title</span><br />
         <input type="text" name="title" />
         <span>Content</span><br />

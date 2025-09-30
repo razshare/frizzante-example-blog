@@ -46,7 +46,7 @@
 
         {#if loggedIn && !expired}
             <li>
-                <a {...href("/article-form")}>
+                <a {...href("/form")}>
                     <span>New Article</span>
                     <Icon value={mdiPlusBox} />
                 </a>

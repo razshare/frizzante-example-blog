@@ -49,7 +49,7 @@ func main() {
 		// This way a user that is logged in but has an expired session, sees the message "Your sessions has expired",
 		// while a user that is not logged in to begin with, is redirected to the login page.
 		{Pattern: "GET /form", Handler: form.View, Tags: []tag.Tag{IsLoggedIn, IsNotExpired}},
-		{Pattern: "POST /form/add", Handler: form.Add, Tags: []tag.Tag{IsLoggedIn, IsNotExpired}},
+		{Pattern: "POST /article/add", Handler: article.Add, Tags: []tag.Tag{IsLoggedIn, IsNotExpired}},
 		{Pattern: "GET /article/remove", Handler: article.Remove, Tags: []tag.Tag{IsLoggedIn, IsNotExpired}},
 	}
 }

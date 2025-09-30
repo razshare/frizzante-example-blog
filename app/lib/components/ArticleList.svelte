@@ -94,7 +94,7 @@
             <span class="created-at">{createdAt}</span>
             {#if loggedIn}
                 <span class="remove">
-                    <a {...href(`/article-remove?id=${article.ID}`)}>[Remove]</a>
+                    <a {...href(`/article/remove?id=${article.ID}`)}>[Remove]</a>
                 </span>
             {/if}
             <div class="content">{article.Content}</div>
