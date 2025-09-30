@@ -9,18 +9,16 @@
         page: number
         hasMore: boolean
         articles: Article[]
-        verified: boolean
+        loggedIn: boolean
         expired: boolean
     }
 
-    let { page, hasMore, articles, verified, expired }: Props = $props()
+    let { page, hasMore, articles, loggedIn, expired }: Props = $props()
 </script>
 
 <Layout title="Board">
     <Push top>
-        <Menu {verified} {expired} />
-        <br />
-        <br />
-        <ArticleList {page} {hasMore} {articles} />
+        <Menu {loggedIn} {expired} />
+        <ArticleList {page} {hasMore} {articles} {loggedIn} />
     </Push>
 </Layout>

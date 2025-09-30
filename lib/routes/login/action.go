@@ -7,8 +7,8 @@ import (
 	"main/lib/core/client"
 	"main/lib/core/receive"
 	"main/lib/core/send"
-	"main/lib/database"
-	"main/lib/database/sqlc"
+	"main/lib/database/sqlite"
+	"main/lib/database/sqlite/sqlc"
 	"main/lib/session/memory"
 	"time"
 )
@@ -18,7 +18,7 @@ func Action(client *client.Client) {
 	id := receive.FormValue(client, "id")
 	password := fmt.Sprintf("%x", sha256.Sum256([]byte(receive.FormValue(client, "password"))))
 
-	if _, err := database.Queries.VerifyAccount(context.Background(), sqlc.VerifyAccountParams{
+	if _, err := sqlite.Queries.VerifyAccount(context.Background(), sqlc.VerifyAccountParams{
 		ID:       id,
 		Password: password,
 	}); err != nil {
@@ -27,7 +27,7 @@ func Action(client *client.Client) {
 	}
 
 	state.LastActivity = time.Now()
-	state.Verified = true
+	state.LoggedIn = true
 	state.AccountId = id
 
 	send.Navigate(client, "/board")

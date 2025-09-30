@@ -7,10 +7,10 @@ import (
 	"main/lib/session/memory"
 )
 
-func Verified(client *client.Client, allow func()) {
+func IsLoggedIn(client *client.Client, allow func()) {
 	state := memory.Start(receive.SessionId(client))
 
-	if !state.Verified {
+	if !state.LoggedIn {
 		send.Navigate(client, "/login")
 		return
 	}

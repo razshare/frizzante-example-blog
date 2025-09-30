@@ -23,9 +23,6 @@ import (
 //go:embed render.format
 var RenderFormat string
 
-//go:embed target.format
-var TargetFormat string
-
 //go:embed head.format
 var HeadFormat string
 
@@ -37,16 +34,18 @@ var DataFormat string
 
 var NoScript = regexp.MustCompile(`<script.*>.*</script>`)
 
-func New(conf Config) func(view _view.View) (html string, err error) {
-	var efs = conf.Efs
-	var app = conf.App
-	var disk = conf.Disk
-	var limit = conf.Limit
-	if conf.ErrorLog == nil {
-		conf.ErrorLog = log.New(os.Stderr, "[error]: ", log.Ldate|log.Ltime)
+func New(config Config) func(view _view.View) (html string, err error) {
+	var efs = config.Efs
+	var app = config.App
+	var limit = config.Limit
+	if config.ErrorLog == nil {
+		config.ErrorLog = log.New(os.Stderr, "[error]: ", log.Ldate|log.Ltime)
 	}
-	if conf.InfoLog == nil {
-		conf.InfoLog = log.New(os.Stdout, "[info]: ", log.Ldate|log.Ltime)
+	if config.InfoLog == nil {
+		config.InfoLog = log.New(os.Stdout, "[info]: ", log.Ldate|log.Ltime)
+	}
+	if config.App == "" {
+		config.App = "app"
 	}
 
 	if limit <= 0 {
@@ -55,10 +54,12 @@ func New(conf Config) func(view _view.View) (html string, err error) {
 
 	if app == "" {
 		app = "app"
+	} else {
+		app = strings.TrimPrefix(app, "."+string(filepath.Separator))
+		app = strings.TrimSuffix(app, string(filepath.Separator))
 	}
 
 	var mut sync.Mutex
-	var id = "app"
 	var dist = filepath.Join(app, "dist")
 	var appServer = filepath.Join(dist, "app.server.js")
 	var appServerFix = strings.ReplaceAll(appServer, "\\", "/")
@@ -69,7 +70,7 @@ func New(conf Config) func(view _view.View) (html string, err error) {
 	var compile = func() (render goja.Callable, runtime *goja.Runtime, err error) {
 		var data []byte
 
-		if !disk && embeds.IsFile(efs, appServerFix) {
+		if !config.UseDisk && embeds.IsFile(efs, appServerFix) {
 			data, err = efs.ReadFile(appServerFix)
 		} else {
 			data, err = os.ReadFile(appServer)
@@ -87,9 +88,9 @@ func New(conf Config) func(view _view.View) (html string, err error) {
 
 			switch level {
 			case LogLevelDanger:
-				logger = conf.ErrorLog
+				logger = config.ErrorLog
 			default:
-				logger = conf.InfoLog
+				logger = config.InfoLog
 			}
 
 			return func(call goja.FunctionCall) goja.Value {
@@ -104,7 +105,7 @@ func New(conf Config) func(view _view.View) (html string, err error) {
 						object := argument.ToObject(runtime)
 						data, err = object.MarshalJSON()
 						if err != nil {
-							conf.ErrorLog.Println(err, stack.Trace())
+							config.ErrorLog.Println(err, stack.Trace())
 							return goja.Undefined()
 						}
 						builder.WriteString(string(data))
@@ -144,7 +145,7 @@ func New(conf Config) func(view _view.View) (html string, err error) {
 		}
 
 		var text string
-		if text, err = js.Bundle(app, api.FormatCommonJS, string(data)); err != nil {
+		if text, err = js.Bundle(filepath.Join(app, "dist"), api.FormatCommonJS, string(data)); err != nil {
 			return
 		}
 
@@ -166,25 +167,25 @@ func New(conf Config) func(view _view.View) (html string, err error) {
 		return
 	}
 
-	return func(view _view.View) (html string, err error) {
-		var data []byte
+	return func(view _view.View) (indexString string, err error) {
+		var propsData []byte
 
-		if !disk && embeds.IsFile(efs, indexFix) {
-			data, err = efs.ReadFile(indexFix)
+		if !config.UseDisk && embeds.IsFile(efs, indexFix) {
+			propsData, err = efs.ReadFile(indexFix)
 		} else {
-			data, err = os.ReadFile(index)
+			propsData, err = os.ReadFile(index)
 		}
 
 		if err != nil {
 			return
 		}
 
-		html = string(data)
+		indexString = string(propsData)
 
 		if view.RenderMode == _view.RenderModeServer || view.RenderMode == _view.RenderModeFull {
 			var render goja.Callable
 			var runtime *goja.Runtime
-			if disk {
+			if config.UseDisk {
 				render, runtime, err = compile()
 				if err != nil {
 					return
@@ -230,36 +231,33 @@ func New(conf Config) func(view _view.View) (html string, err error) {
 			}
 
 			if view.RenderMode == _view.RenderModeServer {
-				html = NoScript.ReplaceAllString(html, "")
+				indexString = NoScript.ReplaceAllString(indexString, "")
 			}
 
 			if view.RenderMode == _view.RenderModeServer {
-				html = strings.Replace(html, "<!--app-target-->", "", 1)
-				html = strings.Replace(html, "<!--app-data-->", "", 1)
+				indexString = strings.Replace(indexString, "<!--app-data-->", "", 1)
 			} else {
-				if data, err = json.Marshal(_view.Wrap(view)); err != nil {
+				if propsData, err = json.Marshal(_view.Wrap(view)); err != nil {
 					return
 				}
 
-				html = strings.Replace(html, "<!--app-target-->", fmt.Sprintf(TargetFormat, id), 1)
-				html = strings.Replace(html, "<!--app-data-->", fmt.Sprintf(DataFormat, data), 1)
+				indexString = strings.Replace(indexString, "<!--app-data-->", fmt.Sprintf(DataFormat, propsData), 1)
 			}
 
-			html = strings.Replace(html, "<!--app-head-->", head, 1)
-			html = strings.Replace(html, "<!--app-body-->", fmt.Sprintf(BodyFormat, id, body), 1)
+			indexString = strings.Replace(indexString, "<!--app-head-->", head, 1)
+			indexString = strings.Replace(indexString, "<!--app-body-->", fmt.Sprintf(BodyFormat, body), 1)
 
 			return
 		}
 
 		if view.RenderMode == _view.RenderModeClient {
-			if data, err = json.Marshal(_view.Wrap(view)); err != nil {
+			if propsData, err = json.Marshal(_view.Wrap(view)); err != nil {
 				return
 			}
 
-			html = strings.Replace(html, "<!--app-target-->", fmt.Sprintf(TargetFormat, id), 1)
-			html = strings.Replace(html, "<!--app-body-->", fmt.Sprintf(BodyFormat, id, ""), 1)
-			html = strings.Replace(html, "<!--app-head-->", fmt.Sprintf(HeadFormat, view.Title), 1)
-			html = strings.Replace(html, "<!--app-data-->", fmt.Sprintf(DataFormat, data), 1)
+			indexString = strings.Replace(indexString, "<!--app-body-->", fmt.Sprintf(BodyFormat, ""), 1)
+			indexString = strings.Replace(indexString, "<!--app-head-->", fmt.Sprintf(HeadFormat, view.Title), 1)
+			indexString = strings.Replace(indexString, "<!--app-data-->", fmt.Sprintf(DataFormat, propsData), 1)
 
 			return
 		}

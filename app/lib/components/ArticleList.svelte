@@ -41,15 +41,16 @@
     import type { Article } from "$lib/types.ts"
     import Icon from "$lib/components/Icon.svelte"
     import { mdiArrowLeft, mdiArrowRight } from "@mdi/js"
-    import {href} from "$lib/scripts/core/href.ts";
+    import { href } from "$lib/scripts/core/href.ts"
 
     type Props = {
         page: number
         hasMore: boolean
         articles: Article[]
+        loggedIn: boolean
     }
 
-    let { page, articles, hasMore }: Props = $props()
+    let { page, articles, hasMore, loggedIn }: Props = $props()
 </script>
 
 {#if articles.length === 0}
@@ -91,9 +92,11 @@
         <div class="article">
             <h1 class="title">{article.Title}</h1>
             <span class="created-at">{createdAt}</span>
-            <span class="remove">
-                <a {...href(`/article-remove?id=${article.ID}`)}>[Remove]</a>
-            </span>
+            {#if loggedIn}
+                <span class="remove">
+                    <a {...href(`/article-remove?id=${article.ID}`)}>[Remove]</a>
+                </span>
+            {/if}
             <div class="content">{article.Content}</div>
         </div>
     {/each}

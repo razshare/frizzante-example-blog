@@ -7,8 +7,8 @@ import (
 	"main/lib/core/client"
 	"main/lib/core/receive"
 	"main/lib/core/send"
-	"main/lib/database"
-	"main/lib/database/sqlc"
+	"main/lib/database/sqlite"
+	"main/lib/database/sqlite/sqlc"
 )
 
 func Action(client *client.Client) {
@@ -25,17 +25,17 @@ func Action(client *client.Client) {
 
 	hash = fmt.Sprintf("%x", sha256.Sum256([]byte(password)))
 
-	if _, err = database.Queries.FindAccountById(context.Background(), id); err == nil {
+	if _, err = sqlite.Queries.FindAccountById(context.Background(), id); err == nil {
 		send.Navigatef(client, "/register?error=account %s already exists", id)
 		return
 	}
 
-	if err = database.Queries.AddAccount(context.Background(), sqlc.AddAccountParams{
+	if err = sqlite.Queries.AddAccount(context.Background(), sqlc.AddAccountParams{
 		ID:          id,
 		DisplayName: displayName,
 		Password:    hash,
 	}); err != nil {
-		send.Navigatef(client, "/register?error=%s", err.Error())
+		send.Navigatef(client, "/register?error=%s", err)
 		return
 	}
 

@@ -10,11 +10,11 @@
     import {href} from "$lib/scripts/core/href.ts";
 
     type Props = {
-        verified: boolean
+        loggedIn: boolean
         expired: boolean
     }
 
-    let { verified, expired }: Props = $props()
+    let { loggedIn, expired }: Props = $props()
 </script>
 
 <nav>
@@ -22,7 +22,7 @@
         <li></li>
     </ul>
     <ul>
-        {#if verified && !expired}
+        {#if loggedIn && !expired}
             <li>
                 <a {...href("/logout")}>
                     <span>Logout</span>
@@ -44,7 +44,7 @@
             </li>
         {/if}
 
-        {#if verified && !expired}
+        {#if loggedIn && !expired}
             <li>
                 <a {...href("/article-form")}>
                     <span>New Article</span>

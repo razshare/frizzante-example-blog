@@ -9,6 +9,6 @@ import (
 
 func Action(client *client.Client) {
 	state := memory.Start(receive.SessionId(client))
-	state.Verified = false
+	state.LoggedIn = false
 	send.Navigate(client, "/login")
 }

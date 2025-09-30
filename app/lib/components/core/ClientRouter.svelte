@@ -1,12 +1,10 @@
 <script lang="ts">
-    import { setContext } from "svelte"
-    import { views } from "./exports.client.ts"
-    import Async from "./app.async.svelte"
+    import { setContext, type SvelteComponent } from "svelte"
+    import { views } from "$exports.client"
+    import Async from "$lib/components/core/Async.svelte"
     import type { View } from "$lib/scripts/core/types.js"
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const components = views as Record<string, Component>
     let { Name, Props, Render, Align } = $props() as View<Record<string, unknown>>
+    const components = views as unknown as Record<string, Promise<SvelteComponent>>
     const view = $state({ Name, Props, Render, Align })
     setContext("view", view)
 </script>

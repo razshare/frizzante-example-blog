@@ -1,11 +1,11 @@
-package database
+package sqlite
 
 import (
 	"database/sql"
 	"embed"
 	"log"
 	"main/lib/core/files"
-	"main/lib/database/sqlc"
+	"main/lib/database/sqlite/sqlc"
 	"os"
 
 	_ "github.com/mattn/go-sqlite3"

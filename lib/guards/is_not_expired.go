@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func Active(client *client.Client, allow func()) {
+func IsNotExpired(client *client.Client, allow func()) {
 	state := memory.Start(receive.SessionId(client))
 
 	if time.Since(state.LastActivity) > 30*time.Minute {

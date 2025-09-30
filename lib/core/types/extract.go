@@ -7,24 +7,40 @@ import (
 	"strings"
 )
 
-func Extract(_type reflect.Type, ignore []string) (primary string, secondary string, definitions []string, err error) {
+func Extract(prefix string, _type reflect.Type, ignore []string) (primary string, secondary string, definitions []string, err error) {
 	var builder strings.Builder
 	var xbuilder strings.Builder
-	prefix := "    "
 
-	if slices.Contains(ignore, _type.Name()) {
-		return "", "", ignore, nil
+	definitions = ignore
+	padding := "    "
+
+	if slices.Contains(definitions, prefix+_type.Name()) {
+		return
 	}
 
-	ignore = append(ignore, _type.Name())
+	definitions = append(definitions, prefix+_type.Name())
 
-	builder.WriteString(fmt.Sprintf("export type %s = {\n", _type.Name()))
+	builder.WriteString(fmt.Sprintf("export type %s = {\n", prefix+_type.Name()))
 	for i := _type.NumField() - 1; i >= 0; i-- {
 		f := _type.Field(i)
 		t := f.Type
 		k := t.Kind()
 		name := f.Name
-		// We cannot use this, goja' runtime.ToValue() will ignore tags since it's not marshaling.
+
+		if strings.ToLower(f.Name[0:1]) == f.Name[0:1] {
+			continue
+		}
+
+		if k == reflect.Pointer {
+			t = t.Elem()
+		}
+
+		if t.Name() == "error" {
+			builder.WriteString(fmt.Sprintf("%s%s: string\n", padding, name))
+			continue
+		}
+
+		// We cannot use this, goja's runtime.ToValue() will ignore tags since it's not marshaling.
 		//if tag := f.Tag.Get("json"); tag != "" {
 		//	name = tag
 		//}
@@ -32,9 +48,7 @@ func Extract(_type reflect.Type, ignore []string) (primary string, secondary str
 		case
 			reflect.Chan,
 			reflect.Func,
-			reflect.Pointer,
 			reflect.Invalid,
-			reflect.Interface,
 			reflect.UnsafePointer:
 			err = fmt.Errorf("type %s of kind %s is not supported", t.String(), k.String())
 			return
@@ -42,14 +56,17 @@ func Extract(_type reflect.Type, ignore []string) (primary string, secondary str
 			reflect.Map:
 			var primaryLoc string
 			var secondaryLoc string
-			if primaryLoc, secondaryLoc, definitions, err = Extract(t.Elem(), ignore); err != nil {
+			var definitionsLoc = make([]string, 0)
+			if primaryLoc, secondaryLoc, definitionsLoc, err = Extract(prefix+name, t.Elem(), definitions); err != nil {
 				return
 			}
-			builder.WriteString(fmt.Sprintf("%s%s: Record<string, %s>", prefix, name, t.Elem().Name()))
+			definitions = append(definitions, definitionsLoc...)
+			builder.WriteString(fmt.Sprintf("%s%s: Record<string, %s>", padding, name, t.Elem().Name()))
 			if primaryLoc != "" {
 				xbuilder.WriteString("\n")
 				xbuilder.WriteString(primaryLoc)
 			}
+
 			if secondaryLoc != "" {
 				xbuilder.WriteString("\n")
 				xbuilder.WriteString(secondaryLoc)
@@ -59,10 +76,12 @@ func Extract(_type reflect.Type, ignore []string) (primary string, secondary str
 			reflect.Array:
 			var primaryLoc string
 			var secondaryLoc string
-			if primaryLoc, secondaryLoc, definitions, err = Extract(t.Elem(), ignore); err != nil {
+			var definitionsLoc = make([]string, 0)
+			if primaryLoc, secondaryLoc, definitionsLoc, err = Extract(prefix+name, t.Elem(), definitions); err != nil {
 				return
 			}
-			builder.WriteString(fmt.Sprintf("%s%s: %s[]", prefix, name, t.Elem().Name()))
+			definitions = append(definitions, definitionsLoc...)
+			builder.WriteString(fmt.Sprintf("%s%s: %s[]", padding, name, t.Elem().Name()))
 			if primaryLoc != "" {
 				xbuilder.WriteString("\n")
 				xbuilder.WriteString(primaryLoc)
@@ -72,13 +91,17 @@ func Extract(_type reflect.Type, ignore []string) (primary string, secondary str
 				xbuilder.WriteString(secondaryLoc)
 			}
 		case
-			reflect.Struct:
+			reflect.Struct,
+			reflect.Pointer,
+			reflect.Interface:
 			var primaryLoc string
 			var secondaryLoc string
-			if primaryLoc, secondaryLoc, definitions, err = Extract(t, ignore); err != nil {
+			var definitionsLoc = make([]string, 0)
+			if primaryLoc, secondaryLoc, definitionsLoc, err = Extract(prefix+name, t, definitions); err != nil {
 				return
 			}
-			builder.WriteString(fmt.Sprintf("%s%s: %s", prefix, name, t.Name()))
+			definitions = append(definitions, definitionsLoc...)
+			builder.WriteString(fmt.Sprintf("%s%s: %s", padding, name, t.Name()))
 			if primaryLoc != "" {
 				xbuilder.WriteString("\n")
 				xbuilder.WriteString(primaryLoc)
@@ -89,7 +112,7 @@ func Extract(_type reflect.Type, ignore []string) (primary string, secondary str
 			}
 		case
 			reflect.Bool:
-			builder.WriteString(fmt.Sprintf("%s%s: boolean", prefix, name))
+			builder.WriteString(fmt.Sprintf("%s%s: boolean", padding, name))
 		case
 			reflect.Int,
 			reflect.Int8,
@@ -105,12 +128,12 @@ func Extract(_type reflect.Type, ignore []string) (primary string, secondary str
 			reflect.Float64,
 			reflect.Complex128,
 			reflect.Uintptr:
-			builder.WriteString(fmt.Sprintf("%s%s: number", prefix, name))
+			builder.WriteString(fmt.Sprintf("%s%s: number", padding, name))
 		case
 			reflect.String:
-			builder.WriteString(fmt.Sprintf("%s%s: string", prefix, name))
+			builder.WriteString(fmt.Sprintf("%s%s: string", padding, name))
 		default:
-			builder.WriteString(fmt.Sprintf("%s%s: unknown", prefix, name))
+			builder.WriteString(fmt.Sprintf("%s%s: unknown", padding, name))
 		}
 		builder.WriteString("\n")
 	}

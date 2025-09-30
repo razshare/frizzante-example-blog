@@ -6,8 +6,8 @@ import (
 	"main/lib/core/receive"
 	"main/lib/core/send"
 	"main/lib/core/view"
-	"main/lib/database"
-	"main/lib/database/sqlc"
+	"main/lib/database/sqlite"
+	"main/lib/database/sqlite/sqlc"
 	"main/lib/session/memory"
 )
 
@@ -18,7 +18,9 @@ func View(client *client.Client) {
 	var hasMore bool
 	var err error
 
-	if articles, err = database.Queries.FindArticles(
+	state := memory.Start(receive.SessionId(client))
+
+	if articles, err = sqlite.Queries.FindArticles(
 		context.Background(),
 		sqlc.FindArticlesParams{
 			Offset: PageSize * page,
@@ -31,13 +33,19 @@ func View(client *client.Client) {
 			Limit: PageSize + 1,
 		},
 	); err != nil {
-		send.Navigatef(client, "/board?error=%s", err.Error())
+		send.View(client, view.View{
+			Name: "Board",
+			Props: map[string]any{
+				"error":    err.Error(),
+				"loggedIn": state.LoggedIn,
+				"expired":  state.LoginExpired,
+			},
+		})
 		return
 	}
 
 	count = len(articles)
 	hasMore = count == int(PageSize)+1
-	state := memory.Start(receive.SessionId(client))
 
 	if articles = articles[:count]; articles == nil {
 		articles = make([]sqlc.Article, 0)
@@ -45,10 +53,11 @@ func View(client *client.Client) {
 
 	// Send the views.
 	send.View(client, view.View{Name: "Board", Props: map[string]any{
-		"verified": state.Verified,
-		"expired":  state.Expired,
 		"page":     page,
 		"hasMore":  hasMore,
 		"articles": articles,
+		"loggedIn": state.LoggedIn,
+		"expired":  state.LoginExpired,
+		"error":    receive.Query(client, "error"),
 	}})
 }

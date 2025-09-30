@@ -21,7 +21,6 @@ export function action(path = ""): {
             const form = event.target as HTMLFormElement
             await swap(form, view).then(function done(record) {
                 record()
-                form.reset()
             })
         },
     }

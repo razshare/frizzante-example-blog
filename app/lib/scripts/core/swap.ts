@@ -24,6 +24,8 @@ export async function swap(target: HTMLAnchorElement | HTMLFormElement, view: Vi
         const params = new URLSearchParams()
         let query = ""
 
+        form.reset()
+
         data.forEach(function each(value, key) {
             if (value instanceof File) {
                 return
@@ -51,7 +53,7 @@ export async function swap(target: HTMLAnchorElement | HTMLFormElement, view: Vi
         } else {
             res = await fetch(form.action, {
                 method,
-                body: data,
+                body: data as unknown as BodyInit,
                 headers: {
                     Accept: "application/json",
                 },

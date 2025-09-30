@@ -1,11 +1,9 @@
 <script lang="ts">
     import { setContext, type Component } from "svelte"
+    import { views } from "$exports.server"
     import type { View } from "$lib/scripts/core/types.js"
-    import { views } from "./exports.server.ts"
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const components = views as Record<string, Component>
     let { Name, Props, Render, Align } = $props() as View<Record<string, unknown>>
+    const components = views as unknown as Record<string, Component>
     const view = $state({ Name, Props, Render, Align })
     setContext("view", view)
 </script>

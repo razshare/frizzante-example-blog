@@ -1,12 +1,12 @@
-package article
+package form
 
 import (
 	"context"
 	"main/lib/core/client"
 	"main/lib/core/receive"
 	"main/lib/core/send"
-	"main/lib/database"
-	"main/lib/database/sqlc"
+	"main/lib/database/sqlite"
+	"main/lib/database/sqlite/sqlc"
 	"main/lib/session/memory"
 	"strings"
 	"time"
@@ -21,30 +21,30 @@ func Add(client *client.Client) {
 	var err error
 
 	if title = strings.Trim(receive.FormValue(client, "title"), " "); title == "" {
-		send.Navigate(client, "/article-form?error=article title cannot be empty")
+		send.Navigate(client, "/article?error=article title cannot be empty")
 		return
 	}
 
 	if content = strings.Trim(receive.FormValue(client, "content"), " "); content == "" {
-		send.Navigate(client, "/article-form?error=article content cannot be empty")
+		send.Navigate(client, "/article?error=article content cannot be empty")
 		return
 	}
 
 	state := memory.Start(receive.SessionId(client))
 
 	if id, err = uuid.NewV4(); nil != err {
-		send.Navigatef(client, "/article-form?error=%s", err.Error())
+		send.Navigatef(client, "/article?error=%s", err)
 		return
 	}
 
-	if err = database.Queries.AddArticle(context.Background(), sqlc.AddArticleParams{
+	if err = sqlite.Queries.AddArticle(context.Background(), sqlc.AddArticleParams{
 		ID:        id.String(),
 		Title:     title,
 		Content:   content,
 		AccountID: state.AccountId,
 		CreatedAt: time.Now().Unix(),
 	}); err != nil {
-		send.Navigatef(client, "/article-form?error=%s", err.Error())
+		send.Navigatef(client, "/article?error=%s", err)
 		return
 	}
 
