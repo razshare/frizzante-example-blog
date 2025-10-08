@@ -2,12 +2,11 @@ package main
 
 import (
 	"embed"
-	"main/lib/core/guard"
-	"main/lib/core/route"
-	"main/lib/core/server"
-	"main/lib/core/tag"
-	"main/lib/core/view/ssr"
-	"main/lib/guards"
+	"main/lib/core/guards"
+	"main/lib/core/routes"
+	"main/lib/core/servers"
+	"main/lib/guards/is_logged_in"
+	"main/lib/guards/is_not_expired"
 	"main/lib/routes/article"
 	"main/lib/routes/board"
 	"main/lib/routes/expired"
@@ -16,27 +15,19 @@ import (
 	"main/lib/routes/login"
 	"main/lib/routes/logout"
 	"main/lib/routes/register"
-	"os"
 )
 
-const IsLoggedIn tag.Tag = 0
-const IsNotExpired tag.Tag = 1
-
+//go:generate make clean configure
+//go:generate make package
+//go:generate make types
 //go:embed app/dist
 var efs embed.FS
-var srv = server.New()
-var dev = os.Getenv("DEV") == "1"
-var render = ssr.New(ssr.Config{Efs: efs, UseDisk: dev})
+var server = servers.New()
 
 func main() {
-	defer server.Start(srv)
-	srv.Efs = efs
-	srv.Render = render
-	srv.Guards = []guard.Guard{
-		{Name: "logged-in", Handler: guards.IsLoggedIn, Tags: []tag.Tag{IsLoggedIn}},
-		{Name: "active", Handler: guards.IsNotExpired, Tags: []tag.Tag{IsNotExpired}},
-	}
-	srv.Routes = []route.Route{
+	defer servers.Start(server)
+	server.Efs = efs
+	server.Routes = []routes.Route{
 		{Pattern: "GET /", Handler: fallback.View},
 		{Pattern: "GET /expired", Handler: expired.View},
 		{Pattern: "GET /login", Handler: login.View},
@@ -48,8 +39,8 @@ func main() {
 		// Order matters here, first check that the user is logged in and then that the login is nor expired.
 		// This way a user that is logged in but has an expired session, sees the message "Your sessions has expired",
 		// while a user that is not logged in to begin with, is redirected to the login page.
-		{Pattern: "GET /form", Handler: form.View, Tags: []tag.Tag{IsLoggedIn, IsNotExpired}},
-		{Pattern: "POST /article/add", Handler: article.Add, Tags: []tag.Tag{IsLoggedIn, IsNotExpired}},
-		{Pattern: "GET /article/remove", Handler: article.Remove, Tags: []tag.Tag{IsLoggedIn, IsNotExpired}},
+		{Pattern: "GET /form", Handler: form.View, Guards: []guards.Guard{is_logged_in.Guard, is_not_expired.Guard}},
+		{Pattern: "POST /article/add", Handler: article.Add, Guards: []guards.Guard{is_logged_in.Guard, is_not_expired.Guard}},
+		{Pattern: "GET /article/remove", Handler: article.Remove, Guards: []guards.Guard{is_logged_in.Guard, is_not_expired.Guard}},
 	}
 }

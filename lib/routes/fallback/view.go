@@ -1,14 +1,10 @@
 package fallback
 
 import (
-	"main/lib/core/client"
+	"main/lib/core/clients"
 	"main/lib/core/send"
-	"os"
 )
 
-func View(client *client.Client) {
-	send.FileOrElse(client, send.FileOrElseConfig{
-		UseDisk: os.Getenv("DEV") == "1",
-		OrElse:  func() { send.Navigate(client, "/board") },
-	})
+func View(client *clients.Client) {
+	send.FileOrElse(client, func() { send.Navigate(client, "/board") })
 }

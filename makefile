@@ -34,8 +34,11 @@ install:
 update:
 	frizzante --update
 
-hooks:
-	frizzante --hooks
+types:
+	frizzante -gtypes
+
+queries:
+	frizzante -gqueries -y
 
 generate:
-	sqlc generate
+	frizzante -g:pick

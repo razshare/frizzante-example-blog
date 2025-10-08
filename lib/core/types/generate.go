@@ -1,7 +1,9 @@
+//go:build types
+
 package types
 
 import (
-	"log"
+	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -10,16 +12,15 @@ import (
 	"main/lib/core/files"
 )
 
-func Generate[T any]() {
+func Generate[T any]() (err error) {
 	var value T
-	var err error
-	var primary string
-	var secondary string
 
-	t := reflect.TypeOf(value)
+	type_ := reflect.TypeOf(value)
 
-	if primary, secondary, _, err = Extract("", t, make([]string, 0)); err != nil {
-		log.Fatal(err)
+	var packages = map[string][]string{}
+	var definitions = map[string]map[string][]string{}
+	if _, err = Define(type_, packages, definitions); err != nil {
+		return
 	}
 
 	if !files.IsDirectory(filepath.Join(".gen", "types")) {
@@ -33,21 +34,49 @@ func Generate[T any]() {
 		"main",
 	}
 	after := "main"
-	pkg := t.PkgPath()
+	packagePath := type_.PkgPath()
 
 	for _, before := range befores {
-		pkg = strings.ReplaceAll(pkg, before, after)
+		packagePath = strings.ReplaceAll(packagePath, before, after)
 	}
 
-	dname := filepath.Join(".gen", "types", strings.ReplaceAll(pkg, "/", string(filepath.Separator)))
-	if !files.IsDirectory(dname) {
-		if err = os.MkdirAll(dname, os.ModePerm); err != nil {
-			log.Fatal(err)
+	dname := filepath.Join(".gen", "types", strings.ReplaceAll(packagePath, "/", string(filepath.Separator)))
+	if files.IsDirectory(dname) {
+		if err = os.RemoveAll(dname); err != nil {
+			return
 		}
 	}
 
-	fname := filepath.Join(dname, t.Name()+".d.ts")
-	if err = os.WriteFile(fname, []byte(primary+secondary), os.ModePerm); err != nil {
-		log.Fatal(err)
+	if err = os.MkdirAll(dname, os.ModePerm); err != nil {
+		return
 	}
+
+	parts := strings.Split(type_.PkgPath(), "/")
+	count := len(parts)
+	package_ := parts[count-1]
+
+	var globalBuilder strings.Builder
+	var namespaceBuilder strings.Builder
+	globalBuilder.WriteString(fmt.Sprintf("export type %s = %s.%s\n\n", type_.Name(), package_, type_.Name()))
+	for namespace, definition := range definitions {
+		namespaceBuilder.Reset()
+		namespaceBuilder.WriteString(fmt.Sprintf("export declare namespace %s {\n", namespace))
+		for name, lines := range definition {
+			namespaceBuilder.WriteString(fmt.Sprintf("    export type %s = {\n", name))
+			for _, line := range lines {
+				namespaceBuilder.WriteString(fmt.Sprintf("        %s\n", line))
+			}
+			namespaceBuilder.WriteString("    }\n")
+		}
+		namespaceBuilder.WriteString("}\n\n")
+		globalBuilder.WriteString(strings.TrimSpace(namespaceBuilder.String()))
+		globalBuilder.WriteString("\n\n")
+	}
+
+	fname := filepath.Join(dname, type_.Name()+".d.ts")
+	if err = os.WriteFile(fname, []byte(strings.TrimSpace(globalBuilder.String())), os.ModePerm); err != nil {
+		return
+	}
+
+	return
 }

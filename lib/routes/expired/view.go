@@ -1,11 +1,11 @@
 package expired
 
 import (
-	"main/lib/core/client"
+	"main/lib/core/clients"
 	"main/lib/core/send"
-	"main/lib/core/view"
+	"main/lib/core/views"
 )
 
-func View(c *client.Client) {
-	send.View(c, view.View{Name: "Expired"})
+func View(client *clients.Client) {
+	send.View(client, views.View{Name: "Expired"})
 }

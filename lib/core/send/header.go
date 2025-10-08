@@ -3,8 +3,8 @@ package send
 import (
 	"fmt"
 
-	"main/lib/core/client"
-	"main/lib/core/stack"
+	"main/lib/core/clients"
+	"main/lib/core/stacks"
 )
 
 // Header sends a header field.
@@ -14,9 +14,9 @@ import (
 // This means the status will become locked and further attempts to send the status will fail with an error.
 //
 // All errors are sent to the server notifier.
-func Header(client *client.Client, key string, value string) {
+func Header(client *clients.Client, key string, value string) {
 	if client.Locked {
-		client.Config.ErrorLog.Println("header is locked", stack.Trace())
+		client.Config.ErrorLog.Println("header is locked", stacks.Trace())
 		return
 	}
 
@@ -24,9 +24,9 @@ func Header(client *client.Client, key string, value string) {
 }
 
 // Headers sends header fields.
-func Headers(client *client.Client, fields map[string]string) {
+func Headers(client *clients.Client, fields map[string]string) {
 	if client.Locked {
-		client.Config.ErrorLog.Println("header is locked", stack.Trace())
+		client.Config.ErrorLog.Println("header is locked", stacks.Trace())
 		return
 	}
 
@@ -36,24 +36,24 @@ func Headers(client *client.Client, fields map[string]string) {
 }
 
 // Redirect redirects the request to a location with a status.
-func Redirect(client *client.Client, location string, status int) {
+func Redirect(client *clients.Client, location string, status int) {
 	Status(client, status)
 	Header(client, "Location", location)
 }
 
 // Navigate redirects the request to a location with status 302.
-func Navigate(client *client.Client, location string) {
+func Navigate(client *clients.Client, location string) {
 	Redirect(client, location, 302)
 	Message(client, "")
 }
 
 // Navigatef redirects the request to a location with status 302.
-func Navigatef(client *client.Client, format string, vars ...any) {
+func Navigatef(client *clients.Client, format string, vars ...any) {
 	Redirect(client, fmt.Sprintf(format, vars...), 302)
 	Message(client, "")
 }
 
 // ContentType sets the Content-Type header field.
-func ContentType(client *client.Client, ctype string) {
+func ContentType(client *clients.Client, ctype string) {
 	Header(client, "Content-Type", ctype)
 }

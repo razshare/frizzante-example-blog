@@ -16,19 +16,18 @@
 
 <script lang="ts">
     import Layout from "$lib/components/Layout.svelte"
-    import Icon from "$lib/components/Icon.svelte"
+    import Icon from "$lib/components/icons/Icon.svelte"
     import { mdiArrowLeft, mdiPlus } from "@mdi/js"
-    import {href} from "$lib/scripts/core/href.ts";
-    import {action} from "$lib/scripts/core/action.ts";
-
-    type Props = { error: string }
+    import { href } from "$lib/scripts/core/href.ts"
+    import { action } from "$lib/scripts/core/action.ts"
+    import type { Props } from "$gen/types/main/lib/routes/form/Props"
     let { error }: Props = $props()
 </script>
 
 <Layout title="Article Form">
     <div class="button-wrapper">
         <a class="back" {...href("/board")}>
-            <Icon value={mdiArrowLeft} />
+            <Icon path={mdiArrowLeft} />
             <span>Back</span>
         </a>
     </div>
@@ -45,7 +44,7 @@
         <div class="button-wrapper">
             <button class="publish">
                 <span>Publish</span>
-                <Icon value={mdiPlus} />
+                <Icon path={mdiPlus} />
             </button>
         </div>
     </form>

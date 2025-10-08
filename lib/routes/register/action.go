@@ -4,14 +4,14 @@ import (
 	"context"
 	"crypto/sha256"
 	"fmt"
-	"main/lib/core/client"
+	"main/lib/core/clients"
 	"main/lib/core/receive"
 	"main/lib/core/send"
-	"main/lib/database/sqlite"
-	"main/lib/database/sqlite/sqlc"
+	"main/lib/database"
+	"main/lib/database/sqlc"
 )
 
-func Action(client *client.Client) {
+func Action(client *clients.Client) {
 	var err error
 	var id = receive.FormValue(client, "id")
 	var displayName = receive.FormValue(client, "displayName")
@@ -25,12 +25,12 @@ func Action(client *client.Client) {
 
 	hash = fmt.Sprintf("%x", sha256.Sum256([]byte(password)))
 
-	if _, err = sqlite.Queries.FindAccountById(context.Background(), id); err == nil {
+	if _, err = database.Queries.FindAccountById(context.Background(), id); err == nil {
 		send.Navigatef(client, "/register?error=account %s already exists", id)
 		return
 	}
 
-	if err = sqlite.Queries.AddAccount(context.Background(), sqlc.AddAccountParams{
+	if err = database.Queries.AddAccount(context.Background(), sqlc.AddAccountParams{
 		ID:          id,
 		DisplayName: displayName,
 		Password:    hash,

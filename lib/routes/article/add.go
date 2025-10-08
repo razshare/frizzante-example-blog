@@ -2,19 +2,19 @@ package article
 
 import (
 	"context"
-	"main/lib/core/client"
+	"main/lib/core/clients"
 	"main/lib/core/receive"
 	"main/lib/core/send"
-	"main/lib/database/sqlite"
-	"main/lib/database/sqlite/sqlc"
-	"main/lib/session/memory"
+	"main/lib/database"
+	"main/lib/database/sqlc"
+	"main/lib/sessions"
 	"strings"
 	"time"
 
 	uuid "github.com/nu7hatch/gouuid"
 )
 
-func Add(client *client.Client) {
+func Add(client *clients.Client) {
 	var title string
 	var content string
 	var id *uuid.UUID
@@ -30,14 +30,14 @@ func Add(client *client.Client) {
 		return
 	}
 
-	state := memory.Start(receive.SessionId(client))
+	state := sessions.Start(receive.SessionId(client))
 
 	if id, err = uuid.NewV4(); nil != err {
 		send.Navigatef(client, "/form?error=%s", err)
 		return
 	}
 
-	if err = sqlite.Queries.AddArticle(context.Background(), sqlc.AddArticleParams{
+	if err = database.Queries.AddArticle(context.Background(), sqlc.AddArticleParams{
 		ID:        id.String(),
 		Title:     title,
 		Content:   content,

@@ -1,8 +1,8 @@
 package receive
 
-import "main/lib/core/client"
+import "main/lib/core/clients"
 
 // Path reads a parameters fields and returns the value.
-func Path(client *client.Client, key string) string {
+func Path(client *clients.Client, key string) string {
 	return client.Request.PathValue(key)
 }

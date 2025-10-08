@@ -1,7 +1,7 @@
 <script lang="ts">
     import Layout from "$lib/components/Layout.svelte"
     import Center from "$lib/components/Center.svelte"
-    import {href} from "$lib/scripts/core/href.ts";
+    import { href } from "$lib/scripts/core/href.ts"
 </script>
 
 <Layout title="Session Expired">

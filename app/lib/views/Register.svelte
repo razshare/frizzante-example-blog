@@ -12,10 +12,9 @@
 <script lang="ts">
     import Layout from "$lib/components/Layout.svelte"
     import Center from "$lib/components/Center.svelte"
-    import {action} from "$lib/scripts/core/action.ts";
-    import {href} from "$lib/scripts/core/href.ts";
-
-    type Props = { error: string }
+    import { action } from "$lib/scripts/core/action.ts"
+    import { href } from "$lib/scripts/core/href.ts"
+    import type { Props } from "$gen/types/main/lib/routes/register/Props"
     let { error }: Props = $props()
 </script>
 
@@ -24,24 +23,9 @@
         <article>
             <h1 class="LoginTitle">Register</h1>
             <form method="POST" {...action("/register")}>
-                <input
-                    type="email"
-                    name="id"
-                    placeholder="Email"
-                    aria-label="Email"
-                />
-                <input
-                    type="text"
-                    name="displayName"
-                    placeholder="Display Name"
-                    aria-label="DisplayName"
-                />
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    aria-label="Password"
-                />
+                <input type="email" name="id" placeholder="Email" aria-label="Email" />
+                <input type="text" name="displayName" placeholder="Display Name" aria-label="DisplayName" />
+                <input type="password" name="password" placeholder="Password" aria-label="Password" />
                 <button type="submit">Continue</button>
                 <p class="AdditionalOptions">
                     or

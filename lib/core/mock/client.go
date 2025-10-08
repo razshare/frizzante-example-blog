@@ -4,8 +4,8 @@ import (
 	"io"
 	"net/http"
 
-	"main/lib/core/client"
-	"main/lib/core/server"
+	"main/lib/core/clients"
+	"main/lib/core/servers"
 )
 
 type ResponseWriter struct {
@@ -51,10 +51,10 @@ func (body *RequestBody) Close() error {
 	return nil
 }
 
-func NewClient() *client.Client {
-	srv := server.New()
+func NewClient() *clients.Client {
+	srv := servers.New()
 
-	conf := &client.Config{
+	conf := &clients.Config{
 		ErrorLog:   srv.ErrorLog,
 		InfoLog:    srv.InfoLog,
 		PublicRoot: srv.PublicRoot,
@@ -73,7 +73,7 @@ func NewClient() *client.Client {
 		},
 	}
 
-	return &client.Client{
+	return &clients.Client{
 		Writer:  writer,
 		Request: request,
 		Config:  conf,

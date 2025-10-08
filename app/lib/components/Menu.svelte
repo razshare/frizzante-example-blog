@@ -5,9 +5,9 @@
 </style>
 
 <script lang="ts">
-    import Icon from "$lib/components/Icon.svelte"
-    import {mdiAccountPlus, mdiLogout, mdiPlusBox} from "@mdi/js"
-    import {href} from "$lib/scripts/core/href.ts";
+    import Icon from "$lib/components/icons/Icon.svelte"
+    import { mdiAccountPlus, mdiLogout, mdiPlusBox } from "@mdi/js"
+    import { href } from "$lib/scripts/core/href.ts"
 
     type Props = {
         loggedIn: boolean
@@ -26,20 +26,20 @@
             <li>
                 <a {...href("/logout")}>
                     <span>Logout</span>
-                    <Icon value={mdiLogout} />
+                    <Icon path={mdiLogout} />
                 </a>
             </li>
         {:else}
             <li>
                 <a {...href("/register")}>
                     <span>Register</span>
-                    <Icon value={mdiAccountPlus} />
+                    <Icon path={mdiAccountPlus} />
                 </a>
             </li>
             <li>
                 <a {...href("/login")}>
                     <span>Login</span>
-                    <Icon value={mdiLogout} />
+                    <Icon path={mdiLogout} />
                 </a>
             </li>
         {/if}
@@ -48,7 +48,7 @@
             <li>
                 <a {...href("/form")}>
                     <span>New Article</span>
-                    <Icon value={mdiPlusBox} />
+                    <Icon path={mdiPlusBox} />
                 </a>
             </li>
         {/if}

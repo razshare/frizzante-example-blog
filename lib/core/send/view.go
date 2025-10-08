@@ -3,13 +3,13 @@ package send
 import (
 	"strings"
 
-	"main/lib/core/client"
-	"main/lib/core/stack"
-	_view "main/lib/core/view"
+	"main/lib/core/clients"
+	"main/lib/core/stacks"
+	"main/lib/core/views"
 )
 
 // View sends a view.
-func View(client *client.Client, view _view.View) {
+func View(client *clients.Client, view views.View) {
 	if client.Writer.Header().Get("Location") != "" {
 		return
 	}
@@ -24,19 +24,19 @@ func View(client *client.Client, view _view.View) {
 		if view.Props == nil {
 			view.Props = map[string]string{}
 		}
-		Json(client, _view.Wrap(view))
+		Json(client, views.NewData(view))
 		return
 	}
 
 	if client.Config.Render == nil {
-		client.Config.ErrorLog.Println("view render function is missing", stack.Trace())
+		client.Config.ErrorLog.Println("view render function is missing", stacks.Trace())
 		return
 	}
 
 	var html string
 	var err error
 	if html, err = client.Config.Render(view); err != nil {
-		client.Config.ErrorLog.Println(err, stack.Trace())
+		client.Config.ErrorLog.Println(err, stacks.Trace())
 	}
 
 	if client.Writer.Header().Get("Content-Type") == "" {

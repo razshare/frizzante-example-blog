@@ -3,18 +3,18 @@ package receive
 import (
 	"io"
 
-	"main/lib/core/client"
-	"main/lib/core/stack"
+	"main/lib/core/clients"
+	"main/lib/core/stacks"
 )
 
 // Message reads the contents of the message and returns the value.
 //
 // Compatible with web sockets and server sent events.
-func Message(client *client.Client) string {
+func Message(client *clients.Client) string {
 	if client.WebSocket != nil {
 		_, data, err := client.WebSocket.ReadMessage()
 		if err != nil {
-			client.Config.ErrorLog.Println(err, stack.Trace())
+			client.Config.ErrorLog.Println(err, stacks.Trace())
 			return ""
 		}
 		return string(data)
@@ -22,7 +22,7 @@ func Message(client *client.Client) string {
 
 	data, err := io.ReadAll(client.Request.Body)
 	if err != nil {
-		client.Config.ErrorLog.Println(err, stack.Trace())
+		client.Config.ErrorLog.Println(err, stacks.Trace())
 		return ""
 	}
 	return string(data)

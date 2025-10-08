@@ -4,7 +4,7 @@ import (
 	"mime/multipart"
 	"net/url"
 
-	"main/lib/core/client"
+	"main/lib/core/clients"
 )
 
 type MultipartFormFile struct {
@@ -14,5 +14,5 @@ type MultipartFormFile struct {
 
 type MultipartForm struct {
 	url.Values
-	Client *client.Client
+	Client *clients.Client
 }

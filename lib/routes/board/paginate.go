@@ -1,22 +1,22 @@
 package board
 
 import (
-	"main/lib/core/client"
+	"main/lib/core/clients"
 	"main/lib/core/receive"
-	"main/lib/core/stack"
+	"main/lib/core/stacks"
 	"strconv"
 )
 
-var PageSize int64 = 10
+var PageSize int64 = 4
 
-func Paginate(client *client.Client) int64 {
+func Paginate(client *clients.Client) int64 {
 	var page int64
 	var pageQuery string
 	var err error
 
 	if pageQuery = receive.Query(client, "page"); pageQuery != "" {
 		if page, err = strconv.ParseInt(pageQuery, 10, 64); err != nil {
-			client.Config.ErrorLog.Println(err, stack.Trace())
+			client.Config.ErrorLog.Println(err, stacks.Trace())
 			return 0
 		}
 	}

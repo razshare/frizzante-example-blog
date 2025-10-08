@@ -1,3 +1,5 @@
+//go:build !dev
+
 package send
 
 import (
@@ -9,22 +11,22 @@ import (
 	"path/filepath"
 	"strings"
 
-	"main/lib/core/client"
+	"main/lib/core/clients"
 	"main/lib/core/embeds"
 	"main/lib/core/files"
 	"main/lib/core/mime"
-	"main/lib/core/stack"
+	"main/lib/core/stacks"
 )
 
 // FileOrElse sends the file requested by the client, or else falls back.
-func FileOrElse(client *client.Client, config FileOrElseConfig) {
+func FileOrElse(client *clients.Client, orElse func()) {
 	if client.WebSocket != nil {
-		client.Config.ErrorLog.Println("file_or_else does not support web sockets", stack.Trace())
+		client.Config.ErrorLog.Println("file_or_else does not support web sockets", stacks.Trace())
 		return
 	}
 
 	if client.EventName != "" {
-		client.Config.ErrorLog.Println("file_or_else does not support server sent events", stack.Trace())
+		client.Config.ErrorLog.Println("file_or_else does not support server sent events", stacks.Trace())
 		return
 	}
 
@@ -36,38 +38,40 @@ func FileOrElse(client *client.Client, config FileOrElseConfig) {
 		name = filepath.Join(client.Config.PublicRoot, client.Request.RequestURI)
 	}
 
-	if config.UseDisk && files.IsFile(name) {
-		if "" == client.Writer.Header().Get("Content-Type") {
+	if files.IsFile(name) {
+		if client.Writer.Header().Get("Content-Type") == "" {
 			Header(client, "Content-Type", mime.Parse(name))
 		}
 
 		http.ServeFile(client.Writer, client.Request, name)
 		return
-	} else if embeds.IsFile(client.Config.Efs, name) {
+	}
+
+	if embeds.IsFile(client.Config.Efs, name) {
 		var file fs.File
 		var err error
 		if file, err = client.Config.Efs.Open(name); err != nil {
-			client.Config.ErrorLog.Println(err, stack.Trace())
+			client.Config.ErrorLog.Println(err, stacks.Trace())
 			return
 		}
 
 		var info os.FileInfo
 		if info, err = file.Stat(); err != nil {
-			client.Config.ErrorLog.Println(err, stack.Trace())
+			client.Config.ErrorLog.Println(err, stacks.Trace())
 			return
 		}
 
-		if "" == client.Writer.Header().Get("Content-Type") {
+		if client.Writer.Header().Get("Content-Type") == "" {
 			Header(client, "Content-Type", mime.Parse(name))
 		}
 
-		if "" == client.Writer.Header().Get("Content-Length") {
+		if client.Writer.Header().Get("Content-Length") == "" {
 			Header(client, "Content-Length", fmt.Sprintf("%d", info.Size()))
 		}
 
 		buf := make([]byte, info.Size())
 		if _, err = file.Read(buf); err != nil {
-			client.Config.ErrorLog.Println(err, stack.Trace())
+			client.Config.ErrorLog.Println(err, stacks.Trace())
 			return
 		}
 
@@ -75,5 +79,5 @@ func FileOrElse(client *client.Client, config FileOrElseConfig) {
 		return
 	}
 
-	config.OrElse()
+	orElse()
 }

@@ -27,13 +27,7 @@
         children: Snippet
     }
 
-    let {
-        left = false,
-        right = false,
-        top = false,
-        bottom = false,
-        children,
-    }: Props = $props()
+    let { left = false, right = false, top = false, bottom = false, children }: Props = $props()
 </script>
 
 <div class:left class:right class:top class:bottom>

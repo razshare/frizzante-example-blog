@@ -3,17 +3,17 @@ package send
 import (
 	"encoding/json"
 
-	"main/lib/core/client"
-	"main/lib/core/stack"
+	"main/lib/core/clients"
+	"main/lib/core/stacks"
 )
 
 // Json sends json content.
 //
 // Compatible with web sockets and server sent events.
-func Json(client *client.Client, value any) {
+func Json(client *clients.Client, value any) {
 	data, err := json.Marshal(value)
 	if err != nil {
-		client.Config.ErrorLog.Println(err, stack.Trace())
+		client.Config.ErrorLog.Println(err, stacks.Trace())
 		return
 	}
 

@@ -38,19 +38,17 @@
 </style>
 
 <script lang="ts">
-    import type { Article } from "$lib/types.ts"
-    import Icon from "$lib/components/Icon.svelte"
+    import Icon from "$lib/components/icons/Icon.svelte"
     import { mdiArrowLeft, mdiArrowRight } from "@mdi/js"
     import { href } from "$lib/scripts/core/href.ts"
-
+    import type {sqlc} from "$gen/types/main/lib/routes/board/Props";
     type Props = {
         page: number
         hasMore: boolean
-        articles: Article[]
+        articles: sqlc.Article[]
         loggedIn: boolean
     }
-
-    let { page, articles, hasMore, loggedIn }: Props = $props()
+    let { page, hasMore, articles, loggedIn }: Props = $props()
 </script>
 
 {#if articles.length === 0}
@@ -60,12 +58,12 @@
         <div class="items">
             {#if page > 0}
                 <a class="previous" {...href(`/board?page=${page - 1}`)}>
-                    <Icon value={mdiArrowLeft} />
+                    <Icon path={mdiArrowLeft} />
                     <span>Previous</span>
                 </a>
             {:else}
                 <span class="previous">
-                    <Icon value={mdiArrowLeft} />
+                    <Icon path={mdiArrowLeft} />
                     <span>Previous</span>
                 </span>
             {/if}
@@ -73,12 +71,12 @@
             {#if hasMore}
                 <a class="next" {...href(`/board?page=${page + 1}`)}>
                     <span>Next</span>
-                    <Icon value={mdiArrowRight} />
+                    <Icon path={mdiArrowRight} />
                 </a>
             {:else}
                 <span class="next">
                     <span>Next</span>
-                    <Icon value={mdiArrowRight} />
+                    <Icon path={mdiArrowRight} />
                 </span>
             {/if}
         </div>
@@ -86,18 +84,18 @@
 
     {@render navigator()}
 
-    {#each articles as article (article.ID)}
-        {@const createdAt = new Date(article.CreatedAt * 1000).toLocaleString()}
+    {#each articles as article (article.id)}
+        {@const createdAt = new Date(article.createdAt * 1000).toLocaleString()}
         <hr />
         <div class="article">
-            <h1 class="title">{article.Title}</h1>
+            <h1 class="title">{article.title}</h1>
             <span class="created-at">{createdAt}</span>
             {#if loggedIn}
                 <span class="remove">
-                    <a {...href(`/article/remove?id=${article.ID}`)}>[Remove]</a>
+                    <a {...href(`/article/remove?id=${article.id}`)}>[Remove]</a>
                 </span>
             {/if}
-            <div class="content">{article.Content}</div>
+            <div class="content">{article.content}</div>
         </div>
     {/each}
 

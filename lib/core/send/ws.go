@@ -2,12 +2,12 @@ package send
 
 import (
 	"github.com/gorilla/websocket"
-	"main/lib/core/client"
-	"main/lib/core/stack"
+	"main/lib/core/clients"
+	"main/lib/core/stacks"
 )
 
 // WsUpgrade upgrades to web sockets.
-func WsUpgrade(client *client.Client) {
+func WsUpgrade(client *clients.Client) {
 	WsUpgradeWithUpgrader(client, websocket.Upgrader{
 		ReadBufferSize:  10240, // 10KB
 		WriteBufferSize: 10240, // 10KB
@@ -15,16 +15,16 @@ func WsUpgrade(client *client.Client) {
 }
 
 // WsUpgradeWithUpgrader upgrades to web sockets.
-func WsUpgradeWithUpgrader(client *client.Client, upgrader websocket.Upgrader) {
+func WsUpgradeWithUpgrader(client *clients.Client, upgrader websocket.Upgrader) {
 	conn, err := upgrader.Upgrade(client.Writer, client.Request, nil)
 	if err != nil {
-		client.Config.ErrorLog.Println(err, stack.Trace())
+		client.Config.ErrorLog.Println(err, stacks.Trace())
 		return
 	}
 
 	defer func() {
 		if cerr := client.WebSocket.Close(); cerr != nil {
-			client.Config.ErrorLog.Println(cerr, stack.Trace())
+			client.Config.ErrorLog.Println(cerr, stacks.Trace())
 		}
 	}()
 

@@ -3,16 +3,7 @@
     import Layout from "$lib/components/Layout.svelte"
     import Menu from "$lib/components/Menu.svelte"
     import Push from "$lib/components/Push.svelte"
-    import type { Article } from "$lib/types.ts"
-
-    type Props = {
-        page: number
-        hasMore: boolean
-        articles: Article[]
-        loggedIn: boolean
-        expired: boolean
-    }
-
+    import type {Props} from "$gen/types/main/lib/routes/board/Props";
     let { page, hasMore, articles, loggedIn, expired }: Props = $props()
 </script>
 
