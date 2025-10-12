@@ -8,7 +8,7 @@
 </style>
 
 <script lang="ts">
-    import { fade } from "svelte/transition"
+    import { fly } from "svelte/transition"
     import type { Snippet } from "svelte"
 
     type Props = {
@@ -29,6 +29,6 @@
     <title>{title}</title>
 </svelte:head>
 
-<main class="container" transition:fade>
+<main in:fly class="container">
     {@render children()}
 </main>

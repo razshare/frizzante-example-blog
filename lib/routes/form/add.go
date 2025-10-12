@@ -1,4 +1,4 @@
-package article
+package form
 
 import (
 	"context"
@@ -7,44 +7,37 @@ import (
 	"main/lib/core/send"
 	"main/lib/database"
 	"main/lib/database/sqlc"
+	"main/lib/security"
 	"main/lib/sessions"
-	"strings"
-	"time"
-
-	uuid "github.com/nu7hatch/gouuid"
 )
 
 func Add(client *clients.Client) {
-	var title string
-	var content string
-	var id *uuid.UUID
-	var err error
+	session := sessions.Start(receive.SessionId(client))
 
-	if title = strings.Trim(receive.FormValue(client, "title"), " "); title == "" {
-		send.Navigate(client, "/form?error=article title cannot be empty")
+	var form sqlc.AddArticleParams
+	if !receive.Form(client, &form) {
+		session.FormError = "could not parse form"
+		send.Navigate(client, "/form")
 		return
 	}
 
-	if content = strings.Trim(receive.FormValue(client, "content"), " "); content == "" {
-		send.Navigate(client, "/form?error=article content cannot be empty")
+	if form.Title == "" {
+		session.FormError = "article title cannot be empty"
+		send.Navigate(client, "/form")
 		return
 	}
 
-	state := sessions.Start(receive.SessionId(client))
-
-	if id, err = uuid.NewV4(); nil != err {
-		send.Navigatef(client, "/form?error=%s", err)
+	if form.Content == "" {
+		session.FormError = "article content cannot be empty"
+		send.Navigate(client, "/form")
 		return
 	}
 
-	if err = database.Queries.AddArticle(context.Background(), sqlc.AddArticleParams{
-		ID:        id.String(),
-		Title:     title,
-		Content:   content,
-		AccountID: state.AccountId,
-		CreatedAt: time.Now().Unix(),
-	}); err != nil {
-		send.Navigatef(client, "/form?error=%s", err)
+	form.ID = security.RandomHex(36)
+
+	if err := database.Queries.AddArticle(context.Background(), form); err != nil {
+		session.FormError = err.Error()
+		send.Navigate(client, "/form")
 		return
 	}
 

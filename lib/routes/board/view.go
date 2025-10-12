@@ -12,14 +12,25 @@ import (
 	"main/lib/sessions"
 )
 
-func View(client *clients.Client) {
-	var page = Paginate(client)
-	var articles []sqlc.Article
-	var count int
-	var hasMore bool
-	var err error
+func init() {
+	_ = types.Generate[Props]()
+}
 
+type Props struct {
+	Page     int64          `json:"page"`
+	HasMore  bool           `json:"hasMore"`
+	Articles []sqlc.Article `json:"articles"`
+	LoggedIn bool           `json:"loggedIn"`
+	Expired  bool           `json:"expired"`
+	Error    string         `json:"error"`
+}
+
+func View(client *clients.Client) {
 	session := sessions.Start(receive.SessionId(client))
+	page := Paginate(client)
+
+	var err error
+	var articles []sqlc.Article
 
 	if articles, err = database.Queries.FindArticles(
 		context.Background(),
@@ -34,14 +45,11 @@ func View(client *clients.Client) {
 			Limit: PageSize + 1,
 		},
 	); err != nil {
-		send.View(client, views.View{
-			Name: "Board",
-			Props: map[string]any{
-				"error":    err.Error(),
-				"loggedIn": session.LoggedIn,
-				"expired":  session.LoginExpired,
-			},
-		})
+		send.View(client, views.View{Name: "Board", Props: Props{
+			Error:    err.Error(),
+			LoggedIn: session.LoggedIn,
+			Expired:  session.LoginExpired,
+		}})
 		return
 	}
 
@@ -49,33 +57,21 @@ func View(client *clients.Client) {
 		articles = make([]sqlc.Article, 0)
 	}
 
-	count = len(articles)
-	if hasMore = count == int(PageSize)+1; hasMore {
+	count := len(articles)
+	hasMore := count == int(PageSize)+1
+
+	if hasMore {
 		if articles = articles[:count-1]; articles == nil {
 			articles = make([]sqlc.Article, 0)
 		}
 	}
 
-	// Send the views.
 	send.View(client, views.View{Name: "Board", Props: Props{
 		Page:     page,
 		HasMore:  hasMore,
 		Articles: articles,
 		LoggedIn: session.LoggedIn,
 		Expired:  session.LoginExpired,
-		Error:    receive.Query(client, "error"),
+		Error:    session.BoardError,
 	}})
-}
-
-type Props struct {
-	Page     int64          `json:"page"`
-	HasMore  bool           `json:"hasMore"`
-	Articles []sqlc.Article `json:"articles"`
-	LoggedIn bool           `json:"loggedIn"`
-	Expired  bool           `json:"expired"`
-	Error    string         `json:"error"`
-}
-
-func init() {
-	_ = types.Generate[Props]()
 }

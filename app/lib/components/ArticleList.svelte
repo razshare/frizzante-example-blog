@@ -41,7 +41,7 @@
     import Icon from "$lib/components/icons/Icon.svelte"
     import { mdiArrowLeft, mdiArrowRight } from "@mdi/js"
     import { href } from "$lib/scripts/core/href.ts"
-    import type {sqlc} from "$gen/types/main/lib/routes/board/Props";
+    import type { sqlc } from "$gen/types/main/lib/routes/board/Props"
     type Props = {
         page: number
         hasMore: boolean
@@ -92,7 +92,7 @@
             <span class="created-at">{createdAt}</span>
             {#if loggedIn}
                 <span class="remove">
-                    <a {...href(`/article/remove?id=${article.id}`)}>[Remove]</a>
+                    <a {...href(`/form/remove?id=${article.id}`)}>[Remove]</a>
                 </span>
             {/if}
             <div class="content">{article.content}</div>

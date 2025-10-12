@@ -31,7 +31,7 @@
             <span>Back</span>
         </a>
     </div>
-    <form method="POST" {...action("/article/add")}>
+    <form method="POST" {...action("/form/add")}>
         <span>Title</span><br />
         <input type="text" name="title" />
         <span>Content</span><br />

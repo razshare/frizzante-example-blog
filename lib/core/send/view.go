@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"main/lib/core/clients"
-	"main/lib/core/stacks"
+	"main/lib/core/stack"
 	"main/lib/core/views"
 )
 
@@ -29,14 +29,14 @@ func View(client *clients.Client, view views.View) {
 	}
 
 	if client.Config.Render == nil {
-		client.Config.ErrorLog.Println("view render function is missing", stacks.Trace())
+		client.Config.ErrorLog.Println("view render function is missing", stack.Trace())
 		return
 	}
 
 	var html string
 	var err error
 	if html, err = client.Config.Render(view); err != nil {
-		client.Config.ErrorLog.Println(err, stacks.Trace())
+		client.Config.ErrorLog.Println(err, stack.Trace())
 	}
 
 	if client.Writer.Header().Get("Content-Type") == "" {

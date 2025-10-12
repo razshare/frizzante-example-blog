@@ -2,40 +2,43 @@ package register
 
 import (
 	"context"
-	"crypto/sha256"
 	"fmt"
 	"main/lib/core/clients"
 	"main/lib/core/receive"
 	"main/lib/core/send"
 	"main/lib/database"
 	"main/lib/database/sqlc"
+	"main/lib/security"
+	"main/lib/sessions"
 )
 
 func Action(client *clients.Client) {
-	var err error
-	var id = receive.FormValue(client, "id")
-	var displayName = receive.FormValue(client, "displayName")
-	var password = receive.FormValue(client, "password")
-	var hash string
+	session := sessions.Start(receive.SessionId(client))
 
-	if id == "" || displayName == "" || password == "" {
-		send.Navigate(client, "/register?error=please fill all fields")
+	var form sqlc.AddAccountParams
+	if !receive.Form(client, &form) {
+		session.RegisterError = "could not parse form"
+		send.Navigate(client, "/register")
 		return
 	}
 
-	hash = fmt.Sprintf("%x", sha256.Sum256([]byte(password)))
-
-	if _, err = database.Queries.FindAccountById(context.Background(), id); err == nil {
-		send.Navigatef(client, "/register?error=account %s already exists", id)
+	if form.ID == "" || form.DisplayName == "" || form.Password == "" {
+		session.RegisterError = "please fill all fields"
+		send.Navigate(client, "/register")
 		return
 	}
 
-	if err = database.Queries.AddAccount(context.Background(), sqlc.AddAccountParams{
-		ID:          id,
-		DisplayName: displayName,
-		Password:    hash,
-	}); err != nil {
-		send.Navigatef(client, "/register?error=%s", err)
+	form.Password = security.Sha256(form.Password)
+
+	if _, err := database.Queries.FindAccountById(context.Background(), form.ID); err == nil {
+		session.RegisterError = fmt.Sprintf("account %s already exists", form.ID)
+		send.Navigate(client, "/register")
+		return
+	}
+
+	if err := database.Queries.AddAccount(context.Background(), form); err != nil {
+		session.RegisterError = err.Error()
+		send.Navigate(client, "/register")
 		return
 	}
 

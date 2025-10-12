@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"main/lib/core/clients"
-	"main/lib/core/stacks"
+	"main/lib/core/stack"
 )
 
 // Json sends json content.
@@ -13,7 +13,7 @@ import (
 func Json(client *clients.Client, value any) {
 	data, err := json.Marshal(value)
 	if err != nil {
-		client.Config.ErrorLog.Println(err, stacks.Trace())
+		client.Config.ErrorLog.Println(err, stack.Trace())
 		return
 	}
 

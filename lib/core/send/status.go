@@ -2,7 +2,7 @@ package send
 
 import (
 	"main/lib/core/clients"
-	"main/lib/core/stacks"
+	"main/lib/core/stack"
 )
 
 // Status sets the status code.
@@ -14,7 +14,7 @@ import (
 // All errors are sent to the server notifier.
 func Status(client *clients.Client, status int) {
 	if client.Locked {
-		client.Config.ErrorLog.Println("status is locked", stacks.Trace())
+		client.Config.ErrorLog.Println("status is locked", stack.Trace())
 		return
 	}
 

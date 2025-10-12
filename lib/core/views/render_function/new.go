@@ -5,13 +5,10 @@ package render_function
 import (
 	"errors"
 	"log"
-	"path/filepath"
 	"strings"
 
 	"github.com/dop251/goja"
-	"github.com/evanw/esbuild/pkg/api"
-	"main/lib/core/js"
-	"main/lib/core/stacks"
+	"main/lib/core/stack"
 	"main/lib/core/types"
 	"main/lib/core/views"
 )
@@ -44,7 +41,7 @@ func New(config Config) (render RenderFunction, err error) {
 					object := argument.ToObject(runtime)
 					marshalData, err = object.MarshalJSON()
 					if err != nil {
-						config.ErrorLog.Println(err, stacks.Trace())
+						config.ErrorLog.Println(err, stack.Trace())
 						return goja.Undefined()
 					}
 					builder.WriteString(string(marshalData))
@@ -91,15 +88,15 @@ func New(config Config) (render RenderFunction, err error) {
 		return
 	}
 
-	var text string
-	if text, err = js.Bundle(filepath.Join(config.App, "dist"), api.FormatCommonJS, string(config.Data)); err != nil {
-		return
-	}
+	//var text string
+	//if text, err = js.Bundle(filepath.Join(config.App, "dist"), api.FormatCommonJS, string(config.Data)); err != nil {
+	//	return
+	//}
 
-	source := "const module={exports:{}};\n" + text + "\nfrizzante_set_render(render)"
+	source := "const module={exports:{}};\n" + string(config.Data) + "\nfrizzante_set_render(render)"
 
 	var prog *goja.Program
-	if prog, err = goja.Compile("app.server.js", source, false); err != nil {
+	if prog, err = goja.Compile("app.server.cjs", source, false); err != nil {
 		return
 	}
 

@@ -11,7 +11,7 @@ import (
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/fastschema/qjs"
 	"main/lib/core/js"
-	"main/lib/core/stacks"
+	"main/lib/core/stack"
 	"main/lib/core/views"
 )
 
@@ -48,7 +48,7 @@ func New(config Config) (render RenderFunction, err error) {
 
 						marshalData, err = argument.JSONStringify()
 						if err != nil {
-							config.ErrorLog.Println(err, stacks.Trace())
+							config.ErrorLog.Println(err, stack.Trace())
 							return
 						}
 						builder.WriteString(marshalData)
@@ -92,7 +92,7 @@ func New(config Config) (render RenderFunction, err error) {
 
 	source := "const module={exports:{}};\n" + text + "\nfrizzante_set_render(render)"
 
-	if _, err = context.Eval("app.server.js", qjs.Code(source)); err != nil {
+	if _, err = context.Eval("app.server.cjs", qjs.Code(source)); err != nil {
 		return
 	}
 

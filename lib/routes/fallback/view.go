@@ -6,5 +6,7 @@ import (
 )
 
 func View(client *clients.Client) {
-	send.FileOrElse(client, func() { send.Navigate(client, "/board") })
+	if !send.RequestedFile(client) {
+		send.Navigate(client, "/board")
+	}
 }

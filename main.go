@@ -7,7 +7,6 @@ import (
 	"main/lib/core/servers"
 	"main/lib/guards/is_logged_in"
 	"main/lib/guards/is_not_expired"
-	"main/lib/routes/article"
 	"main/lib/routes/board"
 	"main/lib/routes/expired"
 	"main/lib/routes/fallback"
@@ -40,7 +39,7 @@ func main() {
 		// This way a user that is logged in but has an expired session, sees the message "Your sessions has expired",
 		// while a user that is not logged in to begin with, is redirected to the login page.
 		{Pattern: "GET /form", Handler: form.View, Guards: []guards.Guard{is_logged_in.Guard, is_not_expired.Guard}},
-		{Pattern: "POST /article/add", Handler: article.Add, Guards: []guards.Guard{is_logged_in.Guard, is_not_expired.Guard}},
-		{Pattern: "GET /article/remove", Handler: article.Remove, Guards: []guards.Guard{is_logged_in.Guard, is_not_expired.Guard}},
+		{Pattern: "POST /form/add", Handler: form.Add, Guards: []guards.Guard{is_logged_in.Guard, is_not_expired.Guard}},
+		{Pattern: "GET /form/remove", Handler: form.Remove, Guards: []guards.Guard{is_logged_in.Guard, is_not_expired.Guard}},
 	}
 }

@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"main/lib/core/clients"
-	"main/lib/core/stacks"
+	"main/lib/core/stack"
 	"main/lib/core/views/render"
 )
 
@@ -70,7 +70,7 @@ func Start(server *Server) {
 				server.InfoLog.Println("shutting down server")
 				return
 			}
-			server.ErrorLog.Println(err, stacks.Trace())
+			server.ErrorLog.Println(err, stack.Trace())
 			os.Exit(1)
 		}
 	}()
@@ -87,7 +87,7 @@ func Start(server *Server) {
 					server.InfoLog.Println("shutting down server")
 					return
 				}
-				server.ErrorLog.Println(err, stacks.Trace())
+				server.ErrorLog.Println(err, stack.Trace())
 				os.Exit(1)
 			}
 		}
